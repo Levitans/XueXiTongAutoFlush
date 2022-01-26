@@ -12,8 +12,8 @@ from package.user import User
 
 class UserData:
     def __init__(self, path):
-        self.__userDataPath = path
-        self.__users = []
+        self.__userDataPath = path      # 数据地址
+        self.__users = []               # 储存user对象
         self.__readUserData()
 
     # 读取本地存储的用户数据
@@ -72,6 +72,10 @@ class UserData:
         usersDataString = json.dumps(userData, ensure_ascii=False)
         f.write(usersDataString)
         f.close()
+
+    def displayUserName(self):
+        for j, i in enumerate(self.__users):
+            print(str(j+1)+"、"+i.getUserName())
 
 
 class SubjectData:

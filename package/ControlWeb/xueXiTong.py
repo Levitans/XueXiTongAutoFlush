@@ -8,7 +8,7 @@ import sys
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from package.display import Display                         # **************************************
+from package.display import Display
 from package.ControlWeb import course
 from package.ControlWeb.task.getAnswer import GetAnswer
 from package.ControlWeb.task.PPT import PPT

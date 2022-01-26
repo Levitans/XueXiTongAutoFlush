@@ -17,11 +17,11 @@ from package.manageDate import BrowserConfiguration
 from package.internetTime import InternetTime
 
 starInformation = """
-===========================================
-作者：Levitan
-本项目已在GitHub上开源
-GitHub地址：https://github.com/Levitans/-
-===========================================
+===========================================================
+·作者：Levitan
+·本项目已在GitHub上开源
+·GitHub地址：https://github.com/Levitans/XueXiTongBrushClass
+===========================================================
 """
 print(starInformation)
 
@@ -42,7 +42,7 @@ browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath
 userData = UserData(userDataPath)
 browser = BrowserConfiguration(browserConfigurationPath)
 
-Display.setFormat(((15, 10, True), (15, 10, True)))
+Display.setFormat(((15, 25), (15, 25)))
 Display.overLengthOfEn = 15
 
 # while True and InternetTime.isExpiration():
@@ -59,6 +59,28 @@ while True:
     mode = input(function)
     print()
 
+    def star():
+        """
+        作用：选择登陆用户，进入学习通展示所有课程
+        :return:
+            user: 选择的登陆用户数据的user对象
+            XueXiTong: XueXiTong对象
+            coursesList: 课程名称列表
+        """
+        userData.displayUserName()
+        index = int(input("选择用户：")) - 1
+        Display.separate()
+        userdata = userData.getUsers()[index]
+        xueXiTong = XueXiTong(chromePath, driverPath, userdata, browser.getState())
+        xueXiTong.landing()
+        # 获取课程列表
+        coursesList = xueXiTong.getCourses()
+        # 展示课程
+        listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
+        for i in range(0, listLen, 2):
+            Display.printTable([coursesList[i], coursesList[i+1]])
+        return userdata, xueXiTong, coursesList
+
     while not (mode in ("1", "2", "3", "4", "5", "6")):
         print("输入错误，重新选择")
         mode = input(function)
@@ -72,21 +94,8 @@ while True:
         userData = UserData(userDataPath)
         print("用户添加成功\n")
     elif mode == "2":                   # 使用已有用户登陆
-        for j, i in enumerate(userData.getUsers()):
-            print(str(j+1)+"、"+i.getUserName())
-        userIndex = int(input("选择用户：")) - 1
-        Display.separate()
-        user = userData.getUsers()[userIndex]
-        xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
-        xueXiTong.landing()
-        # 获取课程列表
-        coursesList = xueXiTong.getCourses()
-        # 展示课程
-        listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
-        for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i+1]])
+        user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1
-
         # 进入指定课程
         # 返回课程中的章节的列表
         chaptersList = xueXiTong.enterCourse(courseIndex)
@@ -106,8 +115,7 @@ while True:
             break
         xueXiTong.automaticLearning(chapterIndex, subjectData)
     elif mode == "3":                   # 修改用户信息
-        for j, i in enumerate(userData.getUsers()):
-            print(str(j+1)+"、"+i.getUserName())
+        userData.displayUserName()
         userIndex = int(input("选择需要修改的用户：")) - 1
         print()
         user = userData.getUsers()[userIndex]
@@ -129,21 +137,8 @@ while True:
         else:
             print("输入错误\n")
     elif mode == "5":                   # 爬取题目（暂时隐藏）
-        for j, i in enumerate(userData.getUsers()):
-            print(str(j + 1) + "、" + i.getUserName())
-        userIndex = int(input("选择用户：")) - 1
-        Display.separate()
-        user = userData.getUsers()[userIndex]
-        xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
-        xueXiTong.landing()
-        # 获取课程列表
-        coursesList = xueXiTong.getCourses()
-        # 展示课程
-        listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
-        for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i+1]])
+        user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1
-
         # 进入指定课程
         # 返回课程中的章节的列表
         chaptersList = xueXiTong.enterCourse(courseIndex)
