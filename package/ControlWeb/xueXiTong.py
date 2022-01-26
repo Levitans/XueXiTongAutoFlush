@@ -73,11 +73,11 @@ class XueXiTong:
         try:
             item.click()
         except selenium.common.exceptions.WebDriverException:
-            Display.separate()                                   # **************************************
+            Display.separate()
             print("当前课程无法关闭浏览器学习")
             print("修改浏览器设置后可再次进行尝试")
             print("作者正在疯狂解决问题")
-            Display.separate()                                   # **************************************
+            Display.separate()
             sys.exit(1)
         # 保存课程名
         self.course.nowCourseName = self.course.getCourseNameList()[courseIndex]
@@ -170,7 +170,7 @@ class XueXiTong:
                                 homework.submitOrSave()
                             except Exception:
                                 print("当前任务点不是题目\n当前任务点无法解决，跳过当前任务点")
-                    Display.separate()                                      # **************************************
+                    Display.separate()
                     self.__driver.switch_to.default_content()
                     self.__driver.switch_to.frame("iframe")
                     iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')

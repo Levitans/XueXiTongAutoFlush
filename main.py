@@ -51,27 +51,31 @@ while True:
         print("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
     browserInf = "关闭显示" if browser.getState() == 1 else "开启显示"
     print("选择模式（{}）".format("当前浏览器模式："+browserInf))
-    function = "1、创建新用户，2、使用已有用户（当前已有{}个用户）" \
-               "，3、修改用户信息，4、设置浏览器显示，5、退出程序\n输入序号：".format(userData.getUserAmount())
+    function = "1、创建新用户，"\
+               "2、使用已有用户（当前已有{}个用户），" \
+               "3、修改用户信息，"\
+               "4、设置浏览器显示，"\
+               "5、退出程序\n输入序号：".format(userData.getUserAmount())
     mode = input(function)
     print()
+
     while not (mode in ("1", "2", "3", "4", "5", "6")):
         print("输入错误，重新选择")
         mode = input(function)
         print()
 
-    if mode == "1":
+    if mode == "1":                     # 创建新用户
         userName = input("输入用户名：")
         account = input("输入手机号：")
         password = input("输入密码：")
         userData.addNewUser(userName, account, password)
         userData = UserData(userDataPath)
         print("用户添加成功\n")
-    elif mode == "2":
+    elif mode == "2":                   # 使用已有用户登陆
         for j, i in enumerate(userData.getUsers()):
             print(str(j+1)+"、"+i.getUserName())
         userIndex = int(input("选择用户：")) - 1
-        Display.separate()                       # **************************************
+        Display.separate()
         user = userData.getUsers()[userIndex]
         xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
         xueXiTong.landing()
@@ -80,7 +84,7 @@ while True:
         # 展示课程
         listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
         for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i+1]])          # **************************************
+            Display.printTable([coursesList[i], coursesList[i+1]])
         courseIndex = int(input("输入课程号：")) - 1
 
         # 进入指定课程
@@ -95,13 +99,13 @@ while True:
         try:
             chapterIndex = chaptersList.index(subjectProgress)
         except ValueError as e:
-            Display.separate()                                  # **************************************
+            Display.separate()
             print("当前课程没有{}章节。".format(subjectProgress))
             print("可以到{}\\data\\subject_data.json中修改课程进度。".format(nowPath))
-            Display.separate()                                  # **************************************
+            Display.separate()
             break
         xueXiTong.automaticLearning(chapterIndex, subjectData)
-    elif mode == "3":
+    elif mode == "3":                   # 修改用户信息
         for j, i in enumerate(userData.getUsers()):
             print(str(j+1)+"、"+i.getUserName())
         userIndex = int(input("选择需要修改的用户：")) - 1
@@ -114,7 +118,7 @@ while True:
             userData.modifyUserData(user.getUserName(), newData, "account")
         elif key == 2:
             userData.modifyUserData(user.getUserName(), newData)
-    elif mode == "4":
+    elif mode == "4":                   # 设置浏览器显示模式
         key = input("1、关闭浏览器显示，2、开启浏览器显示\n输入序号：")
         if key == "1":
             browser.modifyClassData(1)
@@ -124,11 +128,11 @@ while True:
             print("已开启显示浏览器\n")
         else:
             print("输入错误\n")
-    elif mode == "5":
+    elif mode == "5":                   # 爬取题目（暂时隐藏）
         for j, i in enumerate(userData.getUsers()):
             print(str(j + 1) + "、" + i.getUserName())
         userIndex = int(input("选择用户：")) - 1
-        Display.separate()                                   # **************************************
+        Display.separate()
         user = userData.getUsers()[userIndex]
         xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
         xueXiTong.landing()
@@ -137,7 +141,7 @@ while True:
         # 展示课程
         listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
         for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i+1]])          # **************************************
+            Display.printTable([coursesList[i], coursesList[i+1]])
         courseIndex = int(input("输入课程号：")) - 1
 
         # 进入指定课程
@@ -147,6 +151,6 @@ while True:
     else:
         break
 if not InternetTime.isExpiration():
-    Display.printWarning("程序以过期")                         # **************************************
+    Display.printWarning("程序以过期")
 os.system('pause')
 

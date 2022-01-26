@@ -24,7 +24,7 @@ class InternetTime:
             nowTime = nowTime.partition(" ")
             nowTime = nowTime[0].replace("-", "")
         except Exception:
-            Display.printWarning("程序联网失败请重试")             # **************************************
+            Display.printWarning("程序联网失败请重试")
             return isExpiration
         isExpiration = True if int(nowTime) < InternetTime.expirationDate else False
         return isExpiration
