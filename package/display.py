@@ -15,6 +15,7 @@ class Display:
     format = [(10, 10, False) for i in range(10)]
     overLengthOfEn = 5
     overSymbolOfEn = "..."
+    numberCounter = 1
 
     @staticmethod
     def setFormat(formatList):
@@ -58,38 +59,37 @@ class Display:
         return newStr, countEn, countCn
 
     @staticmethod
-    def printTable(strDataList, mode="L"):
+    def printTable(strDataList, mode="L", numberKey=False):
         """
         :param strDataList: 一个列表，表示表格一行的所有元素。
         :param mode: 选择对齐方式
                     ‘l’     左对齐
                     'c'     居中对齐
                     'r'     右对齐
+        :param numberKey: 是否开启显示序号
         :return: 无返回值
         """
-        if mode in 'lLrR':
-            for i in range(len(strDataList)):
-                strData = Display.__strCount(strDataList[i], Display.format[i][2])
-                numSpaceEn = Display.format[i][0] - strData[1]
-                numSpaceCh = Display.format[i][1] - strData[2]
+        for i in range(len(strDataList)):
+            countStr = str(Display.numberCounter) + "." if numberKey else ""
+            strData = Display.__strCount(countStr+strDataList[i], Display.format[i][2])
+            numSpaceEn = Display.format[i][0] - strData[1]
+            numSpaceCh = Display.format[i][1] - strData[2]
+            if mode in 'lLrR':
                 if mode in 'lL':
                     print(strData[0]+chr(32)*numSpaceEn+chr(12288)*numSpaceCh, end="")
                 elif mode in 'rR':
                     print(chr(32)*numSpaceEn+chr(12288)*numSpaceCh+strData[0], end="")
-            print()
-        elif mode in 'cC':
-            for i in range(len(strDataList)):
-                strData = Display.__strCount(strDataList[i], Display.format[i][2])
-                numSpaceEn = Display.format[i][0]-strData[1]
-                numSpaceCh = Display.format[i][1]-strData[2]
+            elif mode in 'cC':
                 beforeEn = numSpaceEn//2
                 beforeCh = numSpaceCh//2
                 afterEn = numSpaceEn-beforeEn
                 afterCh = numSpaceCh-beforeCh
                 print(chr(32)*beforeEn + chr(12288)*beforeCh + strData[0] + chr(32)*afterEn + chr(12288)*afterCh, end="")
-            print()
-        else:
-            raise ValueError("value '{}' is illegal".format(mode))
+            else:
+                raise ValueError("value '{}' is illegal".format(mode))
+            if numberKey:
+                Display.numberCounter += 1
+        print()
 
     @staticmethod
     def separate(number=20):
@@ -102,17 +102,14 @@ class Display:
 
 
 if __name__ == '__main__':
-    Display.setFormat(((10, 10, True), (10, 10, True)))
-    Display.overLengthOfEn = 10
-    data = ['大学物理', '2021-2022上马克思主义基本原理概论', '面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）', '计算机网络与通信', '大学英语（三）非艺术类', '线性代数A(21-22(1))', '网络数据采集实践', '大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）', '实验室安全教育', '实验室安全教育', '职业生涯规划1', '形势与政策2/4（20-21学年第二学期）', 'Python程序设计', '外教口语（二）', '大学英语（二）', '信息技术基础（二）-20-21(2)', '高等数学A（下）', '大学生心理与学业指导', '外教口语（一）', '外教口语（一）', '大学英语（一）非艺术类', '3月10日-11日市质检试卷', '2020年全市高中毕业质量检测-考前模拟', '书香九中智慧阅读', '2020届生物复习', '“新冠病毒”及其他（年段通识课）', '高三化学', '每天一点财富金融学（2021下）', '产业经济学（2021下）', '数据结构', '毛泽东思想和中国特色社会主义理论体系概论2', '毛泽东思想和中国特色社会主义理论体系概论1']
+    Display.setFormat(((15, 10, True), (10, 10, True)))
+    Display.overLengthOfEn = 20
+    data = ['大学物理', '2021-2022上马克思主义基本原理概论', '面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）', '计算机网络与通信', '大学英语（三）非艺术类', '线性代数A(21-22(1))', '网络数据采集实践', '大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）', '实验室安全教育', '实验室安全教育', '职业生涯规划1', '形势与政策2/4（20-21学年第二学期）', 'Python程序设计', '外教口语（二）', '大学英语（二）', '信息技术基础（二）-20-21(2)']
     dataLength = 0
     if len(data) % 2 == 0:
         dataLength = len(data)
     else:
         dataLength = len(data)+1
         data.append(None)
-    print(data)
     for i in range(0, dataLength, 2):
-        Display.printTable([data[i], data[i+1]])
-        # print([data[i], data[i+1]])
-    # 123123
+        Display.printTable([data[i], data[i+1]], numberKey=True)
