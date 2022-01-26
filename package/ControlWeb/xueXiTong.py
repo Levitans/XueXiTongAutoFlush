@@ -8,7 +8,7 @@ import sys
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from package.disPlay import DisPlay
+from package.display import Display                         # **************************************
 from package.ControlWeb import course
 from package.ControlWeb.task.getAnswer import GetAnswer
 from package.ControlWeb.task.PPT import PPT
@@ -73,11 +73,11 @@ class XueXiTong:
         try:
             item.click()
         except selenium.common.exceptions.WebDriverException:
-            DisPlay.displayPart()
+            Display.separate()                                   # **************************************
             print("当前课程无法关闭浏览器学习")
             print("修改浏览器设置后可再次进行尝试")
             print("作者正在疯狂解决问题")
-            DisPlay.displayPart()
+            Display.separate()                                   # **************************************
             sys.exit(1)
         # 保存课程名
         self.course.nowCourseName = self.course.getCourseNameList()[courseIndex]
@@ -170,7 +170,7 @@ class XueXiTong:
                                 homework.submitOrSave()
                             except Exception:
                                 print("当前任务点不是题目\n当前任务点无法解决，跳过当前任务点")
-                    DisPlay.displayPart()
+                    Display.separate()                                      # **************************************
                     self.__driver.switch_to.default_content()
                     self.__driver.switch_to.frame("iframe")
                     iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')

@@ -6,7 +6,7 @@
 
 import requests
 import json
-from package.disPlay import DisPlay
+from package.display import Display
 
 class InternetTime:
     # 过期时间
@@ -24,7 +24,7 @@ class InternetTime:
             nowTime = nowTime.partition(" ")
             nowTime = nowTime[0].replace("-", "")
         except Exception:
-            DisPlay.displayWarning("程序联网失败请重试")
+            Display.printWarning("程序联网失败请重试")             # **************************************
             return isExpiration
         isExpiration = True if int(nowTime) < InternetTime.expirationDate else False
         return isExpiration

@@ -10,7 +10,7 @@ import sys
 import json
 from package.user import User
 from package.ControlWeb.xueXiTong import XueXiTong
-from package.disPlay import DisPlay
+from package.display import Display
 from package.manageDate import UserData
 from package.manageDate import SubjectData
 from package.manageDate import BrowserConfiguration
@@ -41,6 +41,10 @@ browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath
 
 userData = UserData(userDataPath)
 browser = BrowserConfiguration(browserConfigurationPath)
+
+Display.setFormat(((15, 10, True), (15, 10, True)))
+Display.overLengthOfEn = 15
+
 # while True and InternetTime.isExpiration():
 while True:
     if browser.getState() == 1:
@@ -67,14 +71,16 @@ while True:
         for j, i in enumerate(userData.getUsers()):
             print(str(j+1)+"、"+i.getUserName())
         userIndex = int(input("选择用户：")) - 1
-        DisPlay.displayPart()
+        Display.separate()                       # **************************************
         user = userData.getUsers()[userIndex]
         xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
         xueXiTong.landing()
         # 获取课程列表
         coursesList = xueXiTong.getCourses()
         # 展示课程
-        DisPlay.display(coursesList)
+        listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
+        for i in range(0, listLen, 2):
+            Display.printTable([coursesList[i], coursesList[i+1]])          # **************************************
         courseIndex = int(input("输入课程号：")) - 1
 
         # 进入指定课程
@@ -89,10 +95,10 @@ while True:
         try:
             chapterIndex = chaptersList.index(subjectProgress)
         except ValueError as e:
-            DisPlay.displayPart()
+            Display.separate()                                  # **************************************
             print("当前课程没有{}章节。".format(subjectProgress))
             print("可以到{}\\data\\subject_data.json中修改课程进度。".format(nowPath))
-            DisPlay.displayPart()
+            Display.separate()                                  # **************************************
             break
         xueXiTong.automaticLearning(chapterIndex, subjectData)
     elif mode == "3":
@@ -122,14 +128,16 @@ while True:
         for j, i in enumerate(userData.getUsers()):
             print(str(j + 1) + "、" + i.getUserName())
         userIndex = int(input("选择用户：")) - 1
-        DisPlay.displayPart()
+        Display.separate()                                   # **************************************
         user = userData.getUsers()[userIndex]
         xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
         xueXiTong.landing()
         # 获取课程列表
         coursesList = xueXiTong.getCourses()
         # 展示课程
-        DisPlay.display(coursesList)
+        listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
+        for i in range(0, listLen, 2):
+            Display.printTable([coursesList[i], coursesList[i+1]])          # **************************************
         courseIndex = int(input("输入课程号：")) - 1
 
         # 进入指定课程
@@ -139,6 +147,6 @@ while True:
     else:
         break
 if not InternetTime.isExpiration():
-    DisPlay.displayWarning("程序以过期")
+    Display.printWarning("程序以过期")                         # **************************************
 os.system('pause')
 
