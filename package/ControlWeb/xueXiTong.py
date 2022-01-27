@@ -57,9 +57,10 @@ class XueXiTong:
         account = self.__driver.find_element(By.ID, "phone")
         account.send_keys(self.__user.getUserAccount())
         password = self.__driver.find_element(By.ID, "pwd")
+        password = self.__driver.find_element(By.ID, "pwd")
         password.send_keys(self.__user.getUserPassword())
         self.__driver.find_element(By.ID, "loginBtn").click()
-        time.sleep(3)
+        self.__driver.implicitly_wait(20)
 
     # 获取页面中的课程
     def getCourses(self):
@@ -92,7 +93,7 @@ class XueXiTong:
         # 切换浏览器窗口
         headLes = self.__driver.window_handles
         self.__driver.switch_to.window(headLes[1])
-        time.sleep(1)
+        self.__driver.implicitly_wait(20)
 
         # 测试中发现不同电脑打开学习通章节元素的dataname值不同
         try:
@@ -111,7 +112,7 @@ class XueXiTong:
 
     def automaticLearning(self, chapterIndex, subjectData):
         self.__chapter.getChapterObjectList()[chapterIndex].click()
-        time.sleep(2)
+        self.__driver.implicitly_wait(20)
 
         # 切换到第三个窗口
         # 新版学习通进入章节后会切换窗口
@@ -147,7 +148,7 @@ class XueXiTong:
                     self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                                                  prevTableList[tableIndex].find_element(By.TAG_NAME, 'div'))
                     prevTableList[tableIndex].find_element(By.TAG_NAME, 'div').click()
-                    time.sleep(1)
+                    self.__driver.implicitly_wait(20)
                 # 进入第一层iframe
                 self.__driver.switch_to.frame("iframe")
                 iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')
@@ -198,7 +199,7 @@ class XueXiTong:
 
     def crawlData(self):
         self.__chapter.getChapterObjectList()[0].click()
-        time.sleep(2)
+        self.__driver.implicitly_wait(20)
 
         # 切换到第三个窗口
         # 新版学习通进入章节后会切换窗口
@@ -233,7 +234,7 @@ class XueXiTong:
                     self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                                                  prevTableList[tableIndex].find_element(By.TAG_NAME, 'div'))
                     prevTableList[tableIndex].find_element(By.TAG_NAME, 'div').click()
-                    time.sleep(1)
+                    self.__driver.implicitly_wait(20)
 
                 # self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                 #                              prevTableList[1].find_element(By.TAG_NAME, 'div'))
