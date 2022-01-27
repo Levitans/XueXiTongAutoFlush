@@ -21,11 +21,11 @@ from colorama import Fore, Back, init
 init(autoreset=True)        # 设置颜色自动恢复
 
 starInformation = """
-===========================================================
+============================================================
 ·作者：Levitan
 ·本项目已在GitHub上开源
 ·GitHub地址：https://github.com/Levitans/XueXiTongBrushClass
-===========================================================
+============================================================
 """
 
 print(Fore.MAGENTA + starInformation)
@@ -62,7 +62,7 @@ while True:
                "4、设置浏览器显示，" \
                "5、退出程序\n输入序号：".format(userData.getUserAmount())
     mode = input(function)
-    print()
+    Display.separate()
 
     def star():
         """
@@ -83,9 +83,20 @@ while True:
         xueXiTong = XueXiTong(chromePath, driverPath, userdata, browser.getState())
         xueXiTong.landing()
         # 获取课程列表
-        coursesList = xueXiTong.getCourses()
-        progress.key = False
-        progress.join()
+        try:
+            coursesList = xueXiTong.getCourses()
+        except Exception as e:
+            progress.key = False  # 关闭进度条
+            progress.join()  # 等待进度条关闭
+            print("Login failure")
+            Display.separate()
+            Display.printWarning(e.__str__())
+            sys.exit()
+
+        progress.key = False        # 关闭进度条
+        progress.join()             # 等待进度条关闭
+
+        print("Login success")
         Display.separate()
         time.sleep(1)
 
@@ -103,7 +114,7 @@ while True:
     while not (mode in ("1", "2", "3", "4", "5", "6")):
         print("输入错误，重新选择")
         mode = input(function)
-        print()
+        Display.separate()
 
     if mode == "1":  # 创建新用户
         userName = input("输入用户名：")
@@ -136,8 +147,11 @@ while True:
     elif mode == "3":  # 修改用户信息
         userData.displayUserName()
         userIndex = int(input("选择需要修改的用户：")) - 1
-        print()
+        Display.separate()
         user = userData.getUsers()[userIndex]
+        print("{}的数据：".format(user.getUserName()))
+        print("\t账号："+str(user.getUserAccount()))
+        print("\t密码："+str(user.getUserPassword()))
         print("1、修改账号\n2、修改密码")
         key = input("选择修改信息：")
         newData = input("输入新数据：")

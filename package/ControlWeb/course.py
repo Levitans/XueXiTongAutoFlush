@@ -6,6 +6,7 @@
 
 import time
 from selenium.webdriver.common.by import By
+from package.display import Display
 
 # 课程类
 class Course:
@@ -20,7 +21,10 @@ class Course:
         :param driver: 传入需要获取章节的WebDriver对象。
         :return:
         """
-        driver.find_element(By.CLASS_NAME, "zne_kc_icon").click()
+        try:
+            driver.find_element(By.CLASS_NAME, "zne_kc_icon").click()
+        except Exception as e:
+            raise Exception("账号或密码错误")
         time.sleep(2)
 
         driver.switch_to.frame("frame_content")

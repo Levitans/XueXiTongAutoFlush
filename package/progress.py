@@ -20,7 +20,7 @@ class Progress(threading.Thread):
         while self.key:
             print(Fore.GREEN+"▋", end="", flush=True)
             time.sleep(0.5)
-        print("\nLanded successfully")
+        print()
 
 
 if __name__ == '__main__':
