@@ -126,6 +126,7 @@ while True:
     elif mode == "2":  # 使用已有用户登陆
         user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1
+        Display.separate()
         # 进入指定课程
         # 返回课程中的章节的列表
         chaptersList = xueXiTong.enterCourse(courseIndex)
@@ -151,24 +152,29 @@ while True:
         user = userData.getUsers()[userIndex]
         print("{}的数据：".format(user.getUserName()))
         print("\t账号："+str(user.getUserAccount()))
-        print("\t密码："+str(user.getUserPassword()))
+        print("\t密码："+str(user.getUserPassword())+"\n")
         print("1、修改账号\n2、修改密码")
         key = input("选择修改信息：")
-        newData = input("输入新数据：")
         if key == "1":
-            userData.modifyUserData(user.getUserName(), newData, "account")
-        elif key == 2:
-            userData.modifyUserData(user.getUserName(), newData)
+            newAccount = input("输入新数据：")
+            userData.modifyUserData(user.getUserName(), newAccount, "account")
+        elif key == "2":
+            newPassword = input("输入新数据：")
+            userData.modifyUserData(user.getUserName(), newPassword)
+        else:
+            Display.printWarning("输入信息有误")
+        Display.separate()
     elif mode == "4":  # 设置浏览器显示模式
         key = input("1、关闭浏览器显示，2、开启浏览器显示\n输入序号：")
         if key == "1":
             browser.modifyClassData(1)
-            print("已关闭显示浏览器\n")
+            print(Fore.RED+"已关闭显示浏览器")
         elif key == "2":
             browser.modifyClassData(0)
-            print("已开启显示浏览器\n")
+            print(Fore.RED+"已开启显示浏览器")
         else:
             print("输入错误\n")
+        Display.separate()
     elif mode == "5":  # 爬取题目（暂时隐藏）
         user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1
