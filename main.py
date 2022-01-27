@@ -48,7 +48,7 @@ Display.overLengthOfEn = 15
 # while True and InternetTime.isExpiration():
 while True:
     if browser.getState() == 1:
-        print("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
+        Display.printWarning("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
     browserInf = "关闭显示" if browser.getState() == 1 else "开启显示"
     print("选择模式（{}）".format("当前浏览器模式："+browserInf))
     function = "1、创建新用户，"\
@@ -78,7 +78,7 @@ while True:
         # 展示课程
         listLen = len(coursesList) if len(coursesList) % 2 == 0 else len(coursesList) + 1
         for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i+1]])
+            Display.printTable([coursesList[i], coursesList[i+1]], numberKey=True)
         return userdata, xueXiTong, coursesList
 
     while not (mode in ("1", "2", "3", "4", "5", "6")):

@@ -128,10 +128,11 @@ class Display:
             maxRow = max(maxRow, len(item[0]))
             maxCh = max(maxCh, ch)
             newStringList.append(item)
+        maxRow += 3
         info: str = ""
         info += (Display.warnChar*(maxRow+maxCh)+'\n')
         for i in newStringList:
-            info += (Display.warnChar+i[0]+(maxRow-maxCh-i[1])*chr(32)+(maxCh-i[2])*chr(12288)+Display.warnChar+"\n")
+            info += (Display.warnChar+" "+i[0]+(maxRow-maxCh-i[1])*chr(32)+(maxCh-i[2])*chr(12288)+Display.warnChar+"\n")
         info += (Display.warnChar * (maxRow + maxCh)+"\n")
         print(info)
 

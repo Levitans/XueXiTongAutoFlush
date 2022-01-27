@@ -70,6 +70,9 @@ class XueXiTong:
     def enterCourse(self, courseIndex):
         item = self.course.getCourseObjectList()[courseIndex]
         self.__driver.execute_script("arguments[0].focus();", item)
+        # 应该没用
+        self.__driver.execute_script("window.scrollBy(0,1000)")
+
         try:
             item.click()
         except selenium.common.exceptions.WebDriverException:
