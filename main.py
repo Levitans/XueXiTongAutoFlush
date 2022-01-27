@@ -123,6 +123,7 @@ while True:
         userData.addNewUser(userName, account, password)
         userData = UserData(userDataPath)
         print("用户添加成功\n")
+        Display.separate()
     elif mode == "2":  # 使用已有用户登陆
         user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1

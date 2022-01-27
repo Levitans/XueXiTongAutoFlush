@@ -9,12 +9,16 @@ import os
 from datetime import datetime
 from package.user import User
 
-
+# 管理用户数据
 class UserData:
     def __init__(self, path):
-        self.__userDataPath = path      # 数据地址
-        self.__users = []               # 储存user对象
-        self.__readUserData()
+        """
+        :param path: 数据地址
+        users 储存读取到的本地用户数据
+        """
+        self.__userDataPath = path
+        self.__users = []
+        self.__readUserData()       # 读取本地数据
 
     # 读取本地存储的用户数据
     def __readUserData(self):
@@ -43,6 +47,12 @@ class UserData:
 
     # 修改已有用户数据
     def modifyUserData(self, name, newData, mode="password"):
+        """
+        :param name: 需要修改信息的用户名
+        :param newData: 需要修改的新信息
+        :param mode: 需要修改的是账号还是密码，默认修改密码
+        :return: void
+        """
         for i in self.__users:
             if i.getUserName() == name and mode == "password":
                 i.setUserPassword(newData)
@@ -54,7 +64,13 @@ class UserData:
         print("修改成功")
 
     # 添加新用户
-    def addNewUser(self, name, account, password):
+    def addNewUser(self, name: str, account: str, password: str):
+        """
+        :param name: 用户姓名
+        :param account: 用户账号
+        :param password: 用户密码
+        :return: void
+        """
         nameList = [i.getUserName() for i in self.__users]
         if name in nameList:
             raise KeyError("用户名被占用")
@@ -78,11 +94,16 @@ class UserData:
             print(str(j+1)+"、"+i.getUserName())
 
 
+# 管理学科数据
 class SubjectData:
     def __init__(self, filePath):
+        """
+        :param filePath: 文件读取路径
+        __subjectData 指向以读取到的数据生成的字典
+        """
         self.__subjectDataPath = filePath
         self.__subjectData = None
-        self.__radeSubjectData()
+        self.__radeSubjectData()        # 开始读取数据
 
     # 读取学科数据
     def __radeSubjectData(self):
@@ -100,18 +121,29 @@ class SubjectData:
 
     # 查找学科数据
     def getSubjectProcess(self, userName, subjectName):
-        if not(userName in list(self.__subjectData.keys())):
-            self.__subjectData[userName] = {}
-        if not(subjectName in list(self.__subjectData[userName].keys())):
-            self.modifyClassData(userName, subjectName)
-        return self.__subjectData[userName][subjectName]
+        """
+        :param userName: 用户名称
+        :param subjectName: 学科名称
+        :return: 以字符串的形式返回学科进度
+
+        如果学科数据中用户不存在，则将用户添加到学科数据中
+        如果学科不存在则将学科添加到学科数据中，默认添加值为"1.1"
+        """
+        self.__subjectData.setdefault(userName, {})
+        data = self.__subjectData[userName].setdefault(subjectName, "1.1")
+        self.__saveSubjectData()
+        return data
 
     # 更改学科数据
     def modifyClassData(self, userName, className, data="1.1"):
+        """
+        :param userName: 用户名称
+        :param className: 学科名称
+        :param data: 学科进度
+        :return: void
+        """
         if not (userName in list(self.__subjectData.keys())):
-            pass
-        elif not (className in list(self.__subjectData[userName].keys())):
-            self.__subjectData[userName][className] = data
+            raise Exception("{}用户不存在".format(userName))
         else:
             self.__subjectData[userName][className] = data
         self.__saveSubjectData()
@@ -145,10 +177,13 @@ class BrowserConfiguration:
 
 
 if __name__ == '__main__':
-    test = UserData(r"F:\python项目\XueXiTongBrushClass\data\user_data.json")
-    a: User = test.getUsers()[0]
-    print(a.getUserName())
-    print(a.getUserAccount())
-    print(a.getUserPassword())
-    test.modifyUserData(a.getUserName(), "abcdefg")
+    # test = UserData(r"F:\python项目\XueXiTongBrushClass\data\user_data.json")
+    # a: User = test.getUsers()[0]
+    # print(a.getUserName())
+    # print(a.getUserAccount())
+    # print(a.getUserPassword())
+    # test.modifyUserData(a.getUserName(), "abcdefg")
+
+    test = SubjectData(r"F:\python项目\XueXiTongBrushClass\data\subject_data.json")
+    print(test.getSubjectProcess("文小军", "线性代数A(21-22(1))"))
 

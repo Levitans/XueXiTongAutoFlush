@@ -6,9 +6,9 @@
 
 class User:
     def __init__(self, name, account, password):
-        self.__name = name
-        self.__account = account
-        self.__password = password
+        self.__name: str = name
+        self.__account: str = account
+        self.__password: str = password
 
     def getUserName(self):
         return self.__name
