@@ -35,9 +35,9 @@ class Display:
                 Display.format.append((i[0], i[1], True))
 
     @staticmethod
-    def __strCount(str: str, outKey: bool = False):
+    def __strCount(strData: str, outKey: bool = False):
         """
-        :param str: 需要统计个数的字符串
+        :param strData: 需要统计个数的字符串
         :param outKey: 控制是否缩写
         :return:
             返回三个元素的元组：
@@ -48,7 +48,7 @@ class Display:
         countEn = 0
         countCn = 0
         newStr = ""
-        for s in str:
+        for s in strData:
             # 英文
             if s in string.ascii_letters or s in './ ':
                 countEn += 1
@@ -112,7 +112,7 @@ class Display:
 
     @staticmethod
     def separate(number=40):
-        print(Display.separateChar * number)
+        print("\n"+Display.separateChar * number)
 
     @staticmethod
     def printWarning(warnString: str):
@@ -135,38 +135,38 @@ class Display:
         info += (Display.warnChar*(maxRow+maxCh)+'\n')
         for i in newStringList:
             info += (Display.warnChar+" "+i[0]+(maxRow-maxCh-i[1])*chr(32)+(maxCh-i[2])*chr(12288)+Display.warnChar+"\n")
-        info += (Display.warnChar * (maxRow + maxCh)+"\n")
+        info += (Display.warnChar * (maxRow + maxCh))
         print(Fore.RED+info)
 
 
 if __name__ == '__main__':
-    print("="*100+"示例1")
-    # 正常输出
-    Display.setFormat(((15, 10), (10, 10)))
-    data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
-    for i in range(len(data)):
-        Display.printTable(data[i])
+    # print("="*100+"示例1")
+    # # 正常输出
+    # Display.setFormat(((15, 10), (10, 10)))
+    # data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
+    # for i in range(len(data)):
+    #     Display.printTable(data[i])
 
-    print("="*100+"示例2")
-    # 折叠输出
-    Display.setFormat(((15, 10, True), (10, 10, True)))
-    for i in range(len(data)):
-        Display.printTable(data[i])
-
-    print("="*100+"示例3")
-    # 居中输出
-    Display.setFormat(((13, 20), (13, 20)))
-    data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
-    for i in range(len(data)):
-        Display.printTable(data[i], "c")
-
-    print("="*100+"示例4")
-    # 右对齐输出
-    Display.setFormat(((13, 20), (13, 20)))
-    data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
-    for i in range(len(data)):
-        Display.printTable(data[i], "r")
-
+    # print("="*100+"示例2")
+    # # 折叠输出
+    # Display.setFormat(((15, 10, True), (10, 10, True)))
+    # for i in range(len(data)):
+    #     Display.printTable(data[i])
+    #
+    # print("="*100+"示例3")
+    # # 居中输出
+    # Display.setFormat(((13, 20), (13, 20)))
+    # data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
+    # for i in range(len(data)):
+    #     Display.printTable(data[i], "c")
+    #
+    # print("="*100+"示例4")
+    # # 右对齐输出
+    # Display.setFormat(((13, 20), (13, 20)))
+    # data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
+    # for i in range(len(data)):
+    #     Display.printTable(data[i], "r")
+    #
     print("="*100+"示例5")
     # 输出警告信息
     Display.printWarning("这是一个警告\n当前程序可能出错")

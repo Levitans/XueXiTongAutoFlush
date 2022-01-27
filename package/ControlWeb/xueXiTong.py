@@ -63,7 +63,11 @@ class XueXiTong:
 
     # 获取页面中的课程
     def getCourses(self):
-        self.course.getCourseObjectAndName(self.__driver)
+        try:
+            self.course.getCourseObjectAndName(self.__driver)
+        except Exception as e:
+            self.__driver.quit()
+            raise Exception("账号或密码错误")
         return self.course.getCourseNameList()
 
     # 进入课程

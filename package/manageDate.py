@@ -145,9 +145,10 @@ class BrowserConfiguration:
 
 
 if __name__ == '__main__':
-    test = UserData(r"F:\python项目\学习通刷课2\data\user_data.json")
-    a = test.getUsers()[0]
+    test = UserData(r"F:\python项目\XueXiTongBrushClass\data\user_data.json")
+    a: User = test.getUsers()[0]
     print(a.getUserName())
     print(a.getUserAccount())
     print(a.getUserPassword())
-    test.modifyUserData("Levitan", 123123)
+    test.modifyUserData(a.getUserName(), "abcdefg")
+
