@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import string
+from colorama import Fore, Back, init
 
+init(autoreset=True)
 
 class Display:
     # format: 每个元素控制对应列的宽度，元组第1个参数代表英文个数，第2次参数代表中文个数
@@ -109,8 +111,8 @@ class Display:
         print()
 
     @staticmethod
-    def separate(number=20):
-        print(Display.separateCharr * number)
+    def separate(number=40):
+        print(Display.separateChar * number)
 
     @staticmethod
     def printWarning(warnString: str):
@@ -134,7 +136,7 @@ class Display:
         for i in newStringList:
             info += (Display.warnChar+" "+i[0]+(maxRow-maxCh-i[1])*chr(32)+(maxCh-i[2])*chr(12288)+Display.warnChar+"\n")
         info += (Display.warnChar * (maxRow + maxCh)+"\n")
-        print(info)
+        print(Fore.RED+info)
 
 
 if __name__ == '__main__':

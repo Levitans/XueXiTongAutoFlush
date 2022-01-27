@@ -6,6 +6,9 @@
 
 import threading
 import time
+from colorama import Fore, Back, init
+
+init(autoreset=True)
 
 class Progress(threading.Thread):
     def __init__(self):
@@ -15,7 +18,7 @@ class Progress(threading.Thread):
     def run(self):
         print("logging：", end="")
         while self.key:
-            print("▋", end="")
+            print(Fore.GREEN+"▋", end="", flush=True)
             time.sleep(0.5)
         print("\nLanded successfully")
 
