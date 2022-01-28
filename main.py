@@ -111,13 +111,7 @@ while True:
         time.sleep(1)
 
         # 展示课程
-        if len(coursesList) % 2 == 0:
-            listLen = len(coursesList)
-        else:
-            listLen = len(coursesList) + 1
-            coursesList.append("")
-        for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i + 1]], displayNumber=True)
+        Display.printTable(coursesListn, displayNumber=True)
         return userdata, xueXiTong, coursesList
 
 

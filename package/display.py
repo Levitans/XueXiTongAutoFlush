@@ -88,33 +88,38 @@ class Display:
     @staticmethod
     def printTable(strDataList, mode="L", displayNumber=False):
         """
-        :param strDataList: 一个列表，表示表格一行的所有元素。
+        :param strDataList: 需要输出为表格的全部数据
         :param mode: 选择对齐方式
                     ‘l’     左对齐
                     'c'     居中对齐
                     'r'     右对齐
         :param displayNumber: 是否开启显示序号
         :return: 无返回值
+
+            函数根据Display.format对strDataList中的数据进行格式化输出
         """
         if len(Display.format) == 0:
             raise Exception("Display.format未设置")
-        for i in range(len(strDataList)):
-            countStr = str(Display.numberCounter) + "." if displayNumber else ""
-            strData = Display.__strCount(countStr + strDataList[i], Display.format[i][1])
-            if mode in 'lLrR':
-                if mode in 'lL':
-                    print(strData[0] + (Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32), end="")
-                elif mode in 'rR':
-                    print((Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32) + strData[0], end="")
-            elif mode in 'cC':
-                before = (Display.format[i][0] - strData[1] - strData[2] * 2) // 2
-                after = (Display.format[i][0] - strData[1] - strData[2] * 2) - before
-                print(chr(32) * before + strData[0] + chr(32) * after, end="")
-            else:
-                raise ValueError("value '{}' is illegal".format(mode))
-            if displayNumber:
-                Display.numberCounter += 1
-        print()
+        step = len(Display.format)
+        dataList = [strDataList[i: i+step] for i in range(0, len(strDataList), step)]
+        for j in dataList:
+            for i in range(len(j)):
+                countStr = str(Display.numberCounter) + "." if displayNumber else ""
+                strData = Display.__strCount(countStr + j[i], Display.format[i][1])
+                if mode in 'lLrR':
+                    if mode in 'lL':
+                        print(strData[0] + (Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32), end="")
+                    elif mode in 'rR':
+                        print((Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32) + strData[0], end="")
+                elif mode in 'cC':
+                    before = (Display.format[i][0] - strData[1] - strData[2] * 2) // 2
+                    after = (Display.format[i][0] - strData[1] - strData[2] * 2) - before
+                    print(chr(32) * before + strData[0] + chr(32) * after, end="")
+                else:
+                    raise ValueError("value '{}' is illegal".format(mode))
+                if displayNumber:
+                    Display.numberCounter += 1
+            print()
 
     @staticmethod
     def separate(number=40):
@@ -151,9 +156,9 @@ if __name__ == '__main__':
     print("="*100+"示例1")
     # 正常输出
     Display.setFormat(50, 50)
-    data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
-    for i in range(len(data)):
-        Display.printTable(data[i], displayNumber=True)
+    # data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
+    data = ['大学物理', '2021-2022上马克思主义基本原理概论', '面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）', '计算机网络与通信', '大学英语（三）非艺术类', '线性代数A(21-22(1))', '网络数据采集实践', '大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）', '实验室安全教育', '实验室安全教育', '职业生涯规划1', '形势与政策2/4（20-21学年第二学期）', 'Python程序设计', '外教口语（二）', '大学英语（二）', '信息技术基础（二）-20-21(2)']
+    Display.printTable(data, displayNumber=True)
 
     # print("="*100+"示例2")
     # # 折叠输出
