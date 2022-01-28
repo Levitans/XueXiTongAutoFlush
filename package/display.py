@@ -121,21 +121,23 @@ class Display:
         :return: void
         """
         maxRow = 0
-        maxCh = 0
+        maxRowOfCh = 0
+        maxRowOfEh = 0
         strList = warnString.split("\n")
         newStringList = []
         for i in strList:
             item = Display.__strCount(i)
-            ch = item[2]
-            maxRow = max(maxRow, len(item[0]))
-            maxCh = max(maxCh, ch)
+            if len(item[0]) > maxRow:
+                maxRowOfEh = item[1]
+                maxRowOfCh = item[2]
+                maxRow = len(item[0])
             newStringList.append(item)
-        maxRow += 3
+        maxRow = maxRowOfEh + maxRowOfCh * 2
         info: str = ""
-        info += (Display.warnChar*(maxRow+maxCh)+'\n')
+        info += (Display.warnChar * (maxRow + 4) + '\n')
         for i in newStringList:
-            info += (Display.warnChar+" "+i[0]+(maxRow-maxCh-i[1])*chr(32)+(maxCh-i[2])*chr(12288)+Display.warnChar+"\n")
-        info += (Display.warnChar * (maxRow + maxCh))
+            info += (Display.warnChar+" "+i[0]+chr(32)*(maxRow - i[2] * 2 - i[1])+" "+Display.warnChar+"\n")
+        info += (Display.warnChar * (maxRow + 4))
         print(Fore.RED+info)
 
 
@@ -169,4 +171,4 @@ if __name__ == '__main__':
     #
     print("="*100+"示例5")
     # 输出警告信息
-    Display.printWarning("这是一个警告\n当前程序可能出错")
+    Display.printWarning("这是一个警告\n当前程序可能出错aaaa\n阿斯蒂芬叫阿斯蒂芬静安寺了地sadfasdfasfasdfasfsafda方")
