@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import time
+import ctypes
 from package.user import User
 from package.display import Display
 from package.progress import Progress
@@ -18,7 +19,8 @@ from package.manageDate import BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from colorama import Fore, Back, init
-init(autoreset=True)        # 设置颜色自动恢复
+
+init(autoreset=True)  # 设置颜色自动恢复
 
 starInformation = """
 ============================================================
@@ -30,10 +32,17 @@ starInformation = """
 
 print(Fore.MAGENTA + starInformation)
 
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
+
+
+# 禁用快速编辑
+def disableQuickEdit():
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
 
 
 # 地址初始化
@@ -55,7 +64,7 @@ while True:
     if browser.getState() == 1:
         Display.printWarning("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
     browserInf = "关闭显示" if browser.getState() == 1 else "开启显示"
-    print("选择模式（{}".format(Fore.YELLOW+"当前浏览器模式：" + browserInf), end="）\n")
+    print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
     function = "1、创建新用户，" \
                "2、使用已有用户（当前已有{}个用户），" \
                "3、修改用户信息，" \
@@ -63,6 +72,7 @@ while True:
                "5、退出程序\n输入序号：".format(userData.getUserAmount())
     mode = input(function)
     Display.separate()
+
 
     def star():
         """
@@ -93,8 +103,8 @@ while True:
             Display.printWarning(e.__str__())
             sys.exit()
 
-        progress.key = False        # 关闭进度条
-        progress.join()             # 等待进度条关闭
+        progress.key = False  # 关闭进度条
+        progress.join()  # 等待进度条关闭
 
         print("Login success")
         Display.separate()
@@ -152,8 +162,8 @@ while True:
         Display.separate()
         user = userData.getUsers()[userIndex]
         print("{}的数据：".format(user.getUserName()))
-        print("\t账号："+str(user.getUserAccount()))
-        print("\t密码："+str(user.getUserPassword())+"\n")
+        print("\t账号：" + str(user.getUserAccount()))
+        print("\t密码：" + str(user.getUserPassword()) + "\n")
         print("1、修改账号\n2、修改密码")
         key = input("选择修改信息：")
         if key == "1":
@@ -169,10 +179,10 @@ while True:
         key = input("1、关闭浏览器显示，2、开启浏览器显示\n输入序号：")
         if key == "1":
             browser.modifyClassData(1)
-            print(Fore.RED+"已关闭显示浏览器")
+            print(Fore.RED + "已关闭显示浏览器")
         elif key == "2":
             browser.modifyClassData(0)
-            print(Fore.RED+"已开启显示浏览器")
+            print(Fore.RED + "已开启显示浏览器")
         else:
             print("输入错误\n")
         Display.separate()
