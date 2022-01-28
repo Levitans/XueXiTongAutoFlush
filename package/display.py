@@ -5,11 +5,13 @@ from colorama import Fore, Back, init
 init(autoreset=True)
 
 class Display:
-    # format: 每个元素控制对应列的宽度，元组第1个参数代表英文个数，第2次参数代表中文个数
-    #                元组1、2两个元素的和代表列宽。元组第3个参数表示是否需要略写显示。
+    # format: 每个元素控制对应列的宽度，元组第1个参数类型为int表示占位个数，第2个参数类型为boolean表示是否开启略写显示
     #
-    #       例如：((3, 3), (5, 10, true), (58, 6), (2, 5), (5, 3))表示有一行有5列数据。
-    #             以元组中的第二个元素为例，其表示第二列数据占5个半角字符，10个全角字符，且开启省略显示
+    #       例如：format = [(10, False), (15, True), (58, True)]表示有一行有每行有3列数据。
+    #            以format中第2个元素为例，其表示第二列数据占15个半角位，且开启省略显示
+    #            format的长度表示一行的列数
+    #
+    #       注意：使用Display.printTable()前必须先调用Display.setFormat()对format进行初始化
     #
     # overLengthKey:  控制缩写开关
     # overLengthOfEn: 英文文本长度阈值
@@ -18,7 +20,7 @@ class Display:
     # separateChar: 段落分隔符
     # warnChar: 警告分隔符
 
-    format = [(10, 10, False) for i in range(10)]
+    format = []
     overLengthOfEn = 5
     overSymbolOfEn = "..."
     numberCounter = 1
@@ -26,13 +28,21 @@ class Display:
     warnChar: str = "*"
 
     @staticmethod
-    def setFormat(formatList):
+    def setFormat(*formatList):
+        """
+        :param formatList: 传入的格式控制参数，传入的参数个数表示每行显示的列数
+                            e.g.: setFormat(10, (15, True), (58, True))
+                                format=[(10, False), (15，True), (58, True)]
+        :return: void
+        """
         Display.format.clear()
         for i in formatList:
-            if len(i) == 2:
-                Display.format.append((i[0], i[1], False))
+            if isinstance(i, tuple):
+                Display.format.append(i)
+            elif isinstance(i, int):
+                Display.format.append((i, False))
             else:
-                Display.format.append((i[0], i[1], True))
+                raise Exception("参数{}类型错误，应该为int或(int, boolean)".format(i))
 
     @staticmethod
     def __strCount(strData: str, outKey: bool = False):
@@ -76,37 +86,33 @@ class Display:
         return newStr, countEn, countCn
 
     @staticmethod
-    def printTable(strDataList, mode="L", numberKey=False):
+    def printTable(strDataList, mode="L", displayNumber=False):
         """
         :param strDataList: 一个列表，表示表格一行的所有元素。
         :param mode: 选择对齐方式
                     ‘l’     左对齐
                     'c'     居中对齐
                     'r'     右对齐
-        :param numberKey: 是否开启显示序号
+        :param displayNumber: 是否开启显示序号
         :return: 无返回值
         """
+        if len(Display.format) == 0:
+            raise Exception("Display.format未设置")
         for i in range(len(strDataList)):
-            countStr = str(Display.numberCounter) + "." if numberKey else ""
-            strData = Display.__strCount(countStr + strDataList[i], Display.format[i][2])
-            numSpaceEn = Display.format[i][0] - strData[1]
-            numSpaceCh = Display.format[i][1] - strData[2]
+            countStr = str(Display.numberCounter) + "." if displayNumber else ""
+            strData = Display.__strCount(countStr + strDataList[i], Display.format[i][1])
             if mode in 'lLrR':
                 if mode in 'lL':
-                    print(strData[0] + chr(32) * numSpaceEn + chr(12288) * numSpaceCh, end="")
+                    print(strData[0] + (Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32), end="")
                 elif mode in 'rR':
-                    print(chr(32) * numSpaceEn + chr(12288) * numSpaceCh + strData[0], end="")
+                    print((Display.format[i][0] - strData[1] - strData[2] * 2) * chr(32) + strData[0], end="")
             elif mode in 'cC':
-                beforeEn = numSpaceEn // 2
-                beforeCh = numSpaceCh // 2
-                afterEn = numSpaceEn - beforeEn
-                afterCh = numSpaceCh - beforeCh
-                print(
-                    chr(32) * beforeEn + chr(12288) * beforeCh + strData[0] + chr(32) * afterEn + chr(12288) * afterCh,
-                    end="")
+                before = (Display.format[i][0] - strData[1] - strData[2] * 2) // 2
+                after = (Display.format[i][0] - strData[1] - strData[2] * 2) - before
+                print(chr(32) * before + strData[0] + chr(32) * after, end="")
             else:
                 raise ValueError("value '{}' is illegal".format(mode))
-            if numberKey:
+            if displayNumber:
                 Display.numberCounter += 1
         print()
 
@@ -142,12 +148,12 @@ class Display:
 
 
 if __name__ == '__main__':
-    # print("="*100+"示例1")
-    # # 正常输出
-    # Display.setFormat(((15, 10), (10, 10)))
-    # data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
-    # for i in range(len(data)):
-    #     Display.printTable(data[i])
+    print("="*100+"示例1")
+    # 正常输出
+    Display.setFormat(50, 50)
+    data = [['大学物理', '2021-2022上马克思主义基本原理概论'], ['面向对象程序设计（Java）', '形势与政策1/3（2021-2022学年第一学期）'], ['计算机网络与通信', '大学英语（三）非艺术类'], ['线性代数A(21-22(1))', '网络数据采集实践'], ['大学体育3（定向）2021-2022第一学期', '教务管理信息系统、教学云平台使用指南（学生版）'], ['实验室安全教育', '实验室安全教育'], ['职业生涯规划1', '形势与政策2/4（20-21学年第二学期）'], ['Python程序设计', '外教口语（二）'], ['大学英语（二）', '信息技术基础（二）-20-21(2)']]
+    for i in range(len(data)):
+        Display.printTable(data[i], displayNumber=True)
 
     # print("="*100+"示例2")
     # # 折叠输出
@@ -169,6 +175,6 @@ if __name__ == '__main__':
     # for i in range(len(data)):
     #     Display.printTable(data[i], "r")
     #
-    print("="*100+"示例5")
-    # 输出警告信息
-    Display.printWarning("这是一个警告\n当前程序可能出错aaaa\n阿斯蒂芬叫阿斯蒂芬静安寺了地sadfasdfasfasdfasfsafda方")
+    # print("="*100+"示例5")
+    # # 输出警告信息
+    # Display.printWarning("这是一个警告\n当前程序可能出错aaaa\n阿斯蒂芬叫阿斯蒂芬静安寺了地sadfasdfasfasdfasfsafda方")

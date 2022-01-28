@@ -56,7 +56,7 @@ browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath
 userData = UserData(userDataPath)
 browser = BrowserConfiguration(browserConfigurationPath)
 
-Display.setFormat(((15, 25), (15, 25)))
+Display.setFormat(50, 50)
 Display.overLengthOfEn = 15
 
 # while True and InternetTime.isExpiration():
@@ -117,7 +117,7 @@ while True:
             listLen = len(coursesList) + 1
             coursesList.append("")
         for i in range(0, listLen, 2):
-            Display.printTable([coursesList[i], coursesList[i + 1]], numberKey=True)
+            Display.printTable([coursesList[i], coursesList[i + 1]], displayNumber=True)
         return userdata, xueXiTong, coursesList
 
 
