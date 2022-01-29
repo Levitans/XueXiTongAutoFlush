@@ -7,6 +7,7 @@
 import time
 from selenium.webdriver.common.by import By
 from package.display import Display
+from selenium.common.exceptions import NoSuchElementException
 
 # 课程类
 class Course:
@@ -23,7 +24,7 @@ class Course:
         """
         try:
             driver.find_element(By.CLASS_NAME, "zne_kc_icon").click()
-        except Exception as e:
+        except NoSuchElementException as e:
             raise Exception("账号或密码错误")
         time.sleep(2)
 

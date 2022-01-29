@@ -101,6 +101,7 @@ while True:
             print("Login failure")
             Display.separate()
             Display.printWarning(e.__str__())
+            xueXiTong.closeDriver()
             sys.exit()
 
         progress.key = False  # 关闭进度条
@@ -111,7 +112,7 @@ while True:
         time.sleep(1)
 
         # 展示课程
-        Display.printTable(coursesListn, displayNumber=True)
+        Display.printTable(coursesList, displayNumber=True)
         return userdata, xueXiTong, coursesList
 
 
@@ -149,7 +150,7 @@ while True:
             print("可以到{}\\data\\subject_data.json中修改课程进度。".format(nowPath))
             Display.separate()
             break
-        xueXiTong.automaticLearning(chapterIndex, subjectData)
+        xueXiTong.work(chapterIndex, subjectData)
     elif mode == "3":  # 修改用户信息
         userData.displayUserName()
         userIndex = int(input("选择需要修改的用户：")) - 1

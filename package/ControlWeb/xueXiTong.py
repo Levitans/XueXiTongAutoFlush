@@ -51,6 +51,12 @@ class XueXiTong:
         # 课程类可被外部访问
         self.course = course.Course()
 
+    def closeDriver(self):
+        self.__driver.quit()
+
+    def getDriver(self):
+        return self.__driver
+
     # 登陆学习通
     def landing(self):
         self.__driver.get("http://i.chaoxing.com")
@@ -60,14 +66,13 @@ class XueXiTong:
         password = self.__driver.find_element(By.ID, "pwd")
         password.send_keys(self.__user.getUserPassword())
         self.__driver.find_element(By.ID, "loginBtn").click()
-        self.__driver.implicitly_wait(20)
+        time.sleep(3)
 
     # 获取页面中的课程
     def getCourses(self):
         try:
             self.course.getCourseObjectAndName(self.__driver)
         except Exception as e:
-            self.__driver.quit()
             raise Exception("账号或密码错误")
         return self.course.getCourseNameList()
 
@@ -93,7 +98,7 @@ class XueXiTong:
         # 切换浏览器窗口
         headLes = self.__driver.window_handles
         self.__driver.switch_to.window(headLes[1])
-        self.__driver.implicitly_wait(20)
+        time.sleep(3)
 
         # 测试中发现不同电脑打开学习通章节元素的dataname值不同
         try:
@@ -110,15 +115,15 @@ class XueXiTong:
         self.__chapter.getChapterObjectAndName(self.__driver)
         return self.__chapter.getChaptersNameList()
 
-    def automaticLearning(self, chapterIndex, subjectData):
+    def work(self, chapterIndex, subjectData):
         self.__chapter.getChapterObjectList()[chapterIndex].click()
-        self.__driver.implicitly_wait(20)
+        time.sleep(3)
 
-        # 切换到第三个窗口
-        # 新版学习通进入章节后会切换窗口
-        head_les = self.__driver.window_handles
-        self.__driver.switch_to.window(head_les[2])
-        time.sleep(1)
+        # # 切换到第三个窗口
+        # # 新版学习通进入章节后会切换窗口
+        # head_les = self.__driver.window_handles
+        # self.__driver.switch_to.window(head_les[2])
+        # time.sleep(1)
 
         # 收起目录栏
         self.__driver.find_element(By.CSS_SELECTOR, '[class="switchbtn"]').click()
@@ -148,7 +153,7 @@ class XueXiTong:
                     self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                                                  prevTableList[tableIndex].find_element(By.TAG_NAME, 'div'))
                     prevTableList[tableIndex].find_element(By.TAG_NAME, 'div').click()
-                    self.__driver.implicitly_wait(20)
+                    time.sleep(2)
                 # 进入第一层iframe
                 self.__driver.switch_to.frame("iframe")
                 iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')
@@ -199,7 +204,7 @@ class XueXiTong:
 
     def crawlData(self):
         self.__chapter.getChapterObjectList()[0].click()
-        self.__driver.implicitly_wait(20)
+        time.sleep(2)
 
         # 切换到第三个窗口
         # 新版学习通进入章节后会切换窗口
@@ -234,7 +239,7 @@ class XueXiTong:
                     self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                                                  prevTableList[tableIndex].find_element(By.TAG_NAME, 'div'))
                     prevTableList[tableIndex].find_element(By.TAG_NAME, 'div').click()
-                    self.__driver.implicitly_wait(20)
+                    time.sleep(2)
 
                 # self.__driver.execute_script("arguments[0].scrollIntoView(false);",
                 #                              prevTableList[1].find_element(By.TAG_NAME, 'div'))
@@ -268,3 +273,5 @@ class XueXiTong:
             # 点击下一章
             time.sleep(3)
             self.__driver.find_element(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]').click()
+
+
