@@ -5,9 +5,10 @@
 # @Software : PyCharm
 
 import time
+
+import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from package.display import Display
-from selenium.common.exceptions import NoSuchElementException
 
 # 课程类
 class Course:
@@ -24,7 +25,7 @@ class Course:
         """
         try:
             driver.find_element(By.CLASS_NAME, "zne_kc_icon").click()
-        except NoSuchElementException as e:
+        except selenium.common.exceptions.NoSuchElementException:
             raise Exception("账号或密码错误")
         time.sleep(2)
 

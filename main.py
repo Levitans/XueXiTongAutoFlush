@@ -18,6 +18,7 @@ from package.manageDate import SubjectData
 from package.manageDate import BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
+from package.ControlWeb.Spider.spider import Spider
 from colorama import Fore, Back, init
 
 init(autoreset=True)  # 设置颜色自动恢复
@@ -52,6 +53,7 @@ chromePath = "{}\\driver\\chrome\\chrome.exe".format(nowPath)
 userDataPath = "{}\\data\\user_data.json".format(nowPath)
 subjectDataPath = "{}\\data\\subject_data.json".format(nowPath)
 browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
+spiderDataPath = "{}\\spiderData".format(nowPath)
 
 userData = UserData(userDataPath)
 browser = BrowserConfiguration(browserConfigurationPath)
@@ -73,24 +75,31 @@ while True:
     mode = input(function)
     Display.separate()
 
+    while not (mode in ("1", "2", "3", "4", "5", "6")):
+        print("输入错误，重新选择")
+        mode = input(function)
+        Display.separate()
 
-    def star():
-        """
-        作用：选择登陆用户，进入学习通展示所有课程
-        :return:
-            user: 选择的登陆用户数据的user对象
-            XueXiTong: XueXiTong对象
-            coursesList: 课程名称列表
-        """
+    if mode == "1":  # 创建新用户
+        userName = input("输入用户名：")
+        account = input("输入手机号：")
+        password = input("输入密码：")
+        userData.addNewUser(userName, account, password)
+        userData = UserData(userDataPath)
+        print("用户添加成功\n")
+        Display.separate()
+    elif mode == "2":  # 使用已有用户登陆
+        # 选择登录用户
         userData.displayUserName()
         index = int(input("选择用户：")) - 1
         Display.separate()
-        userdata = userData.getUsers()[index]
+        user = userData.getUsers()[index]
 
+        # 显示进度条
         progress = Progress()
         progress.start()
 
-        xueXiTong = XueXiTong(chromePath, driverPath, userdata, browser.getState())
+        xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
         xueXiTong.landing()
         # 获取课程列表
         try:
@@ -113,24 +122,6 @@ while True:
 
         # 展示课程
         Display.printTable(coursesList, displayNumber=True)
-        return userdata, xueXiTong, coursesList
-
-
-    while not (mode in ("1", "2", "3", "4", "5", "6")):
-        print("输入错误，重新选择")
-        mode = input(function)
-        Display.separate()
-
-    if mode == "1":  # 创建新用户
-        userName = input("输入用户名：")
-        account = input("输入手机号：")
-        password = input("输入密码：")
-        userData.addNewUser(userName, account, password)
-        userData = UserData(userDataPath)
-        print("用户添加成功\n")
-        Display.separate()
-    elif mode == "2":  # 使用已有用户登陆
-        user, xueXiTong, coursesList = star()
         courseIndex = int(input("输入课程号：")) - 1
         Display.separate()
         # 进入指定课程
@@ -182,12 +173,46 @@ while True:
             print("输入错误\n")
         Display.separate()
     elif mode == "5":  # 爬取题目（暂时隐藏）
-        user, xueXiTong, coursesList = star()
+
+        userData.displayUserName()
+        index = int(input("选择用户：")) - 1
+        Display.separate()
+        userdata = userData.getUsers()[index]
+
+        progress = Progress()
+        progress.start()
+
+        spider = Spider(chromePath, driverPath, userdata, browser.getState(), spiderDataPath)
+        spider.landing()
+        # 获取课程列表
+        try:
+            coursesList = spider.getCourses()
+        except Exception as e:
+            progress.key = False  # 关闭进度条
+            progress.join()  # 等待进度条关闭
+            print("Login failure")
+            Display.separate()
+            Display.printWarning(e.__str__())
+            spider.closeDriver()
+            sys.exit()
+
+        progress.key = False  # 关闭进度条
+        progress.join()  # 等待进度条关闭
+
+        print("Login success")
+        Display.separate()
+        time.sleep(1)
+
+        # 展示课程
+        Display.printTable(coursesList, displayNumber=True)
         courseIndex = int(input("输入课程号：")) - 1
+        Display.separate()
         # 进入指定课程
         # 返回课程中的章节的列表
-        chaptersList = xueXiTong.enterCourse(courseIndex)
-        xueXiTong.crawlData()
+        chaptersList = spider.enterCourse(courseIndex)
+        spider.work(None, None)
+        print("题目爬取完成")
+
     else:
         break
 if not InternetTime.isExpiration():

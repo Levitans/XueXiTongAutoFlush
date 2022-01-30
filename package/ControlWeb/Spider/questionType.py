@@ -1,10 +1,10 @@
 # -*- encoding = utf-8 -*-
 # @Time : 2021-12-16 16:21
 # @Author : Levitan
-# @File : question.py
+# @File : questionType.py
 # @Software : PyCharm
 
-
+# 选择题类
 class MultipleChoice:
     def __init__(self, qType, problem="", options=None, answer=""):
         self.__type = qType
@@ -27,7 +27,7 @@ class MultipleChoice:
     def getType(self):
         return self.__type
 
-
+# 判断题类
 class TrueOrFalse:
     def __init__(self, qType, problem="", answer=""):
         self.__type = qType
