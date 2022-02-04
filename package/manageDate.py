@@ -150,7 +150,7 @@ class SubjectData:
 
 
 # 1表示关闭显示浏览器，0表示开启显示浏览器
-class BrowserConfiguration:
+class BrowserShow:
     def __init__(self, filPath):
         self.__path = filPath
         self.__browserState = {}
@@ -174,3 +174,19 @@ class BrowserConfiguration:
 
     def getState(self):
         return self.__browserState["browserState"]
+
+class BrowserConfiguration:
+    def __init__(self, filPath):
+        f = open(filPath, 'r')
+        info = f.read()
+        f.close()
+        config = json.loads(info)
+        if config["browser path"] == "":
+            raise Exception("未指定浏览器")
+        if config["driver path"] == "":
+            raise Exception("未指定浏览器驱动")
+        self.__browserPath = config["browser path"]
+        self.__driverPath = config["driver path"]
+
+    def getBrowserPath(self): return self.__browserPath
+    def getDriverPath(self): return self.__driverPath

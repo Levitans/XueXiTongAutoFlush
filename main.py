@@ -13,9 +13,7 @@ import ctypes
 from package.user import User
 from package.display import Display
 from package.progress import Progress
-from package.manageDate import UserData
-from package.manageDate import SubjectData
-from package.manageDate import BrowserConfiguration
+from package.manageDate import UserData, SubjectData, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
@@ -48,24 +46,35 @@ def disableQuickEdit():
 
 # 地址初始化
 nowPath = os.getcwd()
-driverPath = "{}\\driver\\chrome\\chromedriver.exe".format(nowPath)
-chromePath = "{}\\driver\\chrome\\chrome.exe".format(nowPath)
 userDataPath = "{}\\data\\user_data.json".format(nowPath)
 subjectDataPath = "{}\\data\\subject_data.json".format(nowPath)
+browserShowPath = "{}\\data\\browser_show.json".format(nowPath)
 browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
 spiderDataPath = "{}\\spiderData".format(nowPath)
 
+browserPath = ""
+driverPath = ""
+# 获取浏览器和浏览器驱动的地址
+try:
+    browserConfiguration = BrowserConfiguration(browserConfigurationPath)
+    browserPath = browserConfiguration.getBrowserPath()  # 浏览器位置
+    driverPath = browserConfiguration.getDriverPath()  # 驱动位置
+except Exception as e:
+    Display.printWarning(e.__str__())
+    os.system('pause')
+
+
 userData = UserData(userDataPath)
-browser = BrowserConfiguration(browserConfigurationPath)
+browserShow = BrowserShow(browserShowPath)
 
 Display.setFormat(50, 50)
 Display.overLengthOfEn = 15
 
 # while True and InternetTime.isExpiration():
 while True:
-    if browser.getState() == 1:
+    if browserShow.getState() == 1:
         Display.printWarning("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
-    browserInf = "关闭显示" if browser.getState() == 1 else "开启显示"
+    browserInf = "关闭显示" if browserShow.getState() == 1 else "开启显示"
     print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
     function = "1、创建新用户，" \
                "2、使用已有用户（当前已有{}个用户），" \
@@ -99,7 +108,7 @@ while True:
         progress = Progress()
         progress.start()
 
-        xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
+        xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
         try:
             xueXiTong.logging()
         except Exception as e:
@@ -163,10 +172,10 @@ while True:
     elif mode == "4":  # 设置浏览器显示模式
         key = input("1、关闭浏览器显示，2、开启浏览器显示\n输入序号：")
         if key == "1":
-            browser.modifyClassData(1)
+            browserShow.modifyClassData(1)
             print(Fore.RED + "已关闭显示浏览器")
         elif key == "2":
-            browser.modifyClassData(0)
+            browserShow.modifyClassData(0)
             print(Fore.RED + "已开启显示浏览器")
         else:
             print("输入错误\n")
@@ -182,7 +191,7 @@ while True:
         progress = Progress()
         progress.start()
 
-        spider = Spider(chromePath, driverPath, userdata, browser.getState(), spiderDataPath)
+        spider = Spider(browserPath, driverPath, userdata, browserShow.getState(), spiderDataPath)
         spider.logging()
         # 获取课程列表
         try:

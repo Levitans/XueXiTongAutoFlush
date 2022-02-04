@@ -67,10 +67,13 @@ class XueXiTong:
         password.send_keys(self.__user.getUserPassword())
         self.__driver.find_element(By.ID, "loginBtn").click()
         time.sleep(0.5)
-        loggingTest = self.__driver.find_element(By.CSS_SELECTOR, '[class="err-tip"]').text
-        if loggingTest == "手机号或密码错误":
-            self.closeDriver()
-            raise Exception("账号或密码错误")
+        try:
+            loggingTest = self.__driver.find_element(By.CSS_SELECTOR, '[class="err-tip"]').text
+            if loggingTest == "手机号或密码错误":
+                self.closeDriver()
+                raise Exception("账号或密码错误")
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
         time.sleep(3)
 
     # 获取页面中的课程
