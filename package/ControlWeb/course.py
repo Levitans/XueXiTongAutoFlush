@@ -23,10 +23,7 @@ class Course:
         :param driver: 传入需要获取章节的WebDriver对象。
         :return:
         """
-        try:
-            driver.find_element(By.CLASS_NAME, "zne_kc_icon").click()
-        except selenium.common.exceptions.NoSuchElementException:
-            raise Exception("账号或密码错误")
+        driver.find_element(By.CSS_SELECTOR, '[name="课程"]').click()
         time.sleep(2)
 
         driver.switch_to.frame("frame_content")

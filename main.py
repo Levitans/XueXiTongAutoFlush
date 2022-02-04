@@ -100,10 +100,8 @@ while True:
         progress.start()
 
         xueXiTong = XueXiTong(chromePath, driverPath, user, browser.getState())
-        xueXiTong.landing()
-        # 获取课程列表
         try:
-            coursesList = xueXiTong.getCourses()
+            xueXiTong.logging()
         except Exception as e:
             progress.key = False  # 关闭进度条
             progress.join()  # 等待进度条关闭
@@ -112,7 +110,8 @@ while True:
             Display.printWarning(e.__str__())
             xueXiTong.closeDriver()
             sys.exit()
-
+        # 获取课程列表
+        coursesList = xueXiTong.getCourses()
         progress.key = False  # 关闭进度条
         progress.join()  # 等待进度条关闭
 
@@ -173,7 +172,8 @@ while True:
             print("输入错误\n")
         Display.separate()
     elif mode == "5":  # 爬取题目（暂时隐藏）
-
+        if not os.path.exists(spiderDataPath):  # 判断spiderData文件夹是否存在
+            os.mkdir(spiderDataPath)
         userData.displayUserName()
         index = int(input("选择用户：")) - 1
         Display.separate()
@@ -183,7 +183,7 @@ while True:
         progress.start()
 
         spider = Spider(chromePath, driverPath, userdata, browser.getState(), spiderDataPath)
-        spider.landing()
+        spider.logging()
         # 获取课程列表
         try:
             coursesList = spider.getCourses()

@@ -16,6 +16,7 @@ from package.ControlWeb.task.video import Video
 from package.ControlWeb.task.homework import Homework
 from package.ControlWeb.task.exam import Exam
 
+
 class XueXiTong:
     def __init__(self, chromePath, driverPath, user, browserKey):
         """
@@ -38,8 +39,8 @@ class XueXiTong:
             # 不显示浏览器
             option = webdriver.ChromeOptions()
             option.binary_location = chromePath
-            option.add_argument('headless')             # 浏览器不提供可视化界面
-            option.add_argument('--mute-audion')        # 浏览器静音播放
+            option.add_argument('headless')  # 浏览器不提供可视化界面
+            option.add_argument('--mute-audion')  # 浏览器静音播放
             option.add_experimental_option('excludeSwitches', ['enable-logging'])
             self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
 
@@ -57,7 +58,7 @@ class XueXiTong:
         return self.__driver
 
     # 登陆学习通
-    def landing(self):
+    def logging(self):
         self.__driver.get("http://i.chaoxing.com")
         account = self.__driver.find_element(By.ID, "phone")
         account.send_keys(self.__user.getUserAccount())
@@ -65,14 +66,16 @@ class XueXiTong:
         password = self.__driver.find_element(By.ID, "pwd")
         password.send_keys(self.__user.getUserPassword())
         self.__driver.find_element(By.ID, "loginBtn").click()
+        time.sleep(0.5)
+        loggingTest = self.__driver.find_element(By.CSS_SELECTOR, '[class="err-tip"]').text
+        if loggingTest == "手机号或密码错误":
+            self.closeDriver()
+            raise Exception("账号或密码错误")
         time.sleep(3)
 
     # 获取页面中的课程
     def getCourses(self):
-        try:
-            self.course.getCourseObjectAndName(self.__driver)
-        except Exception as e:
-            raise Exception("账号或密码错误")
+        self.course.getCourseObjectAndName(self.__driver)
         return self.course.getCourseNameList()
 
     # 进入课程
@@ -101,15 +104,15 @@ class XueXiTong:
 
         # 测试中发现不同电脑打开学习通章节元素的dataname值不同
         try:
-            self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]')\
-                         .find_element(By.CSS_SELECTOR, '[class="sideCon"]')\
-                         .find_element(By.CSS_SELECTOR, '[class="nav-content "]')\
-                         .find_element(By.CSS_SELECTOR, '[dataname="zj-stu"]').click()
+            self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]') \
+                .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
+                .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
+                .find_element(By.CSS_SELECTOR, '[dataname="zj-stu"]').click()
         except Exception:
-            self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]')\
-                         .find_element(By.CSS_SELECTOR, '[class="sideCon"]')\
-                         .find_element(By.CSS_SELECTOR, '[class="nav-content "]')\
-                         .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
+            self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]') \
+                .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
+                .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
+                .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
         # 获取章节
         self.chapter.getChapterObjectAndName(self.__driver)
         return self.chapter.getChaptersNameList()
@@ -137,9 +140,9 @@ class XueXiTong:
             # 寻找是否有选项卡
             prevTableList = []
             try:
-                prevTableList = self.__driver.find_element(By.CSS_SELECTOR, '[class="prev_tab"]')\
-                                    .find_element(By.CSS_SELECTOR, '[class="prev_ul"]')\
-                                    .find_elements(By.TAG_NAME, 'li')
+                prevTableList = self.__driver.find_element(By.CSS_SELECTOR, '[class="prev_tab"]') \
+                    .find_element(By.CSS_SELECTOR, '[class="prev_ul"]') \
+                    .find_elements(By.TAG_NAME, 'li')
                 print("当前课程有{}个选项卡".format(len(prevTableList)))
             except Exception:
                 print("当前章节没有选项卡")
@@ -158,7 +161,7 @@ class XueXiTong:
                 iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')
                 print("当前小节有{}个任务点".format(len(iframeList)))
                 for i in range(len(iframeList)):
-                    print("当前为第{}个任务点".format(i+1))
+                    print("当前为第{}个任务点".format(i + 1))
                     self.__driver.switch_to.frame(iframeList[i])
                     try:
                         print("尝试视频打开任务点")
@@ -200,4 +203,3 @@ class XueXiTong:
             # 点击下一章
             self.__driver.find_element(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]').click()
         print("当前章节以全部完成")
-

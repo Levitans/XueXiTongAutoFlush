@@ -174,16 +174,3 @@ class BrowserConfiguration:
 
     def getState(self):
         return self.__browserState["browserState"]
-
-
-if __name__ == '__main__':
-    # test = UserData(r"F:\python项目\XueXiTongBrushClass\data\user_data.json")
-    # a: User = test.getUsers()[0]
-    # print(a.getUserName())
-    # print(a.getUserAccount())
-    # print(a.getUserPassword())
-    # test.modifyUserData(a.getUserName(), "abcdefg")
-
-    test = SubjectData(r"F:\python项目\XueXiTongBrushClass\data\subject_data.json")
-    print(test.getSubjectProcess("文小军", "线性代数A(21-22(1))"))
-
