@@ -13,7 +13,7 @@ import ctypes
 from package.user import User
 from package.display import Display
 from package.progress import Progress
-from package.manageDate import UserData, SubjectData, BrowserShow, BrowserConfiguration
+from package.manageDate import UserData, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
@@ -47,7 +47,6 @@ def disableQuickEdit():
 # 地址初始化
 nowPath = os.getcwd()
 userDataPath = "{}\\data\\user_data.json".format(nowPath)
-subjectDataPath = "{}\\data\\subject_data.json".format(nowPath)
 browserShowPath = "{}\\data\\browser_show.json".format(nowPath)
 browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
 spiderDataPath = "{}\\spiderData".format(nowPath)
@@ -123,7 +122,6 @@ while True:
         coursesList = xueXiTong.getCourses()
         progress.key = False  # 关闭进度条
         progress.join()  # 等待进度条关闭
-
         print("Login success")
         Display.separate()
         time.sleep(1)
@@ -135,21 +133,8 @@ while True:
         # 进入指定课程
         # 返回课程中的章节的列表
         chaptersList = xueXiTong.enterCourse(courseIndex)
-        # 实例化subjectData对象
-        subjectData = SubjectData(subjectDataPath)
-        # 查找本地储存的课程进度
-        subjectProgress = subjectData.getSubjectProcess(user.getUserName(), coursesList[courseIndex])
-        print("{}本地进度为{}".format(coursesList[courseIndex], subjectProgress))
-        chapterIndex = 0
-        try:
-            chapterIndex = chaptersList.index(subjectProgress)
-        except ValueError as e:
-            Display.separate()
-            print("当前课程没有{}章节。".format(subjectProgress))
-            print("可以到{}\\data\\subject_data.json中修改课程进度。".format(nowPath))
-            Display.separate()
-            break
-        xueXiTong.work(chapterIndex, subjectData)
+        xueXiTong.work()
+        Display.separate()
     elif mode == "3":  # 修改用户信息
         userData.displayUserName()
         userIndex = int(input("选择需要修改的用户：")) - 1
@@ -219,7 +204,7 @@ while True:
         # 进入指定课程
         # 返回课程中的章节的列表
         chaptersList = spider.enterCourse(courseIndex)
-        spider.work(None, None)
+        spider.work()
         print("题目爬取完成")
 
     else:

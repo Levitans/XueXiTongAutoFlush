@@ -9,7 +9,8 @@ import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from package.display import Display
-from package.ControlWeb import course
+from package.ControlWeb.course import Course
+from package.ControlWeb.chapter import Chapter
 from package.ControlWeb.task.getAnswer import GetAnswer
 from package.ControlWeb.task.PPT import PPT
 from package.ControlWeb.task.video import Video
@@ -45,11 +46,11 @@ class XueXiTong:
             self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
 
         # 实例化章节对象
-        self.chapter = course.Chapter()
+        self.chapter = Chapter()
 
         # 实例化课程类
         # 课程类可被外部访问
-        self.course = course.Course()
+        self.course = Course()
 
     def closeDriver(self):
         self.__driver.quit()
@@ -117,12 +118,28 @@ class XueXiTong:
                 .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
                 .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
         # 获取章节
-        self.chapter.getChapterObjectAndName(self.__driver)
-        return self.chapter.getChaptersNameList()
+        self.chapter.getChapterItem(self.__driver)
 
-    def work(self, chapterIndex, subjectData):
-        self.chapter.getChapterObjectList()[chapterIndex].click()
-        time.sleep(3)
+    def work(self):
+        # 找到没有完成的章节
+        chapterItemList = self.chapter.getChapterItemList()
+        chapterItemIndex = 0
+
+        print("查找未完成的章节")
+        # 跳过以完成的章节
+        for i in chapterItemList:
+            if i.isFinish:
+                print("《{}{}》已完成".format(i.number, i.name))
+                chapterItemIndex += 1
+            else:
+                print("《{}{}》未完成".format(i.number, i.name))
+                break
+        if chapterItemIndex == self.chapter.getLength():    # 如果当前课程已完成则跳过
+            print("当前章节以全部完成")
+            return
+
+        Display.separate()
+        chapterItemList[chapterItemIndex].webObj.click()
 
         # # 切换到第三个窗口
         # # 新版学习通进入章节后会切换窗口
@@ -135,10 +152,12 @@ class XueXiTong:
         time.sleep(1)
 
         # 循环当前课程的所有章节
-        while chapterIndex < self.chapter.getLength():
+        while chapterItemIndex < self.chapter.getLength():
             js = "var q=document.documentElement.scrollTop=10000"
             self.__driver.execute_script(js)
             time.sleep(1)
+
+            print("当前章节为{}{}".format(chapterItemList[chapterItemIndex].number, chapterItemList[chapterItemIndex].name))
 
             # 寻找是否有选项卡
             prevTableList = []
@@ -152,6 +171,16 @@ class XueXiTong:
 
             # 如果没有找到选项卡则执行一次
             lenOfPrevTableList = len(prevTableList) if len(prevTableList) != 0 else 1
+
+            # 如果当前章节以完成则跳过当前章节
+            # 当前学习通点击下一章节是跳到下一个选项卡，不是跳到下一章节
+            if chapterItemList[chapterItemIndex].isFinish:
+                for i in range(lenOfPrevTableList):
+                    self.__driver.find_element(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]').click()
+                    time.sleep(2)
+                chapterItemIndex += 1
+                continue
+
             for tableIndex in range(lenOfPrevTableList):
                 if tableIndex != 0:
                     # 选项卡移动到屏幕中
@@ -165,6 +194,15 @@ class XueXiTong:
                 print("当前小节有{}个任务点".format(len(iframeList)))
                 for i in range(len(iframeList)):
                     print("当前为第{}个任务点".format(i + 1))
+
+                    # 检测任务点是是否完成
+                    try:
+                        self.__driver.find_element(By.CSS_SELECTOR, '[class="ans-attach-ct ans-job-finished"]')
+                        print("当前任务点已完成")
+                        continue
+                    except selenium.common.exceptions.NoSuchElementException:
+                        pass
+
                     self.__driver.switch_to.frame(iframeList[i])
                     try:
                         print("尝试视频打开任务点")
@@ -194,15 +232,8 @@ class XueXiTong:
                     iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')
                 self.__driver.switch_to.default_content()
                 time.sleep(2)
-
-            # 保存进度
-            subjectData.modifyClassData(self.__user.getUserName(),
-                                        self.course.nowCourseName,
-                                        self.chapter.getChaptersNameList()[chapterIndex])
-
-            print("课程第{}节完成".format(self.chapter.getChaptersNameList()[chapterIndex]))
-            chapterIndex += 1
-
-            # 点击下一章
+            print("课程第{}{}节完成".format(chapterItemList[chapterItemIndex].number, chapterItemList[chapterItemIndex].name))
+            Display.separate()
             self.__driver.find_element(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]').click()
+            chapterItemIndex += 1
         print("当前章节以全部完成")

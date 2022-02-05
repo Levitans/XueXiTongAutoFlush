@@ -6,7 +6,6 @@
 
 import time
 
-import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from package.display import Display
 
@@ -41,53 +40,3 @@ class Course:
 
     def getCourseNameList(self):
         return self.__coursesNameList
-
-
-# 章节类
-class Chapter:
-    def __init__(self):
-        self.__chapterObjectList = []
-        self.__chaptersNameList = []
-
-    # 获取章节WebDriver对象和名称
-    def getChapterObjectAndName(self, driver):
-        # 进入页面的iframe
-        iframeList = driver.find_elements(By.CSS_SELECTOR, '[id="frame_content-zj-stu"]')
-        if len(iframeList) == 0:
-            iframeList = driver.find_elements(By.CSS_SELECTOR, '[id="frame_content-zj"]')
-        driver.switch_to.frame(iframeList[-1])
-
-        # 获取章节对象和章节名
-        chaptersList = driver.find_elements(By.CSS_SELECTOR, '[class="chapter_unit"]')
-        for i in chaptersList:
-            sectionList = i.find_elements_by_tag_name("li")
-            for j in sectionList:
-                self.__chapterObjectList.append(j)
-
-                # 提取章节中的章节号
-                string = j.text
-                newString = ""
-                for s in string:
-                    if s.isdigit() or s == ".":
-                        newString += s
-                    else:
-                        break
-                self.__chaptersNameList.append(newString)
-
-    def getLength(self):
-        """
-        :return: 章节的个数
-        """
-        return len(self.__chapterObjectList)
-
-    def getChapterObjectList(self):
-        """
-        :return: 章节的WebDriver对象列表
-        """
-        return self.__chapterObjectList
-
-    def getChaptersNameList(self):
-        """
-        :return: 章节的名字列表
-        """
-        return self.__chaptersNameList

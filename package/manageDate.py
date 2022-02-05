@@ -95,6 +95,7 @@ class UserData:
 
 
 # 管理学科数据
+# 当前版本自动判断章节是否完成，不需要本地储存进度
 class SubjectData:
     def __init__(self, filePath):
         """

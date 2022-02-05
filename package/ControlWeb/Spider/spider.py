@@ -49,12 +49,6 @@ class Spider(XueXiTong):
             py_answer = ""
             for s in py_answerItme:
                 py_answer += (s + " "*5)
-
-            print(question)
-            print(optionsList)
-            print(py_answer)
-            input("下一题")
-
             # 题目类型
             courseType = question.partition("】")[0][1:]
             if courseType == "判断题":
@@ -79,9 +73,10 @@ class Spider(XueXiTong):
                 elif courseType == "多选题":
                     self.__questionList.append(MultipleChoice("多选题", question, optionsList, py_answer))
 
-    def work(self, chapterIndex, subjectData):
+    def work(self):
         # 进入课程的第一个章节
-        self.chapter.getChapterObjectList()[6].click()
+        chapterItemList = self.chapter.getChapterItemList()
+        chapterItemList[0].webObj.click()
         time.sleep(2)
 
         # 收起目录栏
