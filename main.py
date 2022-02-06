@@ -12,7 +12,7 @@ import time
 import ctypes
 from package.user import User
 from package.display import Display
-from package.progress import Progress
+from package.progressbar import ProgressBar
 from package.manageDate import UserData, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
@@ -104,7 +104,7 @@ while True:
         user = userData.getUsers()[index]
 
         # 显示进度条
-        progress = Progress()
+        progress = ProgressBar()
         progress.start()
 
         xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
@@ -173,7 +173,7 @@ while True:
         Display.separate()
         userdata = userData.getUsers()[index]
 
-        progress = Progress()
+        progress = ProgressBar()
         progress.start()
 
         spider = Spider(browserPath, driverPath, userdata, browserShow.getState(), spiderDataPath)
