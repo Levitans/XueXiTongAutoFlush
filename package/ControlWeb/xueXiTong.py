@@ -8,6 +8,8 @@ import sys
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
+import package.exception.atOrPdException
 from package.display import Display
 from package.ControlWeb.course import Course
 from package.ControlWeb.chapter import Chapter
@@ -35,7 +37,7 @@ class XueXiTong:
             option.binary_location = chromePath
             option.add_experimental_option('excludeSwitches', ['enable-logging'])
             self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
-            self.__driver.maximize_window()
+            # self.__driver.maximize_window()
         else:
             # 不显示浏览器
             option = webdriver.ChromeOptions()
@@ -72,7 +74,7 @@ class XueXiTong:
             loggingTest = self.__driver.find_element(By.CSS_SELECTOR, '[class="err-tip"]').text
             if loggingTest == "手机号或密码错误":
                 self.closeDriver()
-                raise Exception("账号或密码错误")
+                raise package.exception.atOrPdException.AtOrPdException()
         except selenium.common.exceptions.NoSuchElementException:
             pass
         time.sleep(3)
@@ -86,18 +88,14 @@ class XueXiTong:
     def enterCourse(self, courseIndex):
         item = self.course.getCourseObjectList()[courseIndex]
         self.__driver.execute_script("arguments[0].focus();", item)
-        # 应该没用
-        self.__driver.execute_script("window.scrollBy(0,1000)")
+        time.sleep(1)
 
-        try:
-            item.click()
-        except selenium.common.exceptions.WebDriverException:
-            Display.separate()
-            print("当前课程无法关闭浏览器学习")
-            print("修改浏览器设置后可再次进行尝试")
-            print("作者正在疯狂解决问题")
-            Display.separate()
-            sys.exit(1)
+        # 防止浮动层阻挡点击
+        self.__driver.switch_to.default_content()
+        self.__driver.execute_script("window.scrollBy(0,400)")
+        self.__driver.switch_to.frame("frame_content")
+
+        item.click()
         # 保存课程名
         self.course.nowCourseName = self.course.getCourseNameList()[courseIndex]
 
@@ -216,9 +214,6 @@ class XueXiTong:
                             powerPoint.finish()
                         except Exception:
                             print("当前任务点不是ppt")
-                            homework = Homework(self.__driver)
-                            homework.finish()
-                            homework.submitOrSave()
                             try:
                                 print("尝试答题打开任务点")
                                 homework = Homework(self.__driver)

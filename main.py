@@ -10,6 +10,8 @@ import sys
 import json
 import time
 import ctypes
+
+import package.exception.atOrPdException
 from package.user import User
 from package.display import Display
 from package.progressbar import ProgressBar
@@ -72,7 +74,8 @@ Display.overLengthOfEn = 15
 # while True and InternetTime.isExpiration():
 while True:
     if browserShow.getState() == 1:
-        Display.printWarning("当前为不显示浏览器运行\n不显示浏览器程序可能会出错")
+        Display.printWarning("若程序运行出错可尝试切换浏览器模式")
+        print()
     browserInf = "关闭显示" if browserShow.getState() == 1 else "开启显示"
     print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
     function = "1、创建新用户，" \
@@ -110,10 +113,10 @@ while True:
         xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
         try:
             xueXiTong.logging()
-        except Exception as e:
+        except package.exception.atOrPdException.AtOrPdException as e:
             progress.key = False  # 关闭进度条
             progress.join()  # 等待进度条关闭
-            print("Login failure")
+            print("loging failure")
             Display.separate()
             Display.printWarning(e.__str__())
             xueXiTong.closeDriver()
@@ -177,11 +180,9 @@ while True:
         progress.start()
 
         spider = Spider(browserPath, driverPath, userdata, browserShow.getState(), spiderDataPath)
-        spider.logging()
-        # 获取课程列表
         try:
-            coursesList = spider.getCourses()
-        except Exception as e:
+            spider.logging()
+        except package.exception.atOrPdException.AtOrPdException as e:
             progress.key = False  # 关闭进度条
             progress.join()  # 等待进度条关闭
             print("Login failure")
@@ -189,7 +190,9 @@ while True:
             Display.printWarning(e.__str__())
             spider.closeDriver()
             sys.exit()
+        # 获取课程列表
 
+        coursesList = spider.getCourses()
         progress.key = False  # 关闭进度条
         progress.join()  # 等待进度条关闭
 
