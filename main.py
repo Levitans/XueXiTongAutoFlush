@@ -14,7 +14,7 @@ import ctypes
 import package.exception.atOrPdException
 from package.user import User
 from package.display import Display
-from package.progressbar import ProgressBar
+from package.progressbar import ProgressBar, ProgressBar2
 from package.manageDate import UserData, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
@@ -135,7 +135,15 @@ while True:
         Display.separate()
         # 进入指定课程
         # 返回课程中的章节的列表
+        print("正在进入课程")
+        progress = ProgressBar2()
+        progress.start()
         chaptersList = xueXiTong.enterCourse(courseIndex)
+        progress.key = False
+        progress.join()  # 等待进度条关闭
+        print("进入课程成功")
+        Display.separate()
+        time.sleep(0.5)
         xueXiTong.work()
         Display.separate()
     elif mode == "3":  # 修改用户信息

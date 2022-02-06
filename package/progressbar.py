@@ -35,17 +35,23 @@ class ProgressBar2(threading.Thread):
         number = 0
         a = 0
         b = 0
-        dur=0
+        dur = 0
+        strFormat = "\r{:^3.0f}%|{}{}| {:.2f}s"
         while self.key:
-            number += 1/x*35
+            number += 1/x*38
             if (number / scale) * 100 >= 99:
                 c = 99
             else:
                 c = (number / scale) * 100
-                a = "*" * math.ceil(number)
-                b = "." * math.ceil(scale - number)
+                a = "█" * math.ceil(number)
+                b = " " * math.ceil(scale - number)
             dur = time.time() - starTime
-            print("\r进度:{:^3.0f}%[{}->{}]用时:{:.2f}s".format(c, a, b, dur), end="")
+            print(strFormat.format(c, a, b, dur), end="")
             time.sleep(0.1)
             x += 1
-        print("\r进度:{:^3.0f}%[{}->{}]用时:{:.2f}s".format(100, "*"*scale, "", dur))
+        print(strFormat.format(100, "█"*scale, "", dur))
+
+
+if __name__ == '__main__':
+    test = ProgressBar2()
+    test.run()

@@ -5,21 +5,22 @@ from colorama import Fore, Back, init
 init(autoreset=True)
 
 class Display:
-    # format: 每个元素控制对应列的宽度，元组第1个参数类型为int表示占位个数，第2个参数类型为boolean表示是否开启略写显示
-    #
-    #       例如：format = [(10, False), (15, True), (58, True)]表示有一行有每行有3列数据。
-    #            以format中第2个元素为例，其表示第二列数据占15个半角位，且开启省略显示
-    #            format的长度表示一行的列数
-    #
-    #       注意：使用Display.printTable()前必须先调用Display.setFormat()对format进行初始化
-    #
-    # overLengthKey:  控制缩写开关
-    # overLengthOfEn: 英文文本长度阈值
-    # overSymbolOfEN: 英文文本超过后补充的符号
-    # numberCounter: 用于输出序号时记录当前序号
-    # separateChar: 段落分隔符
-    # warnChar: 警告分隔符
+    """
+    format: 每个元素控制对应列的宽度，元组第1个参数类型为int表示占位个数，第2个参数类型为boolean表示是否开启略写显示
 
+          例如：format = [(10, False), (15, True), (58, True)]表示有一行有每行有3列数据。
+               以format中第2个元素为例，其表示第二列数据占15个半角位，且开启省略显示
+               format的长度表示一行的列数
+
+          注意：使用Display.printTable()前必须先调用Display.setFormat()对format进行初始化
+
+    overLengthKey:  控制缩写开关
+    overLengthOfEn: 英文文本长度阈值
+    overSymbolOfEN: 英文文本超过后补充的符号
+    numberCounter: 用于输出序号时记录当前序号
+    separateChar: 段落分隔符
+    warnChar: 警告分隔符
+    """
     format = []
     overLengthOfEn = 5
     overSymbolOfEn = "..."

@@ -91,9 +91,10 @@ class XueXiTong:
         time.sleep(1)
 
         # 防止浮动层阻挡点击
-        self.__driver.switch_to.default_content()
-        self.__driver.execute_script("window.scrollBy(0,400)")
-        self.__driver.switch_to.frame("frame_content")
+        if courseIndex >= 3:
+            self.__driver.switch_to.default_content()
+            self.__driver.execute_script("window.scrollBy(0,400)")
+            self.__driver.switch_to.frame("frame_content")
 
         item.click()
         # 保存课程名
@@ -132,6 +133,7 @@ class XueXiTong:
             else:
                 print("《{}{}》未完成".format(i.number, i.name))
                 break
+            time.sleep(0.2)
         if chapterItemIndex == self.chapter.getLength():    # 如果当前课程已完成则跳过
             print("当前章节以全部完成")
             return
