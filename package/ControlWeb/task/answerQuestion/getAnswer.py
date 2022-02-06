@@ -76,4 +76,4 @@ http://api.muketool.com/notice?script=习近平主席提出的“新时代”之
 
 if __name__ == "__main__":
     a = GetAnswer()
-    print(type(a.getAnswer('【判断题】算法分析的两个主要方面是时间复杂度和空间复杂度的分析。', '判断题')[0]))
+    print(a.getAnswer('【单选题】实践的主体是( )'))

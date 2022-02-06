@@ -4,6 +4,7 @@
 # @File : multipleChoiceOfTask.py
 # @Software : PyCharm
 
+import difflib
 import selenium.webdriver.remote.webelement
 from package.ControlWeb.Spider.questionType import MultipleChoice
 
@@ -27,35 +28,13 @@ class MultipleChoiceOfTask(MultipleChoice):
         answer = self.getAnswer()
         options = self.getOptions()
         for i in range(len(options)):
-            if options[i] in answer:
-                answerWebElementList.append(self.__optionsWebElements[i])
+            for j in range(len(answer)):
+                similarDiffRatio = difflib.SequenceMatcher(None, options[i], answer[j]).quick_ratio()
+                # print("{}和{}的匹配率为：{}".format(options[i], answer[j], similarDiffRatio))
+                if similarDiffRatio > 0.88:
+                    answerWebElementList.append(self.__optionsWebElements[i])
         return answerWebElementList
 
-"""
-具有思维能力、从事社会实践和认识活动的人
-======
-['A .绝对精神', 'B .具有思维能力、从事社会实践和认识活动的人', 'C .人', 'D .人的意识']
-
-进入主体的认识和实践范围的客观事物
-======
-['绝对精神的对象化', '客观物质世界', '人的意识的创造物', '进人主体的认识和实践范围的客观事物']
-
-客体对于主体的满足程度与主体需求之间的关系
-======
-['主体对客体的物质欲望和要求', '主体对客体的能动反映', '主体对客体的改造和变革的结果', '客体对于主体的有用性和效益性']
-
-实践是认识发展的动力
-======
-['实践是认识的来源', '技术推动了科学的发展', '实践是认识发展的动力', '科学进步是实践的目的']
-
-['物质生产实践', '科学文化实践', '社会政治实践']
-======
-['物质生产实践', '虚拟实践', '社会政治实践', '科学文化实践']
-
-['实践是社会关系形成的基础', '实践形成了社会生活的基本领域', '实践构成了社会发展的动力']
-======
-['实践是社会关系形成的基础', '实践形成了社会生活的基本领域', '实践构成了社会发展的动力', '实践是检验真理的唯一标准']
-    """
 
 
 
