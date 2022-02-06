@@ -4,7 +4,6 @@
 # @File : xueXiTong.py
 # @Software : PyCharm
 import time
-import sys
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,11 +12,9 @@ import package.exception.atOrPdException
 from package.display import Display
 from package.ControlWeb.course import Course
 from package.ControlWeb.chapter import Chapter
-from package.ControlWeb.task.getAnswer import GetAnswer
 from package.ControlWeb.task.PPT import PPT
 from package.ControlWeb.task.video import Video
-from package.ControlWeb.task.homework import Homework
-from package.ControlWeb.task.exam import Exam
+from package.ControlWeb.task.answerQuestion.homework import Homework
 
 
 class XueXiTong:
@@ -93,7 +90,7 @@ class XueXiTong:
         # 防止浮动层阻挡点击
         if courseIndex >= 3:
             self.__driver.switch_to.default_content()
-            self.__driver.execute_script("window.scrollBy(0,400)")
+            self.__driver.execute_script("window.scrollBy(0,100)")
             self.__driver.switch_to.frame("frame_content")
 
         item.click()
@@ -219,6 +216,7 @@ class XueXiTong:
                             try:
                                 print("尝试答题打开任务点")
                                 homework = Homework(self.__driver)
+                                homework.getData()
                                 homework.finish()
                                 homework.submitOrSave()
                             except Exception:

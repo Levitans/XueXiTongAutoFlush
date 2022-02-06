@@ -6,9 +6,9 @@
 
 # 选择题类
 class MultipleChoice:
-    def __init__(self, qType, problem="", options=None, answer=""):
+    def __init__(self, qType, question="", answer="", options=None):
         self.__type = qType
-        self.__problem = problem
+        self.__question = question
         self.__options = options
         self.__answer = answer
 
@@ -16,29 +16,38 @@ class MultipleChoice:
         options = ""
         for i in self.__options:
             options += i + "\n"
-        return self.__problem + '\n' + options + '\n' + self.__answer
+        return self.__question + '\n' + options + '\n' + self.__answer
 
     def toString(self):
         options = ""
         for i in self.__options:
             options += i + "\n"
-        return self.__problem + '\n' + options + self.__answer
+        return self.__question + '\n' + options + self.__answer
 
     def getType(self):
         return self.__type
+
+    def getAnswer(self):
+        return self.__answer
+
+    def getOptions(self):
+        return self.__options
 
 # 判断题类
 class TrueOrFalse:
-    def __init__(self, qType, problem="", answer=""):
+    def __init__(self, qType, question="", answer=""):
         self.__type = qType
-        self.__problem = problem
+        self.__question = question
         self.__answer = answer
 
     def __str__(self):
-        return self.__problem + '\n' + self.__answer
+        return self.__question + '\n' + self.__answer
 
     def toString(self):
-        return self.__problem + "\n" + self.__answer
+        return self.__question + "\n" + self.__answer
 
     def getType(self):
         return self.__type
+
+    def getAnswer(self):
+        return self.__answer
