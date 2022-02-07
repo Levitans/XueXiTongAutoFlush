@@ -7,15 +7,14 @@ import time
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
-import package.exception.atOrPdException
 from package.display import Display
 from package.ControlWeb.course import Course
 from package.ControlWeb.chapter import Chapter
 from package.ControlWeb.task.PPT import PPT
 from package.ControlWeb.task.video import Video
 from package.ControlWeb.task.answerQuestion.homework import Homework
-
+from package.exception.atOrPdException import AtOrPdException
+from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
 
 class XueXiTong:
     def __init__(self, chromePath, driverPath, user, browserKey):
@@ -28,21 +27,19 @@ class XueXiTong:
         self.__user = user
         self.__driverPath = driverPath
 
-        if browserKey == 0:
-            # 显示浏览器
-            option = webdriver.ChromeOptions()
-            option.binary_location = chromePath
-            option.add_experimental_option('excludeSwitches', ['enable-logging'])
-            self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
-            # self.__driver.maximize_window()
-        else:
-            # 不显示浏览器
-            option = webdriver.ChromeOptions()
-            option.binary_location = chromePath
+        option = webdriver.ChromeOptions()
+        option.binary_location = chromePath
+        option.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+        # 不显示浏览器
+        if browserKey == 1:
             option.add_argument('headless')  # 浏览器不提供可视化界面
             option.add_argument('--mute-audion')  # 浏览器静音播放
-            option.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+        try:
             self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
+        except selenium.common.exceptions.WebDriverException:
+            raise BrowseOrDriverPathException(chromePath, driverPath)
 
         # 实例化章节对象
         self.chapter = Chapter()
@@ -71,7 +68,7 @@ class XueXiTong:
             loggingTest = self.__driver.find_element(By.CSS_SELECTOR, '[class="err-tip"]').text
             if loggingTest == "手机号或密码错误":
                 self.closeDriver()
-                raise package.exception.atOrPdException.AtOrPdException()
+                raise AtOrPdException()
         except selenium.common.exceptions.NoSuchElementException:
             pass
         time.sleep(3)

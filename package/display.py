@@ -61,7 +61,7 @@ class Display:
         newStr = ""
         for s in strData:
             # 英文
-            if s in string.ascii_letters or s in './ ':
+            if s in string.ascii_letters or s in r'./\: ':
                 countEn += 1
                 newStr += s
             # 数字
@@ -73,7 +73,7 @@ class Display:
                 countEn += 1
                 newStr += s
             # 中文
-            elif s.isalpha():
+            elif s.isalpha() or s in "：":
                 countCn += 1
                 newStr += s
             # 特殊字符

@@ -178,7 +178,7 @@ class BrowserShow:
 
 class BrowserConfiguration:
     def __init__(self, filPath):
-        f = open(filPath, 'r')
+        f = open(filPath, 'r', encoding="utf-8")
         info = f.read()
         f.close()
         config = json.loads(info)

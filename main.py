@@ -11,7 +11,6 @@ import json
 import time
 import ctypes
 
-import package.exception.atOrPdException
 from package.user import User
 from package.display import Display
 from package.progressbar import ProgressBar, ProgressBar2
@@ -20,6 +19,9 @@ from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
 from colorama import Fore, Back, init
+from package.exception.atOrPdException import AtOrPdException
+from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
+
 
 init(autoreset=True)  # 设置颜色自动恢复
 
@@ -105,15 +107,18 @@ while True:
         index = int(input("选择用户：")) - 1
         Display.separate()
         user = userData.getUsers()[index]
-
+        #
+        try:
+            xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
+        except BrowseOrDriverPathException as e:    # 捕获浏览器地址配置错误
+            Display.printWarning(e.__str__())
+            sys.exit()
         # 显示进度条
         progress = ProgressBar()
         progress.start()
-
-        xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
         try:
             xueXiTong.logging()
-        except package.exception.atOrPdException.AtOrPdException as e:
+        except AtOrPdException as e:    # 捕获账号密码错误
             progress.key = False  # 关闭进度条
             progress.join()  # 等待进度条关闭
             print("loging failure")
