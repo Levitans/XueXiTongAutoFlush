@@ -43,6 +43,7 @@ class GetAnswer:
         if answer == "":
             return None
 
+        # 验证获取的答案和题目类型是否相同
         if questionType == "":
             return answer
 

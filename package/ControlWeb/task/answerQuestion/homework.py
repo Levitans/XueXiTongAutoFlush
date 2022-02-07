@@ -76,6 +76,9 @@ class Homework:
                     answerWebElement.click()
             elif self.__questionList[i].getType() == "判断题":
                 answerWebElement = self.__questionList[i].getAnswerWebElement()[0]
+                if len(answerWebElement) == 0:
+                    print("查找答案和选项答案不匹配")
+                    continue
                 self.__driver.execute_script("arguments[0].focus();", answerWebElement)
                 answerWebElement.click()
             time.sleep(2)

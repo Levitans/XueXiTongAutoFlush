@@ -22,5 +22,7 @@ class TrueOrFalseOfTask(TrueOrFalse):
         :return: 返回正确答案的WebElement对象
         """
         answer = self.getAnswer()[0]
+        if not isinstance(answer, bool):
+            return []
         index = 0 if answer else 1
         return [self.__answerWebElementList[index]]
