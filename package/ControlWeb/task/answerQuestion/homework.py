@@ -10,13 +10,14 @@ import requests.exceptions
 from package.ControlWeb.task.answerQuestion.getAnswer import GetAnswer
 from package.ControlWeb.task.answerQuestion.multipleChoiceOfTask import MultipleChoiceOfTask
 from package.ControlWeb.task.answerQuestion.trueOrFalseOfTask import TrueOrFalseOfTask
+from package.ControlWeb.task.answerQuestion.answerable import Answerable
 from selenium.webdriver.common.by import By
 
 
 class Homework:
     def __init__(self, driver):
         self.__driver = driver
-        self.__questionList = []
+        self.__questionList: list[Answerable] = []
 
     def getData(self):
         getAnswer = GetAnswer()
@@ -66,22 +67,13 @@ class Homework:
     def finish(self):
         for i in range(len(self.__questionList)):
             print("正在完成第{}题".format(i))
-            if self.__questionList[i].getType() in ("单选题", "多选题"):
-                webElementList = self.__questionList[i].getAnswerWebElement()
-                if len(webElementList) == 0:
-                    print("查找答案和选项答案不匹配")
-                    continue
-                for answerWebElement in webElementList:
-                    self.__driver.execute_script("arguments[0].focus();", answerWebElement)
-                    answerWebElement.click()
-            elif self.__questionList[i].getType() == "判断题":
-                answerWebElement = self.__questionList[i].getAnswerWebElement()[0]
-                if len(answerWebElement) == 0:
-                    print("查找答案和选项答案不匹配")
-                    continue
+            webElementList = self.__questionList[i].getAnswerWebElement()
+            if len(webElementList) == 0:
+                print("查找答案和选项答案不匹配")
+                continue
+            for answerWebElement in webElementList:
                 self.__driver.execute_script("arguments[0].focus();", answerWebElement)
                 answerWebElement.click()
-            time.sleep(2)
 
     def submitOrSave(self):
         # if self.__checkpoint:

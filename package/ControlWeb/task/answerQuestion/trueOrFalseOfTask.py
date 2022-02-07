@@ -4,9 +4,11 @@
 # @File : trueOrFalseOfTask.py
 # @Software : PyCharm
 
-from package.ControlWeb.Spider.questionType import TrueOrFalse
+from selenium.webdriver.remote.webelement import WebElement
+from package.ControlWeb.task.answerQuestion.questionType import TrueOrFalse
+from package.ControlWeb.task.answerQuestion.answerable import Answerable
 
-class TrueOrFalseOfTask(TrueOrFalse):
+class TrueOrFalseOfTask(TrueOrFalse, Answerable):
     def __init__(self, qType, question, answer, answerWebElementList):
         """
         :param qType: 题目类型（单选题，多选题）
@@ -15,7 +17,7 @@ class TrueOrFalseOfTask(TrueOrFalse):
         :param answerWebElementList: 题目选项的WebElement对象， 列表类型
         """
         super(TrueOrFalseOfTask, self).__init__(qType, question, answer)
-        self.__answerWebElementList = answerWebElementList
+        self.__answerWebElementList: list[WebElement] = answerWebElementList
 
     def getAnswerWebElement(self):
         """

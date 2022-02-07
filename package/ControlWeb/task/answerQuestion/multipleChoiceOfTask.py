@@ -5,20 +5,21 @@
 # @Software : PyCharm
 
 import difflib
-import selenium.webdriver.remote.webelement
-from package.ControlWeb.Spider.questionType import MultipleChoice
+from selenium.webdriver.remote.webelement import WebElement
+from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
+from package.ControlWeb.task.answerQuestion.answerable import Answerable
 
-class MultipleChoiceOfTask(MultipleChoice):
+class MultipleChoiceOfTask(MultipleChoice, Answerable):
     def __init__(self, qType, question, answers, options, optionsWebElements):
         """
         :param qType: 题目类型（单选题，多选题）
         :param question: 题目问题
-        :param answers: 查找到的题目答案
-        :param options: 题目选项文字，列表类型
+        :param answers: 查找到的题目答案，list类型
+        :param options: 题目选项文字，list类型
         :param optionsWebElements: 题目选项的WebElement对象， 列表类型
         """
         super(MultipleChoiceOfTask, self).__init__(qType, question, answers, options)
-        self.__optionsWebElements: list[selenium.webdriver.remote.webelement.WebElement] = optionsWebElements
+        self.__optionsWebElements: list[WebElement] = optionsWebElements
 
     def getAnswerWebElement(self):
         """

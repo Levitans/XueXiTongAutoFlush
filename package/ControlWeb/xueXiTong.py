@@ -136,7 +136,8 @@ class XueXiTong:
             return
 
         Display.separate()
-        chapterItemList[chapterItemIndex].webObj.click()
+        # chapterItemList[chapterItemIndex].webObj.click()
+        chapterItemList[20].webObj.click()
 
         # # 切换到第三个窗口
         # # 新版学习通进入章节后会切换窗口
@@ -218,6 +219,7 @@ class XueXiTong:
                                 homework = Homework(self.__driver)
                                 homework.getData()
                                 homework.finish()
+                                input("暂停")
                                 homework.submitOrSave()
                             except Exception:
                                 print("当前任务点不是题目\n当前任务点无法解决，跳过当前任务点")

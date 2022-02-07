@@ -11,8 +11,8 @@ import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from package.display import Display
 from package.ControlWeb.xueXiTong import XueXiTong
-from package.ControlWeb.Spider.questionType import MultipleChoice
-from package.ControlWeb.Spider.questionType import TrueOrFalse
+from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
+from package.ControlWeb.task.answerQuestion.questionType import TrueOrFalse
 
 
 class Spider(XueXiTong):
@@ -34,14 +34,18 @@ class Spider(XueXiTong):
             item = questionList[i]
 
             # 获取问题
-            question = item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.split("\n")[-1]
+            question = item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.replace("\n", "")
+            question = question[question.find("【"):]
+
+            # 题目类型
+            questionType = question.partition("】")[0][1:]
 
             # 获取选项
             options = item.find_elements(By.CSS_SELECTOR, '[class="clearfix"]')
             options.pop(0)
-            optionsList = []        # 保存选项文本
+            optionsText = []        # 保存选项文本
             for j in options:
-                optionsList.append(j.text.replace("\n", ""))
+                optionsText.append(j.text.replace("\n", ""))
 
             # 我的答案的标签
             py_answer_itme = item.find_element(By.CSS_SELECTOR, '[class="Py_answer clearfix"]')
@@ -49,29 +53,20 @@ class Spider(XueXiTong):
             py_answer = ""
             for s in py_answerItme:
                 py_answer += (s + " "*5)
-            # 题目类型
-            courseType = question.partition("】")[0][1:]
-            if courseType == "判断题":
-                # 获取我的答案是否正确
-                trueOrFalseKey = py_answer_itme.find_elements(By.TAG_NAME, "i")[-1].get_attribute("class")
-                if trueOrFalseKey == "fr dui":
-                    py_answer += "√"
-                elif trueOrFalseKey == "fr cuo" or trueOrFalseKey == "fr bandui":
-                    py_answer += "×"
 
-                self.__questionList.append(TrueOrFalse("判断题", question, py_answer))
-            else:
-                # 获取我的答案是否正确
-                trueOrFalseKey = py_answer_itme.find_element(By.TAG_NAME, "i").get_attribute("class")
-                if trueOrFalseKey == "fr dui":
-                    py_answer += "√"
-                elif trueOrFalseKey == "fr cuo" or trueOrFalseKey == "fr bandui":
-                    py_answer += "×"
+            # 获取我的答案是否正确
+            trueOrFalseKey = py_answer_itme.find_element(By.TAG_NAME, "i").get_attribute("class")
+            if trueOrFalseKey == "fr dui":
+                py_answer += "√"
+            elif trueOrFalseKey == "fr cuo" or trueOrFalseKey == "fr bandui":
+                py_answer += "×"
 
-                if courseType == "单选题":
-                    self.__questionList.append(MultipleChoice("单选题", question, optionsList, py_answer))
-                elif courseType == "多选题":
-                    self.__questionList.append(MultipleChoice("多选题", question, optionsList, py_answer))
+            if questionType == "判断题":
+                self.__questionList.append(TrueOrFalse("判断题", question, [py_answer]))
+            elif questionType == "单选题":
+                self.__questionList.append(MultipleChoice("单选题", question, [py_answer], optionsText))
+            elif questionType == "多选题":
+                self.__questionList.append(MultipleChoice("多选题", question, [py_answer], optionsText))
 
     def work(self):
         # 进入课程的第一个章节
