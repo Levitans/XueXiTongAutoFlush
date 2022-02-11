@@ -5,6 +5,7 @@
 # @Software : PyCharm
 
 import difflib
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
 from package.ControlWeb.task.answerQuestion.answerable import Answerable
@@ -33,7 +34,11 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
                 similarDiffRatio = difflib.SequenceMatcher(None, options[i], answer[j]).quick_ratio()
                 # print("{}和{}的匹配率为：{}".format(options[i], answer[j], similarDiffRatio))
                 if similarDiffRatio > 0.88:
-                    answerWebElementList.append(self.__optionsWebElements[i])
+                    inputTge = self.__optionsWebElements[i].find_element(By.TAG_NAME, "input")
+                    if not inputTge.is_selected():
+                        answerWebElementList.append(self.__optionsWebElements[i])
+                    else:
+                        print("选项已经被选中")
         return answerWebElementList
 
 
