@@ -17,9 +17,9 @@ from package.exception.atOrPdException import AtOrPdException
 from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
 
 class XueXiTong:
-    def __init__(self, chromePath, driverPath, user, browserKey):
+    def __init__(self, browserPath, driverPath, browserName, user, browserKey):
         """
-        :param chromePath:  Chrome浏览器的地址
+        :param browserPath:  Chrome浏览器的地址
         :param driverPath:  Chrome浏览器的driver地址
         :param user:        User对象
         :param browserKey:  标记是否显示浏览器
@@ -27,19 +27,29 @@ class XueXiTong:
         self.__user = user
         self.__driverPath = driverPath
 
-        option = webdriver.ChromeOptions()
-        option.binary_location = chromePath
-        option.add_experimental_option('excludeSwitches', ['enable-logging'])
-
-        # 不显示浏览器
-        if browserKey == 1:
-            option.add_argument('headless')  # 浏览器不提供可视化界面
-            option.add_argument('--mute-audion')  # 浏览器静音播放
-
         try:
-            self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
+            if browserName == 'chrome':
+                option = webdriver.ChromeOptions()
+                option.binary_location = browserPath
+                option.add_experimental_option('excludeSwitches', ['enable-logging'])
+                # 不显示浏览器
+                if browserKey == 1:
+                    option.add_argument('headless')  # 浏览器不提供可视化界面
+                    option.add_argument('--mute-audion')  # 浏览器静音播放
+
+                self.__driver = webdriver.Chrome(executable_path=self.__driverPath, options=option)
+            elif browserName == 'firefox':
+                option = webdriver.FirefoxOptions()
+                option.binary_location = browserPath
+                # 不显示浏览器
+                if browserKey == 1:
+                    option.add_argument('headless')  # 浏览器不提供可视化界面
+                    option.add_argument('--mute-audion')  # 浏览器静音播放
+                self.__driver = webdriver.Firefox(executable_path=self.__driverPath, options=option)
+            elif browserName == 'Edge':
+                pass
         except selenium.common.exceptions.WebDriverException:
-            raise BrowseOrDriverPathException(chromePath, driverPath)
+            raise BrowseOrDriverPathException(browserPath, driverPath)
 
         # 实例化章节对象
         self.chapter = Chapter()
@@ -59,7 +69,6 @@ class XueXiTong:
         self.__driver.get("http://i.chaoxing.com")
         account = self.__driver.find_element(By.ID, "phone")
         account.send_keys(self.__user.getUserAccount())
-        password = self.__driver.find_element(By.ID, "pwd")
         password = self.__driver.find_element(By.ID, "pwd")
         password.send_keys(self.__user.getUserPassword())
         self.__driver.find_element(By.ID, "loginBtn").click()

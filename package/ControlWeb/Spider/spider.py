@@ -16,8 +16,8 @@ from package.ControlWeb.task.answerQuestion.questionType import TrueOrFalse
 
 
 class Spider(XueXiTong):
-    def __init__(self, chromePath, driverPath, user, browserKey, saveFilePath):
-        super().__init__(chromePath, driverPath, user, browserKey)
+    def __init__(self, browserPath, driverPath, browserName, user, browserKey, saveFilePath):
+        super().__init__(browserPath, driverPath, browserName, user, browserKey)
         self.__driver = self.getDriver()
         self.__questionList = []
         self.DanXPath = "{}\\单选题.txt".format(saveFilePath)

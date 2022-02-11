@@ -57,11 +57,13 @@ spiderDataPath = "{}\\spiderData".format(nowPath)
 
 browserPath = ""
 driverPath = ""
+browserName = ""
 # 获取浏览器和浏览器驱动的地址
 try:
     browserConfiguration = BrowserConfiguration(browserConfigurationPath)
     browserPath = browserConfiguration.getBrowserPath()  # 浏览器位置
     driverPath = browserConfiguration.getDriverPath()  # 驱动位置
+    browserName = browserConfiguration.gerBrowserName()     # 浏览器名称
 except Exception as e:
     Display.printWarning(e.__str__())
     os.system('pause')
@@ -109,7 +111,7 @@ while True:
         user = userData.getUsers()[index]
         #
         try:
-            xueXiTong = XueXiTong(browserPath, driverPath, user, browserShow.getState())
+            xueXiTong = XueXiTong(browserPath, driverPath, browserName, user, browserShow.getState())
         except BrowseOrDriverPathException as e:    # 捕获浏览器地址配置错误
             Display.printWarning(e.__str__())
             sys.exit()
@@ -192,7 +194,7 @@ while True:
         progress = ProgressBar()
         progress.start()
 
-        spider = Spider(browserPath, driverPath, userdata, browserShow.getState(), spiderDataPath)
+        spider = Spider(browserPath, driverPath, browserName, userdata, browserShow.getState(), spiderDataPath)
         try:
             spider.logging()
         except package.exception.atOrPdException.AtOrPdException as e:

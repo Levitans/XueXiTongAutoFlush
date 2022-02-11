@@ -188,6 +188,12 @@ class BrowserConfiguration:
             raise Exception("未指定浏览器驱动")
         self.__browserPath = config["browser path"]
         self.__driverPath = config["driver path"]
+        if self.__browserPath.find('/') != -1:
+            self.__browserName = self.__browserPath.split('/')[-1].split('.')[0]
+        else:
+            self.__browserName = self.__browserPath.split('\\')[-1].split('.')[0]
 
     def getBrowserPath(self): return self.__browserPath
+    def gerBrowserName(self): return self.__browserName
     def getDriverPath(self): return self.__driverPath
+
