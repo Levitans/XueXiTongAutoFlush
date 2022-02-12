@@ -91,4 +91,3 @@ class Homework:
         self.__driver.find_element(By.CSS_SELECTOR, '[onclick="noSubmit();"]').click()
         time.sleep(1)
         self.__driver.switch_to.alert.accept()
-        print("完成答题")

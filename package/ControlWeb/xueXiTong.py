@@ -142,14 +142,13 @@ class XueXiTong:
             return
 
         Display.separate()
-        # chapterItemList[chapterItemIndex].webObj.click()
-        chapterItemList[20].webObj.click()
+        chapterItemList[chapterItemIndex].webObj.click()
+        time.sleep(1)
 
         # # 切换到第三个窗口
         # # 新版学习通进入章节后会切换窗口
         # head_les = self.__driver.window_handles
         # self.__driver.switch_to.window(head_les[2])
-        # time.sleep(1)
 
         # 收起目录栏
         self.__driver.find_element(By.CSS_SELECTOR, '[class="switchbtn"]').click()
@@ -207,28 +206,27 @@ class XueXiTong:
                     except selenium.common.exceptions.NoSuchElementException:
                         pass
 
-                    self.__driver.switch_to.frame(iframeList[i])
-                    try:
-                        print("尝试视频打开任务点")
-                        video = Video(self.__driver)
-                        video.finish()
-                    except Exception:
-                        print("当前任务点不是视频")
+                    # 判断是否为视频任务点
+                    if iframeList[i].get_attribute("class") == 'ans-attach-online ans-insertvideo-online':
+                        self.__driver.switch_to.frame(iframeList[i])
+                        print("当前任务点是视频")
+                        Video.finish(self.__driver)
+                        print("视频任务点完成")
+                    elif iframeList[i].get_attribute("class") == "ans-attach-online insertdoc-online-pdf":
+                        self.__driver.switch_to.frame(iframeList[i])
+                        print("当前任务点是ppt")
+                        PPT.finish(self.__driver)
+                        print("PPT任务点完成")
+                    else:
+                        self.__driver.switch_to.frame(iframeList[i])
                         try:
-                            print("尝试ppt打开任务点")
-                            powerPoint = PPT(self.__driver)
-                            powerPoint.finish()
-                        except Exception:
-                            print("当前任务点不是ppt")
-                            try:
-                                print("尝试答题打开任务点")
-                                homework = Homework(self.__driver)
-                                homework.getData()
-                                homework.finish()
-                                input("暂停")
-                                homework.submitOrSave()
-                            except Exception:
-                                print("当前任务点不是题目\n当前任务点无法解决，跳过当前任务点")
+                            homework = Homework(self.__driver)
+                            homework.getData()
+                            homework.finish()
+                            homework.submitOrSave()
+                            print("测验任务点完成")
+                        except selenium.common.exceptions.NoSuchElementException:
+                            print("当前任务点无法完成")
                     Display.separate()
                     self.__driver.switch_to.default_content()
                     self.__driver.switch_to.frame("iframe")
