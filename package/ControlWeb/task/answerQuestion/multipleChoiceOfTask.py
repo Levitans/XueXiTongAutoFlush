@@ -11,7 +11,7 @@ from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
 from package.ControlWeb.task.answerQuestion.answerable import Answerable
 
 class MultipleChoiceOfTask(MultipleChoice, Answerable):
-    def __init__(self, qType, question, answers, options, optionsWebElements):
+    def __init__(self, questionWebObj,  qType, question, answers, options, optionsWebElements):
         """
         :param qType: 题目类型（单选题，多选题）
         :param question: 题目问题
@@ -21,6 +21,7 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
         """
         super(MultipleChoiceOfTask, self).__init__(qType, question, answers, options)
         self.__optionsWebElements: list[WebElement] = optionsWebElements
+        self.qWebObj = questionWebObj       # 整个题目的web对象，用于定位到题目
 
     def getAnswerWebElement(self):
         """
@@ -32,10 +33,9 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
         for i in range(len(options)):
             for j in range(len(answer)):
                 similarDiffRatio = difflib.SequenceMatcher(None, options[i], answer[j]).quick_ratio()
-                # print("{}和{}的匹配率为：{}".format(options[i], answer[j], similarDiffRatio))
+                # print("[{}]和[{}]的匹配率为：{}".format(options[i], answer[j], similarDiffRatio))
                 if similarDiffRatio > 0.88:
-                    inputTge = self.__optionsWebElements[i].find_element(By.TAG_NAME, "input")
-                    if not inputTge.is_selected():
+                    if self.__optionsWebElements[i].find_element(By.TAG_NAME, "input").get_attribute("checked") is None:
                         answerWebElementList.append(self.__optionsWebElements[i])
                     else:
                         print("选项已经被选中")

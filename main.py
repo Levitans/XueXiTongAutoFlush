@@ -224,7 +224,6 @@ while True:
         chaptersList = spider.enterCourse(courseIndex)
         spider.work()
         print("题目爬取完成")
-
     else:
         break
 if not InternetTime.isExpiration():

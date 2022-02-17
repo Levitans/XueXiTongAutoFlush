@@ -38,7 +38,7 @@ class ProgressBar2(threading.Thread):
         dur = 0
         strFormat = "\r{:^3.0f}%|{}{}| {:.2f}s"
         while self.key:
-            number += 1/x*38
+            number += 1/x*43
             if (number / scale) * 100 >= 99:
                 c = 99
             else:

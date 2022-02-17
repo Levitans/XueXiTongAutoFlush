@@ -43,8 +43,8 @@ class XueXiTong:
                 option.binary_location = browserPath
                 # 不显示浏览器
                 if browserKey == 1:
-                    option.add_argument('headless')  # 浏览器不提供可视化界面
-                    option.add_argument('--mute-audion')  # 浏览器静音播放
+                    options.add_argument('--headless')
+                    options.add_argument('--disable-gpu')
                 self.__driver = webdriver.Firefox(executable_path=self.__driverPath, options=option)
             elif browserName == 'Edge':
                 pass
@@ -169,7 +169,7 @@ class XueXiTong:
                     .find_element(By.CSS_SELECTOR, '[class="prev_ul"]') \
                     .find_elements(By.TAG_NAME, 'li')
                 print("当前课程有{}个选项卡".format(len(prevTableList)))
-            except Exception:
+            except selenium.common.exceptions.NoSuchElementException:
                 print("当前章节没有选项卡")
 
             # 如果没有找到选项卡则执行一次

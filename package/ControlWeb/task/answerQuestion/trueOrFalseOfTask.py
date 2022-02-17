@@ -9,7 +9,7 @@ from package.ControlWeb.task.answerQuestion.questionType import TrueOrFalse
 from package.ControlWeb.task.answerQuestion.answerable import Answerable
 
 class TrueOrFalseOfTask(TrueOrFalse, Answerable):
-    def __init__(self, qType, question, answer, answerWebElementList):
+    def __init__(self, questionWebObj, qType, question, answer, answerWebElementList):
         """
         :param qType: 题目类型（单选题，多选题）
         :param question: 题目问题
@@ -18,6 +18,7 @@ class TrueOrFalseOfTask(TrueOrFalse, Answerable):
         """
         super(TrueOrFalseOfTask, self).__init__(qType, question, answer)
         self.__answerWebElementList: list[WebElement] = answerWebElementList
+        self.qWebObj = questionWebObj  # 整个题目的web对象，用于定位到题目
 
     def getAnswerWebElement(self):
         """

@@ -15,12 +15,12 @@
 4、程序能保存多个用户的登陆信息，每位用户单独储存课程进度。启动程序时，程序自动读取当前用户的刷课进度，可以做到随时刷课随时停止。
 
 ## 使用
-###该项目依赖：  
+### 该项目依赖：  
 >1、selenium（*version3.141.0*）  
 2、requests  
 3、colorama  
 
-###项目展示：
+### 项目展示：
 1、登陆界面
 ![demo1](https://github.com/Levitans/XueXiTongAutoFlush/blob/master/demoImage/demo1.png)
 2、选择课程
