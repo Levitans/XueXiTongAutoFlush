@@ -19,7 +19,7 @@ from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
 from colorama import Fore, Back, init
-from package.exception.atOrPdException import AtOrPdException
+from package.exception import AtOrPdException
 from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
 
 
@@ -50,9 +50,14 @@ def disableQuickEdit():
 
 # 地址初始化
 nowPath = os.getcwd()
-userDataPath = "{}\\data\\user_data.json".format(nowPath)
-browserShowPath = "{}\\data\\browser_show.json".format(nowPath)
-browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
+# userDataPath = "{}\\data\\user_data.json".format(nowPath)
+# browserShowPath = "{}\\data\\browser_show.json".format(nowPath)
+# browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
+
+userDataPath = "{}\\dataTest\\user_data.json".format(nowPath)
+browserShowPath = "{}\\dataTest\\browser_show.json".format(nowPath)
+browserConfigurationPath = "{}\\dataTest\\browser_configuration.json".format(nowPath)
+
 spiderDataPath = "{}\\spiderData".format(nowPath)
 
 browserPath = ""

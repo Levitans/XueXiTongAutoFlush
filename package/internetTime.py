@@ -5,26 +5,27 @@
 # @Software : PyCharm
 
 import requests
+from time import mktime, strftime, strptime
 import json
 from package.display import Display
 
 class InternetTime:
     # 过期时间
-    expirationDate = 20221010
+    __expirationDate = '2022-07-01 00:00:00'
 
     @staticmethod
     def isExpiration():
         isExpiration = False
-        nowTime = 9999999
         try:
-            url = "http://quan.suning.com/getSysTime.do"
+            url = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp"
             r = requests.get(url)
             nowTime = json.loads(r.text)
-            nowTime = nowTime["sysTime2"]
-            nowTime = nowTime.partition(" ")
-            nowTime = nowTime[0].replace("-", "")
+            nowTime = int(nowTime["data"]["t"])/1000
         except Exception:
             Display.printWarning("网络时间抓取失败")
             return isExpiration
-        isExpiration = True if int(nowTime) < InternetTime.expirationDate else False
+
+        expirationTimestamp = mktime(strptime(InternetTime.__expirationDate, '%Y-%m-%d %H:%M:%S'))
+
+        isExpiration = True if nowTime < expirationTimestamp else False
         return isExpiration

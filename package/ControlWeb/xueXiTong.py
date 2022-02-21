@@ -13,8 +13,7 @@ from package.ControlWeb.chapter import Chapter
 from package.ControlWeb.task.PPT import PPT
 from package.ControlWeb.task.video import Video
 from package.ControlWeb.task.answerQuestion.homework import Homework
-from package.exception.atOrPdException import AtOrPdException
-from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
+from package.exception import AtOrPdException, BrowseOrDriverPathException
 
 class XueXiTong:
     def __init__(self, browserPath, driverPath, browserName, user, browserKey):

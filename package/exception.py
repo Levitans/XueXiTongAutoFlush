@@ -1,8 +1,12 @@
 # -*- encoding = utf-8 -*-
-# @Time : 2022-02-07 20:09
+# @Time : 2022-02-18 13:22
 # @Author : Levitan
-# @File : browseOrDriverPathException.py
+# @File : exception.py
 # @Software : PyCharm
+
+class AtOrPdException(Exception):
+    def __str__(self):
+        return "账号或密码错误"
 
 class BrowseOrDriverPathException(Exception):
     def __init__(self, errorBrowserPath, errorDriverPath):
@@ -24,4 +28,9 @@ class BrowseOrDriverPathException(Exception):
         浏览器驱动地址：C:/Users/admin-dell/Desktop/driver/chrome/chromedriver.exe
             """.format(self.__errorBrowserPath, self.__errorDriverPath)
         return errorInfo
-        
+
+class NoFoundAnswerException(Exception):
+    """
+    在接口中没有找到答案抛出此异常。
+    """
+    pass

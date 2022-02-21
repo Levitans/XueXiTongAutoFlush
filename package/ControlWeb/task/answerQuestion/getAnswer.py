@@ -6,6 +6,7 @@
 
 import requests
 import json
+from package.exception import NoFoundAnswerException
 
 
 class GetAnswer:
@@ -27,6 +28,8 @@ class GetAnswer:
         dataText = r.text
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
+            return ""
+        if isinstance(dataJson['answer'], list):
             return ""
         answer = dataJson['answer'].encode().decode()
         return answer
@@ -67,29 +70,31 @@ class GetAnswer:
             print("正在通过接口1查题")
             answer = GetAnswer.__API1(question)
             if answer == "":
-                raise requests.exceptions.Timeout
-        except (requests.exceptions.Timeout, json.JSONDecodeError):
+                raise NoFoundAnswerException
+        except (
+                requests.exceptions.Timeout, json.JSONDecodeError, requests.exceptions.ConnectionError,
+                NoFoundAnswerException):
             print("接口1查询失败")
             print("正在通过接口2查题")
             try:
                 answer = GetAnswer.__API2(question)
                 if answer == "":
-                    raise requests.exceptions.Timeout
-            except (requests.exceptions.Timeout, json.JSONDecodeError):
+                    raise NoFoundAnswerException
+            except (requests.exceptions.Timeout, json.JSONDecodeError, NoFoundAnswerException):
                 print("接口2查询失败")
                 print("正在通过接口3查题")
                 try:
                     answer = GetAnswer.__API3(question)
                     if answer == "":
-                        raise requests.exceptions.Timeout
-                except (requests.exceptions.Timeout, json.JSONDecodeError):
+                        raise NoFoundAnswerException
+                except (requests.exceptions.Timeout, json.JSONDecodeError, NoFoundAnswerException):
                     print("接口3查询失败")
                     print("正在通过接口4查题")
                     try:
                         answer = GetAnswer.__API4(question)
                         if answer == "":
-                            raise requests.exceptions.Timeout
-                    except requests.exceptions.Timeout:
+                            raise NoFoundAnswerException
+                    except (requests.exceptions.Timeout, NoFoundAnswerException):
                         print("接口4查询失败")
                         print("本题无法找到答案")
         return answer
@@ -139,6 +144,7 @@ class GetAnswer:
                     return [data[i]]
             return None
 
+
 """
 坚持保护优先,自然恢复为主#着力推进绿色发展、循环发展、低碳发展#形成节约资源和保护环境的空间格局
 人与社会\u0001人与自然\u0001人与人
@@ -146,8 +152,8 @@ class GetAnswer:
 
 https://api.gochati.cn/jsapi.php?token=cxmooc&q=近平主席提出的“新时代”之“新”,是基于中国特色社会主义进入一个新的发展阶段
 http://api.muketool.com/notice?script=习近平主席提出的“新时代”之“新”,是基于中国特色社会主义进入一个新的发展阶段。&version=1.0.7
-https://api.julym.com/class/damn.php?question=近平主席提出的“新时代”之“新”,是基于中国特色社会主义进入一个新的发展阶段
+https://api.julym.com/class/damn.php?question=马克思主义的社会形态理论指出( )
 """
 
 if __name__ == "__main__":
-    print(GetAnswer.getAnswer('asdfasfdsafsdWho’s the author of Romeo and Juliet?'))
+    print(GetAnswer.getAnswer('空想社会主义的最杰出代表包括'))
