@@ -22,11 +22,11 @@
 
 ### 项目展示：
 1、登陆界面
-![demo1](https://github.com/Levitans/XueXiTongAutoFlush/blob/master/demoImage/demo1.png)
+![demo1](./demoImage/demo1.png)
 2、选择课程
-![demo2](https://github.com/Levitans/XueXiTongAutoFlush/blob/master/demoImage/demo2.png)
+![demo2](./demoImage/demo2.png)
 3、开始刷课
-![demo3](https://github.com/Levitans/XueXiTongAutoFlush/blob/master/demoImage/demo3.png)
+![demo3](./demoImage/demo3.png)
 
 ## 主要项目负责人
 **Levitans**

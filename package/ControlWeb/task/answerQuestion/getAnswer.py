@@ -12,12 +12,14 @@ from package.exception import NoFoundAnswerException
 class GetAnswer:
     @staticmethod
     def __API1(question):
-        api = r"https://api.gochati.cn/jsapi.php?token=cxmooc&q="
-        url = "{}{}".format(api, question)
-        r = requests.get(url, timeout=10)
+        api = r"https://cx.icodef.com/wyn-nb"
+        data = {'question': question}
+        r = requests.post(url=api, data=data, timeout=10)
         dataText = r.text
         dataJson = json.loads(dataText)
-        answer = dataJson["da"]
+        if dataJson['code'] == -1:
+            return ""
+        answer = dataJson['data']
         return answer
 
     @staticmethod
@@ -27,7 +29,7 @@ class GetAnswer:
         r = requests.get(url, timeout=10)
         dataText = r.text
         dataJson = json.loads(dataText)
-        if dataJson['code'] == 0:
+        if dataJson['code'] == "0" or dataJson['code'] == 0:
             return ""
         if isinstance(dataJson['answer'], list):
             return ""
@@ -36,14 +38,12 @@ class GetAnswer:
 
     @staticmethod
     def __API3(question):
-        api = r"https://cx.icodef.com/wyn-nb"
-        data = {'question': question}
-        r = requests.post(url=api, data=data, timeout=10)
+        api = r"https://api.gochati.cn/jsapi.php?token=cxmooc&q="
+        url = "{}{}".format(api, question)
+        r = requests.get(url, timeout=10)
         dataText = r.text
         dataJson = json.loads(dataText)
-        if dataJson['code'] == -1:
-            return ""
-        answer = dataJson['data']
+        answer = dataJson["da"]
         return answer
 
     @staticmethod
@@ -156,4 +156,4 @@ https://api.julym.com/class/damn.php?question=马克思主义的社会形态理�
 """
 
 if __name__ == "__main__":
-    print(GetAnswer.getAnswer('空想社会主义的最杰出代表包括'))
+    print(GetAnswer.getAnswer('Which of the following works is by Mark Twain?'))

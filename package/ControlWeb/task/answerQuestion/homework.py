@@ -32,13 +32,12 @@ class Homework:
         for i in range(len(questionList)):
             Display.separate(10)
             item = questionList[i]
-
-            title = item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.split("\n")[1]
+            title = item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.replace("\n", "")
             # 获取问题
             question = title[title.find("】")+1:]
 
             # 题目类型
-            questionType = title.partition("】")[0][1:]
+            questionType = title[title.find("【")+1: title.find("】")]
 
             # 获取问题答案
             answer = GetAnswer.getAnswer(question, questionType)

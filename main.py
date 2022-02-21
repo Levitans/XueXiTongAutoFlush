@@ -19,9 +19,7 @@ from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
 from colorama import Fore, Back, init
-from package.exception import AtOrPdException
-from package.exception.browseOrDriverPathException import BrowseOrDriverPathException
-
+from package.exception import AtOrPdException, BrowseOrDriverPathException
 
 init(autoreset=True)  # 设置颜色自动恢复
 
