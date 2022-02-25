@@ -156,4 +156,4 @@ https://api.julym.com/class/damn.php?question=马克思主义的社会形态理�
 """
 
 if __name__ == "__main__":
-    print(GetAnswer.getAnswer('Which of the following works is by Mark Twain?'))
+    print(GetAnswer.getAnswer('What does “thee” mean in “Shall I compare thee to a summer’s day”'))

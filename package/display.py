@@ -4,46 +4,58 @@ from colorama import Fore, Back, init
 
 init(autoreset=True)
 
+
+class Format:
+    def __init__(self, formatList, alignWay='L', displayNumber=False):
+        """
+        :param alignWay: 选择对齐方式
+                ‘l’     左对齐
+                'c'     居中对齐
+                'r'     右对齐
+        :param displayNumber: 是否开启显示序号
+        :param formatList:
+        """
+        self.__alignWay = alignWay
+        self.__displayNumber = displayNumber
+        self.__format = []
+        self.__setFormat(formatList)
+
+    def __setFormat(self, formatList):
+        """
+        :param formatList: 传入的格式控制参数，传入的参数个数表示每行显示的列数
+                            例如: setFormat(10, (15, True), (58, True))
+                                __format=[(10, False), (15, True), (58, True)]
+        :return: void
+        """
+        for i in formatList:
+            if isinstance(i, tuple):
+                self.__format.append(i)
+            elif isinstance(i, int):
+                self.__format.append((i, False))
+            else:
+                raise Exception("参数{}类型错误，应该为int或(int, boolean)".format(i))
+
+    def getAlignWay(self):
+        return self.__alignWay
+
+    def getDisplayNumber(self):
+        return self.__displayNumber
+
+    def getFormat(self):
+        return self.__format
+
+
 class Display:
     """
-    __format: 每个元素控制对应列的宽度，元组第1个参数类型为int表示占位个数，第2个参数类型为boolean表示是否开启略写显示
-
-          例如：__format = [(10, False), (15, True), (58, True)]表示有一行有每行有3列数据。
-               以format中第2个元素为例，其表示第二列数据占15个半角位，且开启省略显示
-               format的长度表示一行的列数
-
-          注意：使用Display.printTable()前必须先调用Display.setFormat()对format进行初始化
-
-    overLengthKey:  控制缩写开关
     overLengthOfEn: 英文文本长度阈值
     overSymbolOfEN: 英文文本超过后补充的符号
-    numberCounter: 用于输出序号时记录当前序号
     separateChar: 段落分隔符
     warnChar: 警告分隔符
     """
-    __format = []
     overLengthOfEn = 5
     overSymbolOfEn = "..."
-    numberCounter = 1
     separateChar = "="
     warnChar: str = "*"
-
-    @staticmethod
-    def setFormat(*formatList):
-        """
-        :param formatList: 传入的格式控制参数，传入的参数个数表示每行显示的列数
-                            e.g.: setFormat(10, (15, True), (58, True))
-                                __format=[(10, False), (15，True), (58, True)]
-        :return: void
-        """
-        Display.__format.clear()
-        for i in formatList:
-            if isinstance(i, tuple):
-                Display.__format.append(i)
-            elif isinstance(i, int):
-                Display.__format.append((i, False))
-            else:
-                raise Exception("参数{}类型错误，应该为int或(int, boolean)".format(i))
 
     @staticmethod
     def __strCount(strData: str, outKey: bool = False):
@@ -87,25 +99,18 @@ class Display:
         return newStr, countEn, countCn
 
     @staticmethod
-    def printTable(strDataList, mode="L", displayNumber=False, tableFormat: list = None):
+    def printTable(strDataList, dataFormat: Format):
         """
         :param strDataList: 需要输出为表格的全部数据
-        :param mode: 选择对齐方式
-                    ‘l’     左对齐
-                    'c'     居中对齐
-                    'r'     右对齐
-        :param displayNumber: 是否开启显示序号
-        :param tableFormat: 表格控制参数，若不穿此参数，使用Display.__format
+        :param dataFormat: Format对象，用于设置表格的格式
         :return: 无返回值
 
             函数根据Display.format对strDataList中的数据进行格式化输出
         """
-
-        if tableFormat:
-            print(1)
-            myFormat = tableFormat
-        else:
-            myFormat = Display.__format
+        mode = dataFormat.getAlignWay()
+        displayNumber = dataFormat.getDisplayNumber()
+        myFormat = dataFormat.getFormat()
+        numberCounter = 1
 
         if len(myFormat) == 0:
             raise Exception("myFormat未设置")
@@ -113,13 +118,12 @@ class Display:
         dataList = [strDataList[i: i + step] for i in range(0, len(strDataList), step)]
         for j in dataList:
             for i in range(len(j)):
-                countStr = str(Display.numberCounter) + "." if displayNumber else ""
+                countStr = str(numberCounter) + "." if displayNumber else ""
                 strData = Display.__strCount(countStr + j[i], myFormat[i][1])
-                if mode in 'lLrR':
-                    if mode in 'lL':
-                        print(strData[0] + (myFormat[i][0] - strData[1] - strData[2] * 2) * chr(32), end="")
-                    elif mode in 'rR':
-                        print((myFormat[i][0] - strData[1] - strData[2] * 2) * chr(32) + strData[0], end="")
+                if mode in 'lL':
+                    print(strData[0] + (myFormat[i][0] - strData[1] - strData[2] * 2) * chr(32), end="")
+                elif mode in 'rR':
+                    print((myFormat[i][0] - strData[1] - strData[2] * 2) * chr(32) + strData[0], end="")
                 elif mode in 'cC':
                     before = (myFormat[i][0] - strData[1] - strData[2] * 2) // 2
                     after = (myFormat[i][0] - strData[1] - strData[2] * 2) - before
@@ -127,7 +131,7 @@ class Display:
                 else:
                     raise ValueError("value '{}' is illegal".format(mode))
                 if displayNumber:
-                    Display.numberCounter += 1
+                    numberCounter += 1
             print()
 
     @staticmethod

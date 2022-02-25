@@ -4,7 +4,6 @@
 # @File : main.py
 # @Software : PyCharm
 
-
 import os
 import sys
 import json
@@ -12,7 +11,7 @@ import time
 import ctypes
 
 from package.user import User
-from package.display import Display
+from package.display import Display, Format
 from package.progressbar import ProgressBar, ProgressBar2
 from package.manageDate import UserData, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
@@ -65,13 +64,11 @@ try:
 except Exception as e:
     Display.printWarning(e.__str__())
     os.system('pause')
+    sys.exit()
 
 
 userData = UserData(userDataPath)
 browserShow = BrowserShow(browserShowPath)
-
-Display.setFormat(50, 50)
-Display.overLengthOfEn = 15
 
 # while True and InternetTime.isExpiration():
 while True:
@@ -135,7 +132,7 @@ while True:
         time.sleep(1)
 
         # 展示课程
-        Display.printTable(coursesList, displayNumber=True)
+        Display.printTable(coursesList, Format([50, 50], displayNumber=True))
         courseIndex = int(input("输入课程号：")) - 1
         Display.separate()
         # 进入指定课程
@@ -214,7 +211,7 @@ while True:
         time.sleep(1)
 
         # 展示课程
-        Display.printTable(coursesList, displayNumber=True)
+        Display.printTable(coursesList, Format([50, 50], displayNumber=True))
         courseIndex = int(input("输入课程号：")) - 1
         Display.separate()
         # 进入指定课程
@@ -227,3 +224,4 @@ while True:
 if not InternetTime.isExpiration():
     Display.printWarning("程序以过期")
 os.system('pause')
+sys.exit()
