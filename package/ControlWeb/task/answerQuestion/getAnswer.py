@@ -156,4 +156,4 @@ https://api.julym.com/class/damn.php?question=马克思主义的社会形态理�
 """
 
 if __name__ == "__main__":
-    print(GetAnswer.getAnswer('What does “thee” mean in “Shall I compare thee to a summer’s day”'))
+    print(GetAnswer.getAnswer('数据可视化分析流程：①数据过滤 ②数据获取与清洗 ③数据聚合 ④图形映射 ⑤交互分析*'))

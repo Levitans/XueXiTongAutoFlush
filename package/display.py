@@ -85,7 +85,7 @@ class Display:
                 countEn += 1
                 newStr += s
             # 中文
-            elif s.isalpha() or s in "：":
+            elif s.isalpha() or s in "：（）":
                 countCn += 1
                 newStr += s
             # 特殊字符

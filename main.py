@@ -77,12 +77,13 @@ while True:
         print()
     browserInf = "关闭显示" if browserShow.getState() == 1 else "开启显示"
     print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
-    function = "1、创建新用户，" \
-               "2、使用已有用户（当前已有{}个用户），" \
-               "3、修改用户信息，" \
-               "4、设置浏览器显示，" \
-               "5、退出程序\n输入序号：".format(userData.getUserAmount())
-    mode = input(function)
+    function = ["创建新用户",
+                "使用已有用户（当前已有{}个用户）".format(userData.getUserAmount()),
+                "修改用户信息",
+                "设置浏览器显示",
+                "退出程序"]
+    Display.printTable(function, Format([30, 20], displayNumber=True))
+    mode = input("\n输入序号：")
     Display.separate()
 
     while not (mode in ("1", "2", "3", "4", "5", "6")):
