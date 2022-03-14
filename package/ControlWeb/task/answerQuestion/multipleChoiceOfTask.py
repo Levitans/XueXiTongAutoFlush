@@ -11,15 +11,15 @@ from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
 from package.ControlWeb.task.answerQuestion.answerable import Answerable
 
 class MultipleChoiceOfTask(MultipleChoice, Answerable):
-    def __init__(self, questionWebObj,  qType, question, answers, options, optionsWebElements):
+    def __init__(self, questionWebObj, qType, question, answersList, options, optionsWebElements):
         """
         :param qType: 题目类型（单选题，多选题）
         :param question: 题目问题
-        :param answers: 查找到的题目答案，list类型
+        :param answersList: 查找到的题目答案，list类型
         :param options: 题目选项文字，list类型
         :param optionsWebElements: 题目选项的WebElement对象， 列表类型
         """
-        super(MultipleChoiceOfTask, self).__init__(qType, question, answers, options)
+        super(MultipleChoiceOfTask, self).__init__(qType, question, answersList, options)
         self.__optionsWebElements: list[WebElement] = optionsWebElements
         self.qWebObj = questionWebObj       # 整个题目的web对象，用于定位到题目
 
@@ -28,17 +28,19 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
         :return: 将查找到的答案与题目选项相比较，返回一个包含正确选项WebElement对象的列表
         """
         answerWebElementList = []
-        answer = self.getAnswer()
+        answerList = self.getAnswer()
         options = self.getOptions()
-        for i in range(len(options)):
-            for j in range(len(answer)):
-                similarDiffRatio = difflib.SequenceMatcher(None, options[i], answer[j]).quick_ratio()
-                # print("[{}]和[{}]的匹配率为：{}".format(options[i], answer[j], similarDiffRatio))
-                if similarDiffRatio > 0.88:
-                    if self.__optionsWebElements[i].find_element(By.TAG_NAME, "input").get_attribute("checked") is None:
-                        answerWebElementList.append(self.__optionsWebElements[i])
-                    else:
-                        print("选项已经被选中")
+        for answerIndex in range(len(answerList)):
+            for i in range(len(options)):
+                for j in range(len(answerList[answerIndex])):
+                    if self.__optionsWebElements[i] in answerWebElementList:
+                        continue
+                    similarDiffRatio = difflib.SequenceMatcher(None, options[i], answerList[answerIndex][j]).quick_ratio()
+                    if similarDiffRatio > 0.88:
+                        if self.__optionsWebElements[i].find_element(By.TAG_NAME, "input").get_attribute("checked") is None:
+                            answerWebElementList.append(self.__optionsWebElements[i])
+                        else:
+                            print("选项已经被选中")
         return answerWebElementList
 
 

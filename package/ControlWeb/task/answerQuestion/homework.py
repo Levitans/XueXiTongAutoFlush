@@ -29,6 +29,7 @@ class Homework:
         questionList = self.__driver.find_elements(By.CSS_SELECTOR, '[class="TiMu"]')
         print("当前页面共有{}题".format(len(questionList)))
 
+        myGetAnswer = GetAnswer()
         for i in range(len(questionList)):
             Display.separate(10)
             item = questionList[i]
@@ -40,9 +41,9 @@ class Homework:
             questionType = title[title.find("【")+1: title.find("】")]
 
             # 获取问题答案
-            answer = GetAnswer.getAnswer(question, questionType)
+            answerList = myGetAnswer.getAnswer(question, questionType)
             # 判断是否找到答案
-            if answer is None:
+            if answerList is None:
                 continue
             if questionType in ("单选题", "多选题"):
                 # 获取题目选项的WebElement对象
@@ -53,12 +54,13 @@ class Homework:
                 for option in optionWebElementList:
                     optionTextList.append(option.find_element(By.CSS_SELECTOR, '[class="fl after"]').text.replace("\n", ""))
                 self.__questionList.append(
-                    MultipleChoiceOfTask(item, questionType, question, answer, optionTextList, optionWebElementList))
+                    MultipleChoiceOfTask(item, questionType, question, answerList, optionTextList, optionWebElementList))
             elif questionType == "判断题":
                 answerWebElementList = item.find_elements(By.TAG_NAME, "label")
-                self.__questionList.append(TrueOrFalseOfTask(item, questionType, question, answer, answerWebElementList))
+                self.__questionList.append(TrueOrFalseOfTask(item, questionType, question, answerList[0], answerWebElementList))
             else:
                 raise Exception("当前题目类型为：{}，不在（单选题、多选题、判断题）中，程序无法解决".format(questionType))
+        myGetAnswer.close()
 
     def finish(self):
         for i in range(len(self.__questionList)):

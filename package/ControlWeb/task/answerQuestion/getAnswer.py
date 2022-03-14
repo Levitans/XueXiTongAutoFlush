@@ -7,18 +7,25 @@
 import requests
 import json
 from package.exception import NoFoundAnswerException
-
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures._base import TimeoutError
 
 class GetAnswer:
+    def __init__(self):
+        self.__pool = ThreadPoolExecutor(max_workers=4)
+
     @staticmethod
     def __API1(question):
         api = r"https://cx.icodef.com/wyn-nb"
         data = {'question': question}
-        r = requests.post(url=api, data=data, timeout=10)
+        try:
+            r = requests.post(url=api, data=data, timeout=10)
+        except requests.exceptions.Timeout:
+            return ""
         dataText = r.text
         dataJson = json.loads(dataText)
         if dataJson['code'] == -1:
-            return ""
+            raise NoFoundAnswerException
         answer = dataJson['data']
         return answer
 
@@ -26,11 +33,14 @@ class GetAnswer:
     def __API2(question):
         api = r"https://api.julym.com/class/damn.php?question="
         url = "{}{}".format(api, question)
-        r = requests.get(url, timeout=10)
+        try:
+            r = requests.get(url, timeout=10)
+        except requests.exceptions.Timeout:
+            return ""
         dataText = r.text
         dataJson = json.loads(dataText)
         if dataJson['code'] == "0" or dataJson['code'] == 0:
-            return ""
+            raise NoFoundAnswerException
         if isinstance(dataJson['answer'], list):
             return ""
         answer = dataJson['answer'].encode().decode()
@@ -40,9 +50,17 @@ class GetAnswer:
     def __API3(question):
         api = r"https://api.gochati.cn/jsapi.php?token=cxmooc&q="
         url = "{}{}".format(api, question)
-        r = requests.get(url, timeout=10)
+        try:
+            r = requests.get(url, timeout=10)
+        except requests.exceptions.Timeout:
+            raise NoFoundAnswerException
         dataText = r.text
-        dataJson = json.loads(dataText)
+        try:
+            dataJson = json.loads(dataText)
+        except json.decoder.JSONDecodeError:
+            raise NoFoundAnswerException
+        if dataJson["code"] == 0:
+            return ""
         answer = dataJson["da"]
         return answer
 
@@ -51,109 +69,138 @@ class GetAnswer:
         api = "http://api.902000.xyz:88/wkapi.php"
         # 公众号：如月的梦想
         data = {'q': question}
-        r = requests.post(url=api, data=data, timeout=10)
+        try:
+            r = requests.post(url=api, data=data, timeout=10)
+        except requests.exceptions.Timeout:
+            return ""
         dataText = r.text
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
-            return ""
+            raise NoFoundAnswerException
         answer = dataJson['answer']
         return answer
 
-    @staticmethod
-    def __requestAnswer(question):
+    def __requestAnswer(self, question, questionType):
         """
         :param question: 需要查询的问题
         :return: 若找到答案则返答案的string，若没找到答案则返回空string
         """
-        answer = ""
+        answerList = []
+
+        future1 = self.__pool.submit(GetAnswer.__API1, question)
+        future2 = self.__pool.submit(GetAnswer.__API2, question)
+        future3 = self.__pool.submit(GetAnswer.__API3, question)
+        future4 = self.__pool.submit(GetAnswer.__API4, question)
+
         try:
-            print("正在通过接口1查题")
-            answer = GetAnswer.__API1(question)
-            if answer == "":
-                raise NoFoundAnswerException
-        except (
-                requests.exceptions.Timeout, json.JSONDecodeError, requests.exceptions.ConnectionError,
-                NoFoundAnswerException):
-            print("接口1查询失败")
-            print("正在通过接口2查题")
-            try:
-                answer = GetAnswer.__API2(question)
-                if answer == "":
-                    raise NoFoundAnswerException
-            except (requests.exceptions.Timeout, json.JSONDecodeError, NoFoundAnswerException):
-                print("接口2查询失败")
-                print("正在通过接口3查题")
-                try:
-                    answer = GetAnswer.__API3(question)
-                    if answer == "":
-                        raise NoFoundAnswerException
-                except (requests.exceptions.Timeout, json.JSONDecodeError, NoFoundAnswerException):
-                    print("接口3查询失败")
-                    print("正在通过接口4查题")
-                    try:
-                        answer = GetAnswer.__API4(question)
-                        if answer == "":
-                            raise NoFoundAnswerException
-                    except (requests.exceptions.Timeout, NoFoundAnswerException):
-                        print("接口4查询失败")
-                        print("本题无法找到答案")
-        return answer
+            answer1 = future1.result(timeout=20)
+            answerList.append(GetAnswer.__parseAnswer(answer1, questionType))
+        except TimeoutError:
+            print("线程1响应超时")
+        except NoFoundAnswerException:
+            print("线程1未找到答案")
+        try:
+            answer2 = future2.result(timeout=20)
+            answerList.append(GetAnswer.__parseAnswer(answer2, questionType))
+        except TimeoutError:
+            print("线程2响应超时")
+        except NoFoundAnswerException:
+            print("线程2未找到答案")
+        try:
+            answer3 = future3.result(timeout=20)
+            answerList.append(GetAnswer.__parseAnswer(answer3, questionType))
+        except TimeoutError:
+            print("线程3响应超时")
+        except NoFoundAnswerException:
+            print("线程3未找到答案")
+        try:
+            answer4 = future4.result(timeout=20)
+            answerList.append(GetAnswer.__parseAnswer(answer4, questionType))
+        except TimeoutError:
+            print("线程4响应超时")
+        except NoFoundAnswerException:
+            print("线程4未找到答案")
+        return answerList
 
     @staticmethod
-    def __parseAnswer(answer):
-        separator = ("#", "\u0001")
+    def __parseAnswer(answer, questionType):
+        if answer == "":
+            return None
+        separator = ("#", "\u0001", "\x01", "&nbsp;")
         for i in separator:
             if i in answer:
-                return answer.split(i)
-        return [answer]
+                answer = answer.split(i)
+                break
 
-    @staticmethod
-    def getAnswer(problem, questionType=""):
-        """
-        :param problem: 待搜索的题目
-        :param questionType: 题目的类型，若不提供题目类型则不检测查找答案正确性
-        :return: 若查找到的答案符合题目类型则将答案以列表的方式返回，否者返回None
-        """
-        print("正在搜索题目：{}".format(problem))
-        data = GetAnswer.__requestAnswer(problem)
-        answer = GetAnswer.__parseAnswer(data)
-        # 没找到答案返回None
-        if answer[0] == "":
-            return None
-        print("搜索成功答案为：{}".format(answer))
         # 验证获取的答案和题目类型是否相同
         if questionType == "":
             return answer
 
         elif questionType == "单选题":
-            if len(answer) > 1:
+            if isinstance(answer, list):
                 return None
-            return answer
+            return [answer]
 
         elif questionType == "多选题":
-            if len(answer) == 1:
+            if not isinstance(answer, list):
                 return None
             return answer
         elif questionType == "判断题":
-            if len(answer) > 1:
+            if isinstance(answer, list):
                 return None
             data = {'√': True, '正确': True, 'T': True, 'ri': True, '是': True, '对': True,
                     '×': False, '错误': False, '错': False, 'F': False, 'wr': False, '否': False}
             for i in data.keys():
-                if answer[0] == i:
+                if answer == i:
                     return [data[i]]
             return None
 
+    def getAnswer(self, question, questionType=""):
+        """
+        :param question: 待搜索的题目
+        :param questionType: 题目的类型，若不提供题目类型则不检测查找答案正确性
+        :return: 形如[[答案1], [答案2], [答案3]]的二维列表，其中列表的元素个数在[0, 4]范围内
+        """
+        print("正在搜索题目：{}".format(question))
+        answerList = self.__requestAnswer(question, questionType)
+        while None in answerList:
+            answerList.remove(None)
+        for i in range(len(answerList)):
+            print("答案{}：{}".format(i+1, answerList[i]))
+        return answerList
 
-"""
-坚持保护优先,自然恢复为主#着力推进绿色发展、循环发展、低碳发展#形成节约资源和保护环境的空间格局
-人与社会\u0001人与自然\u0001人与人
-使生态文明建设的战略地位更加明确#使中国特色社会主义事业总体布局更加完善#深化了对党执政规律、社会主义建设规律、人类社会发展规律的认识#有利于夺取中国特色社会主义新胜利
+    def getSingleAnswer(self, question, questionType=""):
+        answerList = self.getAnswer(question, questionType)
+        similarityMatrix = [[0 for j in range(len(answerList))] for i in range(len(answerList))]
+        maxSimilarDiffRatio = 0
+        for item1 in range(len(answerList)):
+            for item2 in range(item1, len(answerList)):
+                if item1 == item2:
+                    continue
+                similarQuestionNumber = 0
+                for q1 in answerList[item1]:
+                    for q2 in answerList[item2]:
+                        similarDiffRatio = difflib.SequenceMatcher(None, q1, q2).quick_ratio()
+                        if similarDiffRatio > 0.9:
+                            similarQuestionNumber += 1
+                similarityMatrix[item1][item2] = similarQuestionNumber
+        print(similarityMatrix)
 
-https://api.gochati.cn/jsapi.php?token=cxmooc&q=近平主席提出的“新时代”之“新”,是基于中国特色社会主义进入一个新的发展阶段
-http://api.muketool.com/notice?script=习近平主席提出的“新时代”之“新”,是基于中国特色社会主义进入一个新的发展阶段。&version=1.0.7
-https://api.julym.com/class/damn.php?question=马克思主义的社会形态理论指出( )
-"""
+    def close(self):
+        self.__pool.shutdown()
+
 
 if __name__ == "__main__":
-    print(GetAnswer.getAnswer('数据可视化分析流程：①数据过滤 ②数据获取与清洗 ③数据聚合 ④图形映射 ⑤交互分析*'))
+    getAnswer = GetAnswer()
+    q = "群众和英雄共同创造历史"
+    answerList = getAnswer.getAnswer(q, "判断题")
+    print(answerList)
+
+
+
+
+"""
+['物质是第一性的,意识是第二性的', '主观能动性的发挥,必须尊重客观规律']
+['物质是第一性的,意识是第二性的', '主观能动性的发挥,必须尊重客观规律']
+['物质是第一性的，意识是第二性的', '主观能动性的发挥，必须尊重客观规律']
+"""

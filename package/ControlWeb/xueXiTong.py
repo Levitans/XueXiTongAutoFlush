@@ -113,11 +113,17 @@ class XueXiTong:
                 .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
                 .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
                 .find_element(By.CSS_SELECTOR, '[dataname="zj-stu"]').click()
-        except Exception:
-            self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]') \
-                .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
-                .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
-                .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
+        except selenium.common.exceptions.NoSuchElementException:
+            try:
+                self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]') \
+                    .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
+                    .find_element(By.CSS_SELECTOR, '[class="nav-content "]') \
+                    .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
+            except selenium.common.exceptions.NoSuchElementException:
+                self.__driver.find_element(By.CSS_SELECTOR, '[class="nav_side"]') \
+                    .find_element(By.CSS_SELECTOR, '[class="sideCon"]') \
+                    .find_element(By.CSS_SELECTOR, '[class="nav-content   stuNavigationList"]') \
+                    .find_element(By.CSS_SELECTOR, '[dataname="zj"]').click()
         # 获取章节
         self.chapter.getChapterItem(self.__driver)
 
