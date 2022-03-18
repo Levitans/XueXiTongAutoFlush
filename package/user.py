@@ -10,17 +10,17 @@ class User:
         self.__account: str = account
         self.__password: str = password
 
-    def getUserName(self):
+    def getName(self):
         return self.__name
 
-    def getUserAccount(self):
+    def getAccount(self):
         return self.__account
 
-    def getUserPassword(self):
+    def getPassword(self):
         return self.__password
 
-    def setUserAccount(self, accountData):
+    def setAccount(self, accountData):
         self.__account = accountData
 
-    def setUserPassword(self, passwordData):
+    def setPassword(self, passwordData):
         self.__password = passwordData

@@ -13,7 +13,7 @@ import ctypes
 from package.user import User
 from package.display import Display, Format
 from package.progressbar import ProgressBar, ProgressBar2
-from package.manageDate import UserData, BrowserShow, BrowserConfiguration
+from package.dataManger import UserDataManger, BrowserShow, BrowserConfiguration
 from package.internetTime import InternetTime
 from package.ControlWeb.xueXiTong import XueXiTong
 from package.ControlWeb.Spider.spider import Spider
@@ -67,7 +67,7 @@ except Exception as e:
     sys.exit()
 
 
-userData = UserData(userDataPath)
+userData = UserDataManger(userDataPath)
 browserShow = BrowserShow(browserShowPath)
 
 # while True and InternetTime.isExpiration():
@@ -82,7 +82,7 @@ while True:
                 "修改用户信息",
                 "设置浏览器显示",
                 "退出程序"]
-    Display.printTable(function, Format([30, 20], displayNumber=True))
+    Display.printTable(function, Format([20, 20], displayNumber=True))
     mode = input("\n输入序号：")
     Display.separate()
 
@@ -96,54 +96,60 @@ while True:
         account = input("输入手机号：")
         password = input("输入密码：")
         userData.addNewUser(userName, account, password)
-        userData = UserData(userDataPath)
+        userData = UserDataManger(userDataPath)
         print("用户添加成功\n")
         Display.separate()
     elif mode == "2":  # 使用已有用户登陆
         # 选择登录用户
-        userData.displayUserName()
+        usersList = userData.getUsers()
+        Display.printTable([i.getName() for i in usersList], Format([20], displayNumber=True))
+        print()
         index = int(input("选择用户：")) - 1
         Display.separate()
-        user = userData.getUsers()[index]
-        #
+        user = usersList[index]
+
         try:
             xueXiTong = XueXiTong(browserPath, driverPath, browserName, user, browserShow.getState())
         except BrowseOrDriverPathException as e:    # 捕获浏览器地址配置错误
             Display.printWarning(e.__str__())
             sys.exit()
-        # 显示进度条
+
+        # 登陆学习通
         progress = ProgressBar()
         progress.start()
         try:
             xueXiTong.logging()
         except AtOrPdException as e:    # 捕获账号密码错误
-            progress.key = False  # 关闭进度条
             progress.join()  # 等待进度条关闭
             print("loging failure")
             Display.separate()
             Display.printWarning(e.__str__())
             xueXiTong.closeDriver()
             sys.exit()
-        # 获取课程列表
-        coursesList = xueXiTong.getCourses()
-        progress.key = False  # 关闭进度条
-        progress.join()  # 等待进度条关闭
+        finally:
+            progress.key = False  # 关闭进度条
+            progress.join()  # 等待进度条关闭
         print("Login success")
         Display.separate()
         time.sleep(1)
 
-        # 展示课程
-        Display.printTable(coursesList, Format([50, 50], displayNumber=True))
+        # 获取页面所有课程并展示
+        coursesList = xueXiTong.getCourses()
+        coursesNameList = [i.name for i in coursesList]
+        Display.printTable(coursesNameList, Format([50, 50], displayNumber=True))
+
+        # 选择课程
         courseIndex = int(input("输入课程号：")) - 1
         Display.separate()
+
         # 进入指定课程
-        # 返回课程中的章节的列表
         print("正在进入课程")
-        progress = ProgressBar2()
-        progress.start()
-        chaptersList = xueXiTong.enterCourse(courseIndex)
-        progress.key = False
-        progress.join()  # 等待进度条关闭
+        try:
+            chaptersList = xueXiTong.enterCourse(coursesList[courseIndex])
+        except Exception as e:
+            Display.printWarning(e.__str__())
+            xuexitong.closeDriver()
+            sys.exit()
         print("进入课程成功")
         Display.separate()
         time.sleep(0.5)
@@ -154,17 +160,17 @@ while True:
         userIndex = int(input("选择需要修改的用户：")) - 1
         Display.separate()
         user = userData.getUsers()[userIndex]
-        print("{}的数据：".format(user.getUserName()))
-        print("\t账号：" + str(user.getUserAccount()))
-        print("\t密码：" + str(user.getUserPassword()) + "\n")
+        print("{}的数据：".format(user.getName()))
+        print("\t账号：" + str(user.getAccount()))
+        print("\t密码：" + str(user.getPassword()) + "\n")
         print("1、修改账号\n2、修改密码")
         key = input("选择修改信息：")
         if key == "1":
             newAccount = input("输入新数据：")
-            userData.modifyUserData(user.getUserName(), newAccount, "account")
+            userData.modifyUserData(user.getName(), newAccount, "account")
         elif key == "2":
             newPassword = input("输入新数据：")
-            userData.modifyUserData(user.getUserName(), newPassword)
+            userData.modifyUserData(user.getName(), newPassword)
         else:
             Display.printWarning("输入信息有误")
         Display.separate()

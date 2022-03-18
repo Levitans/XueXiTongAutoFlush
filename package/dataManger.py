@@ -1,7 +1,7 @@
 # -*- encoding = utf-8 -*-
 # @Time : 2021-09-14 0:25
 # @Author : Levitan
-# @File : manageDate.py
+# @File : dataManger.py
 # @Software : PyCharm
 
 import json
@@ -10,7 +10,7 @@ from datetime import datetime
 from package.user import User
 
 # 管理用户数据
-class UserData:
+class UserDataManger:
     def __init__(self, path):
         """
         :param path: 数据地址
@@ -38,7 +38,7 @@ class UserData:
             self.__users.append(newUser)
 
     # 获取用户信息
-    def getUsers(self):
+    def getUsers(self) -> list[User]:
         return self.__users
 
     # 获取用户数据量
@@ -54,11 +54,11 @@ class UserData:
         :return: void
         """
         for i in self.__users:
-            if i.getUserName() == name and mode == "password":
-                i.setUserPassword(newData)
+            if i.getName() == name and mode == "password":
+                i.setPassword(newData)
                 break
-            if i.getUserName() == name and mode == "account":
-                i.setUserAccount(newData)
+            if i.getName() == name and mode == "account":
+                i.setAccount(newData)
                 break
         self.__saveUsersData()
         print("修改成功")
@@ -71,7 +71,7 @@ class UserData:
         :param password: 用户密码
         :return: void
         """
-        nameList = [i.getUserName() for i in self.__users]
+        nameList = [i.getName() for i in self.__users]
         if name in nameList:
             raise KeyError("用户名被占用")
         newUser = User(name, account, password)
@@ -83,20 +83,16 @@ class UserData:
         userData = {}
         # 将User类解析成dict类
         for i in self.__users:
-            userData[i.getUserName()] = {"account": i.getUserAccount(), "password": i.getUserPassword()}
+            userData[i.getName()] = {"account": i.getAccount(), "password": i.getPassword()}
         f = open(self.__userDataPath, "w", encoding="utf-8")
         usersDataString = json.dumps(userData, ensure_ascii=False)
         f.write(usersDataString)
         f.close()
 
-    def displayUserName(self):
-        for j, i in enumerate(self.__users):
-            print(str(j+1)+"、"+i.getUserName())
-
 
 # 管理学科数据
 # 当前版本自动判断章节是否完成，不需要本地储存进度
-class SubjectData:
+class SubjectDataManger:
     def __init__(self, filePath):
         """
         :param filePath: 文件读取路径
