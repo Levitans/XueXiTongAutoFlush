@@ -20,7 +20,11 @@ class ChapterItem:
 
 class Learnable(metaclass=ABCMeta):
     @abstractmethod
-    def isNew(self) -> bool:    # 判断是否为新版本页面
+    def isNew(self) -> bool:    # 判断进入课程后的页面是否为新版本页面
+        pass
+
+    @abstractmethod
+    def changeToNewPage(self):    # 将旧页面切换为新页面
         pass
 
     @abstractmethod

@@ -35,9 +35,10 @@ class PPT:
         imgList = driver.find_elements(By.TAG_NAME, 'img')
         print("共有{}张PPT".format(len(imgList)))
         for i in range(len(imgList)):
-            print("观看第{}张PPT".format(i+1))
+            print('\r'+"观看第{}张PPT".format(i+1), end="")
             driver.execute_script("window.scrollBy(0,2000)")
             time.sleep(1)
+        print()
 
     @staticmethod
     def finish(driver):

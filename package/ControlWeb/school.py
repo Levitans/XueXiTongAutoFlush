@@ -14,8 +14,22 @@ class Fuist(Learnable):
     def __init__(self, webDriver):
         self.__driver = webDriver
 
+    # 进入课程后判断页面是否为新版本
     def isNew(self) -> bool:
-        pass
+        try:
+            title = self.__driver.find_element(By.XPATH, "/html/head/title")
+            if title == "学习进度页面":
+                return False
+            else:
+                return True
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+
+    # 将页面改为新版本
+    def changeToNewPage(self):
+        self.__driver.find_element(By.CSS_SELECTOR, '[class="c-header"]')\
+                     .find_element(By.CSS_SELECTOR, '[class="navshow"]')\
+                     .find_element(By.CSS_SELECTOR, '[class="experience"]').click()
 
     def getCourses(self) -> list[Course]:
         self.__driver.find_element(By.CSS_SELECTOR, '[name="课程"]').click()

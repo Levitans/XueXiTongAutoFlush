@@ -90,6 +90,13 @@ class XueXiTong:
         self.__school.enterCourse(course)
 
     def work(self):
+        # 判断是否为旧页面，如果是则切换为新页面
+        if not self.__school.isNew():
+            print("当前页面为旧版\n正在切换为新版")
+            self.__school.changeToNewPage()
+        else:
+            print("当前页面为新版")
+
         # 获取页面章节
         self.__school.clickChapter()
         time.sleep(1)
@@ -186,7 +193,8 @@ class XueXiTong:
                         print("当前任务点是视频")
                         Video.finish(self.__driver)
                         print("视频任务点完成")
-                    elif iframeList[i].get_attribute("class") == "ans-attach-online insertdoc-online-pdf":
+                    elif iframeList[i].get_attribute("class") in \
+                            ("ans-attach-online insertdoc-online-pdf", "ans-attach-online insertdoc-online-ppt"):
                         self.__driver.switch_to.frame(iframeList[i])
                         print("当前任务点是ppt")
                         PPT.finish(self.__driver)
