@@ -9,6 +9,7 @@ import sys
 import json
 import time
 import ctypes
+import configparser
 
 from package.user import User
 from package.display import Display, Format
@@ -45,37 +46,51 @@ def disableQuickEdit():
     kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
 
 
-# 地址初始化
-nowPath = os.getcwd()
-userDataPath = "{}\\data\\user_data.json".format(nowPath)
-browserShowPath = "{}\\data\\browser_show.json".format(nowPath)
-browserConfigurationPath = "{}\\data\\browser_configuration.json".format(nowPath)
-spiderDataPath = "{}\\spiderData".format(nowPath)
-
 browserPath = ""
 driverPath = ""
 browserName = ""
-# 获取浏览器和浏览器驱动的地址
-try:
-    browserConfiguration = BrowserConfiguration(browserConfigurationPath)
-    browserPath = browserConfiguration.getBrowserPath()  # 浏览器位置
-    driverPath = browserConfiguration.getDriverPath()  # 驱动位置
-    browserName = browserConfiguration.gerBrowserName()     # 浏览器名称
-except Exception as e:
-    Display.printWarning(e.__str__())
-    os.system('pause')
-    sys.exit()
+userDataPath = ""
+spiderDataPath = ""
+browserShow: BrowserShow = None
+userData: UserDataManger = None
+
+# 运行前准备
+def initialization():
+    global browserPath, driverPath, browserName, userDataPath, spiderDataPath, browserShow, userData
+    # 地址初始化
+    nowPath = os.getcwd()
+    confPath = nowPath + "\\" + "config.ini"
+    conf = configparser.ConfigParser()
+    conf.read(confPath, encoding="utf-8")
+
+    # 读取浏览器地址
+    try:
+        browserConfiguration = BrowserConfiguration(conf)
+        browserPath = browserConfiguration.getBrowserPath()  # 浏览器位置
+        driverPath = browserConfiguration.getDriverPath()  # 驱动位置
+        browserName = browserConfiguration.gerBrowserName()  # 浏览器名称
+    except Exception as e:
+        Display.printWarning(e.__str__())
+        os.system('pause')
+        sys.exit()
+
+    # 读取用户数数据地址
+    userDataPath = "{}".format(nowPath) + conf.get("data_path", "user_data_path")
+    spiderDataPath = "{}".format(nowPath) + conf.get("data_path", "spider_data_path")
+
+    # 初始化浏浏览器显示和用户数据管理
+    browserShow = BrowserShow(conf, confPath)
+    userData = UserDataManger(userDataPath)
 
 
-userData = UserDataManger(userDataPath)
-browserShow = BrowserShow(browserShowPath)
+while True and InternetTime.isExpiration():
+# while True:
+    initialization()
 
-# while True and InternetTime.isExpiration():
-while True:
-    if browserShow.getState() == 1:
+    if browserShow.getState() == "1":
         Display.printWarning("若程序运行出错可尝试切换浏览器模式")
         print()
-    browserInf = "关闭显示" if browserShow.getState() == 1 else "开启显示"
+    browserInf = "关闭显示" if browserShow.getState() == "1" else "开启显示"
     print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
     function = ["创建新用户",
                 "使用已有用户（当前已有{}个用户）".format(userData.getUserAmount()),
@@ -177,10 +192,10 @@ while True:
     elif mode == "4":  # 设置浏览器显示模式
         key = input("1、关闭浏览器显示，2、开启浏览器显示\n输入序号：")
         if key == "1":
-            browserShow.modifyClassData(1)
+            browserShow.modifyClassData("1")
             print(Fore.RED + "已关闭显示浏览器")
         elif key == "2":
-            browserShow.modifyClassData(0)
+            browserShow.modifyClassData("0")
             print(Fore.RED + "已开启显示浏览器")
         else:
             print("输入错误\n")

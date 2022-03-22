@@ -9,6 +9,7 @@ import os
 from datetime import datetime
 from package.user import User
 
+
 # 管理用户数据
 class UserDataManger:
     def __init__(self, path):
@@ -18,7 +19,7 @@ class UserDataManger:
         """
         self.__userDataPath = path
         self.__users = []
-        self.__readUserData()       # 读取本地数据
+        self.__readUserData()  # 读取本地数据
 
     # 读取本地存储的用户数据
     def __readUserData(self):
@@ -100,7 +101,7 @@ class SubjectDataManger:
         """
         self.__subjectDataPath = filePath
         self.__subjectData = None
-        self.__radeSubjectData()        # 开始读取数据
+        self.__radeSubjectData()  # 开始读取数据
 
     # 读取学科数据
     def __radeSubjectData(self):
@@ -145,51 +146,31 @@ class SubjectDataManger:
             self.__subjectData[userName][className] = data
         self.__saveSubjectData()
 
-
-# 1表示关闭显示浏览器，0表示开启显示浏览器
 class BrowserShow:
-    def __init__(self, filPath):
-        self.__path = filPath
-        self.__browserState = {}
-        self.__radeSubjectData()
-
-    def __radeSubjectData(self):
-        f = open(self.__path, "r", encoding="utf-8")
-        inf = f.read()
-        f.close()
-        self.__browserState = json.loads(inf)
+    def __init__(self, conf, confPath):
+        self.__conf = conf
+        self.__confPath = confPath
 
     def modifyClassData(self, key):
-        self.__browserState["browserState"] = key
-        self.__save()
-
-    def __save(self):
-        f = open(self.__path, "w", encoding="utf-8")
-        data = json.dumps(self.__browserState)
-        f.write(data)
-        f.close()
+        self.__conf.set("browser_config", "browser_is_display", key)
+        self.__conf.write(open(self.__confPath, 'w', encoding="utf-8"))
 
     def getState(self):
-        return self.__browserState["browserState"]
+        return self.__conf.get("browser_config", "browser_is_display")
 
 class BrowserConfiguration:
-    def __init__(self, filPath):
-        f = open(filPath, 'r', encoding="utf-8")
-        info = f.read()
-        f.close()
-        config = json.loads(info)
-        if config["browser path"] == "":
-            raise Exception("未指定浏览器")
-        if config["driver path"] == "":
-            raise Exception("未指定浏览器驱动")
-        self.__browserPath = config["browser path"]
-        self.__driverPath = config["driver path"]
-        if self.__browserPath.find('/') != -1:
-            self.__browserName = self.__browserPath.split('/')[-1].split('.')[0]
+    def __init__(self, conf):
+        self.__conf = conf
+
+    def getBrowserPath(self):
+        return self.__conf.get("browser_config", "browser_path")
+
+    def gerBrowserName(self):
+        browserPath = self.__conf.get("browser_config", "browser_path")
+        if browserPath.find('/') != -1:
+            return browserPath.split('/')[-1].split('.')[0]
         else:
-            self.__browserName = self.__browserPath.split('\\')[-1].split('.')[0]
+            return browserPath.split('\\')[-1].split('.')[0]
 
-    def getBrowserPath(self): return self.__browserPath
-    def gerBrowserName(self): return self.__browserName
-    def getDriverPath(self): return self.__driverPath
-
+    def getDriverPath(self):
+        return self.__conf.get("browser_config", "browser_driver")
