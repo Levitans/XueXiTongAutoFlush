@@ -11,16 +11,22 @@ from package.ControlWeb.task.answerQuestion.getAnswer import GetAnswer
 from package.ControlWeb.task.answerQuestion.multipleChoiceOfTask import MultipleChoiceOfTask
 from package.ControlWeb.task.answerQuestion.trueOrFalseOfTask import TrueOrFalseOfTask
 from package.ControlWeb.task.answerQuestion.answerable import Answerable
+from package.ControlWeb.task.taskInterface import Achievable
 from package.display import Display
 from selenium.webdriver.common.by import By
 
 
-class Homework:
+class Homework(Achievable):
     def __init__(self, driver):
+        self.__name__ = "答题"
         self.__driver = driver
         self.__questionList: list[Answerable] = []
 
-    def getData(self):
+    def isCurrentTask(self, iframeIndex) -> bool:
+        # 还没找到判断任务点是否为答题的方法，所以直接返回True
+        return True
+
+    def __getData(self):
         # 进入iframe
         iframe = self.__driver.find_element(By.CSS_SELECTOR, '[id="frame_content"]')
         self.__driver.switch_to.frame(iframe)
@@ -63,6 +69,7 @@ class Homework:
         myGetAnswer.close()
 
     def finish(self):
+        self.__getData()
         for i in range(len(self.__questionList)):
             print("正在完成第{}题".format(i+1))
             webElementList = self.__questionList[i].getAnswerWebElement()
@@ -73,8 +80,9 @@ class Homework:
                 self.__driver.execute_script("arguments[0].scrollIntoView();", self.__questionList[i].qWebObj)
                 time.sleep(1)
                 answerWebElement.click()
+        self.__submitOrSave()
 
-    def submitOrSave(self):
+    def __submitOrSave(self):
         # if self.__checkpoint:
         #     self.__driver.find_element(By.CSS_SELECTOR, '[href="javascript:void(0);"][onclick="btnBlueSubmit();"]').click()
         #     time.sleep(1)

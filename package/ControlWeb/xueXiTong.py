@@ -4,13 +4,16 @@
 # @File : xueXiTong.py
 # @Software : PyCharm
 import time
+import traceback
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from package.display import Display
+from package.dataManger import ErrorLogManger
 from package.ControlWeb.school import *
 from package.ControlWeb.task.PPT import PPT
 from package.ControlWeb.task.video import Video
+from package.ControlWeb.task.audio import Audio
 from package.ControlWeb.task.answerQuestion.homework import Homework
 from package.exception import AtOrPdException, BrowseOrDriverPathException
 
@@ -36,7 +39,7 @@ class XueXiTong:
                 option.binary_location = browserPath
                 option.add_experimental_option('excludeSwitches', ['enable-logging'])
                 # 不显示浏览器
-                if browserKey == 1:
+                if browserKey == "1":
                     option.add_argument('headless')  # 浏览器不提供可视化界面
                     option.add_argument('--mute-audion')  # 浏览器静音播放
 
@@ -45,13 +48,14 @@ class XueXiTong:
                 option = webdriver.FirefoxOptions()
                 option.binary_location = browserPath
                 # 不显示浏览器
-                if browserKey == 1:
+                if browserKey == "1":
                     options.add_argument('--headless')
                     options.add_argument('--disable-gpu')
                 driver = webdriver.Firefox(executable_path=driverPath, options=option)
             else:
                 raise BrowseOrDriverPathException(browserPath, driverPath)
-        except selenium.common.exceptions.WebDriverException:
+        except selenium.common.exceptions.WebDriverException as e:
+            ErrorLogManger.writerErrorMessage(e, traceback.format_exc())
             raise BrowseOrDriverPathException(browserPath, driverPath)
         return driver
 
@@ -187,28 +191,20 @@ class XueXiTong:
                     except selenium.common.exceptions.NoSuchElementException:
                         pass
 
-                    # 判断是否为视频任务点
-                    if iframeList[i].get_attribute("class") == 'ans-attach-online ans-insertvideo-online':
-                        self.__driver.switch_to.frame(iframeList[i])
-                        print("当前任务点是视频")
-                        Video.finish(self.__driver)
-                        print("视频任务点完成")
-                    elif iframeList[i].get_attribute("class") in \
-                            ("ans-attach-online insertdoc-online-pdf", "ans-attach-online insertdoc-online-ppt"):
-                        self.__driver.switch_to.frame(iframeList[i])
-                        print("当前任务点是ppt")
-                        PPT.finish(self.__driver)
-                        print("PPT任务点完成")
-                    else:
-                        self.__driver.switch_to.frame(iframeList[i])
-                        try:
-                            homework = Homework(self.__driver)
-                            homework.getData()
-                            homework.finish()
-                            homework.submitOrSave()
-                            print("测验任务点完成")
-                        except selenium.common.exceptions.NoSuchElementException:
-                            print("当前任务点无法完成")
+                    for work in (PPT, Video, Audio, Homework):
+                        item = work(self.__driver)
+                        if item.isCurrentTask(i):
+                            print("当前任务点是“{}”".format(item.__name__))
+                            self.__driver.switch_to.frame(iframeList[i])
+                            try:
+                                item.finish()
+                                break
+                            except selenium.common.exceptions.NoSuchElementException as e:
+                                ErrorLogManger.writerErrorMessage(e, traceback.format_exc())
+                                print("当前任务点“{}”完成时出错\n已保存错误信息\n跳过当前任务点".format(item.__name__))
+                                continue
+                        else:
+                            print("当前任务点不是{}".format(item.__name__))
                     Display.separate()
                     self.__driver.switch_to.default_content()
                     self.__driver.switch_to.frame("iframe")

@@ -6,7 +6,7 @@
 
 import json
 import os
-from datetime import datetime
+import datetime
 from package.user import User
 
 
@@ -145,6 +145,17 @@ class SubjectDataManger:
         else:
             self.__subjectData[userName][className] = data
         self.__saveSubjectData()
+
+# 异常日志管理
+class ErrorLogManger:
+    @staticmethod
+    def writerErrorMessage(exceptionObj, details):
+        nowTime = datetime.datetime.today()
+        with open("./data/errorLog.txt", "a", encoding="utf-8") as f:
+            message = {"time": nowTime, "typeError": exceptionObj.__str__(), "excMessage": details}
+            f.write(message.__str__())
+            f.write("\n")
+
 
 class BrowserShow:
     def __init__(self, conf, confPath):

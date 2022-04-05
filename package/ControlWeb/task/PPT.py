@@ -6,8 +6,27 @@
 import time
 import random
 from selenium.webdriver.common.by import By
+from package.ControlWeb.task.taskInterface import Achievable
 
-class PPT:
+class PPT(Achievable):
+    def __init__(self, driver):
+        self.__name__ = "PPT"
+        self.__driver = driver
+
+    def isCurrentTask(self, iframeIndex) -> bool:
+        iframeList = self.__driver.find_elements(By.TAG_NAME, 'iframe')
+        if iframeList[iframeIndex].get_attribute("class") in \
+                ("ans-attach-online insertdoc-online-pdf", "ans-attach-online insertdoc-online-ppt"):
+            return True
+        else:
+            return False
+
+    def finish(self):
+        try:
+            PPT.__ppt1(self.__driver)
+        except Exception:
+            PPT.__ppt2(self.__driver)
+
     @staticmethod
     def __ppt1(driver):
         pageData = driver.find_element(By.CSS_SELECTOR, '[class="mkeNum mkeNum_bom"]') \
@@ -31,7 +50,7 @@ class PPT:
 
     @staticmethod
     def __ppt2(driver):
-        driver.switch_to.frame(driver.find_element(By.CSS_SELECTOR, '[id="panView"]'))
+        driver.switch_to.frame(driver.find_element(By.CSS_SELECTOR, '[id="panView"]'))  # id="iframe"
         imgList = driver.find_elements(By.TAG_NAME, 'img')
         print("共有{}张PPT".format(len(imgList)))
         for i in range(len(imgList)):
@@ -39,10 +58,3 @@ class PPT:
             driver.execute_script("window.scrollBy(0,2000)")
             time.sleep(1)
         print()
-
-    @staticmethod
-    def finish(driver):
-        try:
-            PPT.__ppt1(driver)
-        except Exception:
-            PPT.__ppt2(driver)

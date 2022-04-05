@@ -11,8 +11,8 @@ import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from package.display import Display
 from package.ControlWeb.xueXiTong import XueXiTong
-from package.ControlWeb.task.answerQuestion.questionType import MultipleChoice
-from package.ControlWeb.task.answerQuestion.questionType import TrueOrFalse
+from package.ControlWeb.task.answerQuestion.question import MultipleChoice
+from package.ControlWeb.task.answerQuestion.question import TrueOrFalse
 
 
 class Spider(XueXiTong):

@@ -96,12 +96,13 @@ while True and InternetTime.isExpiration():
                 "使用已有用户（当前已有{}个用户）".format(userData.getUserAmount()),
                 "修改用户信息",
                 "设置浏览器显示",
+                "程序更新",
                 "退出程序"]
     Display.printTable(function, Format([20, 20], displayNumber=True))
     mode = input("\n输入序号：")
     Display.separate()
 
-    while not (mode in ("1", "2", "3", "4", "5", "6")):
+    while not (mode in ("1", "2", "3", "4", "5", "6", "7")):
         print("输入错误，重新选择")
         mode = input(function)
         Display.separate()
@@ -200,7 +201,9 @@ while True and InternetTime.isExpiration():
         else:
             print("输入错误\n")
         Display.separate()
-    elif mode == "5":  # 爬取题目（暂时隐藏）
+    elif mode == "5":
+        pass
+    elif mode == "6":  # 爬取题目（暂时隐藏）
         if not os.path.exists(spiderDataPath):  # 判断spiderData文件夹是否存在
             os.mkdir(spiderDataPath)
         userData.displayUserName()
