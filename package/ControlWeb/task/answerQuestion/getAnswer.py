@@ -109,7 +109,7 @@ class GetAnswer:
             print("线程2响应超时")
         except NoFoundAnswerException:
             print("线程2未找到答案")
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print("接口2连接失败")
 
         try:
@@ -119,7 +119,7 @@ class GetAnswer:
             print("线程3响应超时")
         except NoFoundAnswerException:
             print("线程3未找到答案")
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print("接口3连接失败")
 
         try:
@@ -129,7 +129,7 @@ class GetAnswer:
             print("线程4响应超时")
         except NoFoundAnswerException:
             print("线程4未找到答案")
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print("接口4连接失败")
 
         return answerList
@@ -204,7 +204,7 @@ class GetAnswer:
 
 if __name__ == "__main__":
     getAnswer = GetAnswer()
-    q = "在人类社会发展中起决定作用的因素是（）"
+    q = " 规定将总理衙门改为外务部并“班列六部之前”的不平等条约是( )"
     answerList = getAnswer.getAnswer(q)
     print(answerList)
 

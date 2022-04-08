@@ -1,0 +1,1 @@
+venv/bin/python#.9 main.py || python main.py

@@ -8,7 +8,6 @@ import os
 import sys
 import json
 import time
-import ctypes
 import configparser
 
 from package.user import User
@@ -40,23 +39,17 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# 禁用快速编辑
-def disableQuickEdit():
-    kernel32 = ctypes.windll.kernel32
-    kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
-
-
 browserPath = ""
 driverPath = ""
 browserName = ""
 userDataPath = ""
 spiderDataPath = ""
 browserShow: BrowserShow = None
-userData: UserDataManger = None
+userManger: UserDataManger = None
 
 # 运行前准备
 def initialization():
-    global browserPath, driverPath, browserName, userDataPath, spiderDataPath, browserShow, userData
+    global browserPath, driverPath, browserName, userDataPath, spiderDataPath, browserShow, userManger
     # 地址初始化
     nowPath = os.getcwd()
     confPath = nowPath + "\\" + "config.ini"
@@ -80,11 +73,10 @@ def initialization():
 
     # 初始化浏浏览器显示和用户数据管理
     browserShow = BrowserShow(conf, confPath)
-    userData = UserDataManger(userDataPath)
+    userManger = UserDataManger(userDataPath)
 
 
-while True and InternetTime.isExpiration():
-# while True:
+while True:
     initialization()
 
     if browserShow.getState() == "1":
@@ -93,7 +85,7 @@ while True and InternetTime.isExpiration():
     browserInf = "关闭显示" if browserShow.getState() == "1" else "开启显示"
     print("选择模式（{}".format(Fore.YELLOW + "当前浏览器模式：" + browserInf), end="）\n")
     function = ["创建新用户",
-                "使用已有用户（当前已有{}个用户）".format(userData.getUserAmount()),
+                "使用已有用户（当前已有{}个用户）".format(userManger.getUserAmount()),
                 "修改用户信息",
                 "设置浏览器显示",
                 "程序更新",
@@ -109,20 +101,22 @@ while True and InternetTime.isExpiration():
 
     if mode == "1":  # 创建新用户
         userName = input("输入用户名：")
-        account = input("输入手机号：")
-        password = input("输入密码：")
-        userData.addNewUser(userName, account, password)
-        userData = UserDataManger(userDataPath)
-        print("用户添加成功\n")
+        if userName in userManger.getUserNameList():
+            print("用户名已存在！")
+        else:
+            account = input("输入手机号：")
+            password = input("输入密码：")
+            userManger.addNewUser(userName, account, password)
+            userManger = UserDataManger(userDataPath)
+            print("用户添加成功")
         Display.separate()
     elif mode == "2":  # 使用已有用户登陆
         # 选择登录用户
-        usersList = userData.getUsers()
-        Display.printTable([i.getName() for i in usersList], Format([20], displayNumber=True))
+        Display.printTable(userManger.getUserNameList(), Format([20], displayNumber=True))
         print()
         index = int(input("选择用户：")) - 1
         Display.separate()
-        user = usersList[index]
+        user = userManger.getUser(index)
 
         try:
             xueXiTong = XueXiTong(browserPath, driverPath, browserName, user, browserShow.getState())
@@ -164,7 +158,7 @@ while True and InternetTime.isExpiration():
             chaptersList = xueXiTong.enterCourse(coursesList[courseIndex])
         except Exception as e:
             Display.printWarning(e.__str__())
-            xuexitong.closeDriver()
+            xueXiTong.closeDriver()
             sys.exit()
         print("进入课程成功")
         Display.separate()
@@ -172,21 +166,23 @@ while True and InternetTime.isExpiration():
         xueXiTong.work()
         Display.separate()
     elif mode == "3":  # 修改用户信息
-        userData.displayUserName()
-        userIndex = int(input("选择需要修改的用户：")) - 1
+        Display.printTable(userManger.getUserNameList(), Format([20], displayNumber=True))
+        index = int(input("选择需要修改的用户：")) - 1
         Display.separate()
-        user = userData.getUsers()[userIndex]
+        user = userManger.getUser(index)
         print("{}的数据：".format(user.getName()))
         print("\t账号：" + str(user.getAccount()))
         print("\t密码：" + str(user.getPassword()) + "\n")
-        print("1、修改账号\n2、修改密码")
+        print("1、修改账号\n2、修改密码\n3、删除账号")
         key = input("选择修改信息：")
         if key == "1":
             newAccount = input("输入新数据：")
-            userData.modifyUserData(user.getName(), newAccount, "account")
+            userManger.modifyUserData(user.getName(), newAccount, "account")
         elif key == "2":
             newPassword = input("输入新数据：")
-            userData.modifyUserData(user.getName(), newPassword)
+            userManger.modifyUserData(user.getName(), newPassword)
+        elif key == "3":
+            userManger.deleteUser(user)
         else:
             Display.printWarning("输入信息有误")
         Display.separate()
@@ -202,14 +198,15 @@ while True and InternetTime.isExpiration():
             print("输入错误\n")
         Display.separate()
     elif mode == "5":
-        pass
+        os.system("start powershell.exe cmd /k 'bin\\updata.exe'")
+        sys.exit()
     elif mode == "6":  # 爬取题目（暂时隐藏）
         if not os.path.exists(spiderDataPath):  # 判断spiderData文件夹是否存在
             os.mkdir(spiderDataPath)
-        userData.displayUserName()
+        userManger.displayUserName()
         index = int(input("选择用户：")) - 1
         Display.separate()
-        userdata = userData.getUsers()[index]
+        userdata = userManger.getUserNameList()[index]
 
         progress = ProgressBar()
         progress.start()

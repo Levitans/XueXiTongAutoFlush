@@ -38,9 +38,16 @@ class UserDataManger:
             newUser = User(i, act, psd)
             self.__users.append(newUser)
 
-    # 获取用户信息
-    def getUsers(self) -> list[User]:
-        return self.__users
+    # 获取所有用户的名字
+    def getUserNameList(self) -> list[str]:
+        userNameList = []
+        for i in self.__users:
+            userNameList.append(i.getName())
+        return userNameList
+
+    # 通过索引获取用户数据
+    def getUser(self, index) -> User:
+        return self.__users[index]
 
     # 获取用户数据量
     def getUserAmount(self):
@@ -72,12 +79,21 @@ class UserDataManger:
         :param password: 用户密码
         :return: void
         """
-        nameList = [i.getName() for i in self.__users]
-        if name in nameList:
-            raise KeyError("用户名被占用")
         newUser = User(name, account, password)
         self.__users.append(newUser)
         self.__saveUsersData()
+
+    # 删除用户
+    def deleteUser(self, user: User):
+        key = False
+        for i in range(len(self.__users)):
+            item = self.getUser(i)
+            if item.getName() == user.getName():
+                self.__users.pop(i)
+                key = True
+                self.__saveUsersData()
+                break
+        print("删除成功") if key else print("删除失败")
 
     # 保存用户数据
     def __saveUsersData(self):

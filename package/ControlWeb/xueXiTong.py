@@ -183,13 +183,13 @@ class XueXiTong:
                 for i in range(len(iframeList)):
                     print("当前为第{}个任务点".format(i + 1))
 
-                    # 检测任务点是是否完成
-                    try:
-                        self.__driver.find_element(By.CSS_SELECTOR, '[class="ans-attach-ct ans-job-finished"]')
-                        print("当前任务点已完成")
-                        continue
-                    except selenium.common.exceptions.NoSuchElementException:
-                        pass
+                    # # 检测任务点是是否完成
+                    # try:
+                    #     self.__driver.find_element(By.CSS_SELECTOR, '[class="ans-attach-ct ans-job-finished"]')
+                    #     print("当前任务点已完成")
+                    #     continue
+                    # except selenium.common.exceptions.NoSuchElementException:
+                    #     pass
 
                     for work in (PPT, Video, Audio, Homework):
                         item = work(self.__driver)
