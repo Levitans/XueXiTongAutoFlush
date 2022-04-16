@@ -7,8 +7,8 @@
 import difflib
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from package.ControlWeb.task.answerQuestion.question import MultipleChoice
-from package.ControlWeb.task.answerQuestion.answerable import Answerable
+from package.learn.task.quiz.question import MultipleChoice
+from package.learn.task.interface import Answerable
 
 class MultipleChoiceOfTask(MultipleChoice, Answerable):
     def __init__(self, questionWebObj, qType, question, answersList, options, optionsWebElements):

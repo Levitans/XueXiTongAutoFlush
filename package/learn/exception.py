@@ -34,3 +34,6 @@ class NoFoundAnswerException(Exception):
     在接口中没有找到答案抛出此异常。
     """
     pass
+
+class InitializationException(Exception):
+    pass

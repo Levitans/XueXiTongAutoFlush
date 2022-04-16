@@ -6,9 +6,9 @@
 import time
 import random
 from selenium.webdriver.common.by import By
-from package.ControlWeb.task.taskInterface import Achievable
+from package.learn.task.interface import Task
 
-class PPT(Achievable):
+class PPT(Task):
     def __init__(self, driver):
         self.__name__ = "PPT"
         self.__driver = driver

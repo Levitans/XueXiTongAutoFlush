@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import string
-from colorama import Fore, Back, init
-
-init(autoreset=True)
+from package.learn import color
 
 
-class Format:
+class MyFormat:
     def __init__(self, formatList, alignWay='L', displayNumber=False):
         """
         :param alignWay: 选择对齐方式
@@ -99,7 +97,7 @@ class Display:
         return newStr, countEn, countCn
 
     @staticmethod
-    def printTable(strDataList, dataFormat: Format):
+    def printTable(strDataList, dataFormat: MyFormat):
         """
         :param strDataList: 需要输出为表格的全部数据
         :param dataFormat: Format对象，用于设置表格的格式
@@ -163,4 +161,4 @@ class Display:
             info += (Display.warnChar + " " + i[0] + chr(32) * (
                         maxRow - i[2] * 2 - i[1]) + " " + Display.warnChar + "\n")
         info += (Display.warnChar * (maxRow + 4))
-        print(Fore.RED + info)
+        print(color.read(info))

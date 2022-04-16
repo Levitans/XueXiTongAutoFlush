@@ -1,12 +1,12 @@
 # -*- encoding = utf-8 -*-
 # @Time : 2021-09-14 0:02
 # @Author : Levitan
-# @File : getAnswer.py
+# @File : getanswer.py
 # @Software : PyCharm
 
 import requests
 import json
-from package.exception import NoFoundAnswerException
+from package.learn.exception import NoFoundAnswerException
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures._base import TimeoutError
 

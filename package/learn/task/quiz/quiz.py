@@ -7,16 +7,15 @@ import time
 
 import requests.exceptions
 
-from package.ControlWeb.task.answerQuestion.getAnswer import GetAnswer
-from package.ControlWeb.task.answerQuestion.multipleChoiceOfTask import MultipleChoiceOfTask
-from package.ControlWeb.task.answerQuestion.trueOrFalseOfTask import TrueOrFalseOfTask
-from package.ControlWeb.task.answerQuestion.answerable import Answerable
-from package.ControlWeb.task.taskInterface import Achievable
-from package.display import Display
+from package.learn.task.quiz.getanswer import GetAnswer
+from package.learn.task.quiz.multipleChoiceOfTask import MultipleChoiceOfTask
+from package.learn.task.quiz.trueOrFalseOfTask import TrueOrFalseOfTask
+from package.learn.task.interface import Task, Answerable
+from package.learn.display import Display
 from selenium.webdriver.common.by import By
 
 
-class Homework(Achievable):
+class Quiz(Task):
     def __init__(self, driver):
         self.__name__ = "答题"
         self.__driver = driver

@@ -5,9 +5,9 @@
 # @Software : PyCharm
 import time
 from selenium.webdriver.common.by import By
-from package.ControlWeb.task.taskInterface import Achievable
+from package.learn.task.interface import Task
 
-class Video(Achievable):
+class Video(Task):
     def __init__(self, driver):
         self.__name__ = "视频"
         self.__driver = driver

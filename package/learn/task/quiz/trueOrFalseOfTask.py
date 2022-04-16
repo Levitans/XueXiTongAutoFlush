@@ -5,8 +5,8 @@
 # @Software : PyCharm
 
 from selenium.webdriver.remote.webelement import WebElement
-from package.ControlWeb.task.answerQuestion.question import TrueOrFalse
-from package.ControlWeb.task.answerQuestion.answerable import Answerable
+from package.learn.task.quiz.question import TrueOrFalse
+from package.learn.task.interface import Answerable
 
 class TrueOrFalseOfTask(TrueOrFalse, Answerable):
     def __init__(self, questionWebObj, qType, question, answer, answerWebElementList):

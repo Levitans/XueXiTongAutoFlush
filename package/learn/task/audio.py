@@ -6,9 +6,9 @@
 import time
 
 from selenium.webdriver.common.by import By
-from package.ControlWeb.task.taskInterface import Achievable
+from package.learn.task.interface import Task
 
-class Audio(Achievable):
+class Audio(Task):
     def __init__(self, driver):
         self.__name__ = "音频"
         self.__driver = driver
