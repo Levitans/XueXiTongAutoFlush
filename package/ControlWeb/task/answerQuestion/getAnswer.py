@@ -23,6 +23,10 @@ class GetAnswer:
         except requests.exceptions.Timeout:
             return ""
         dataText = r.text
+
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
+
         dataJson = json.loads(dataText)
         if dataJson['code'] == -1:
             raise NoFoundAnswerException
@@ -38,6 +42,10 @@ class GetAnswer:
         except requests.exceptions.Timeout:
             return ""
         dataText = r.text
+
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
+
         dataJson = json.loads(dataText)
         if dataJson['code'] == "0" or dataJson['code'] == 0:
             raise NoFoundAnswerException
@@ -55,6 +63,10 @@ class GetAnswer:
         except requests.exceptions.Timeout:
             raise NoFoundAnswerException
         dataText = r.text
+
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
+
         try:
             dataJson = json.loads(dataText)
         except json.decoder.JSONDecodeError:
@@ -74,6 +86,10 @@ class GetAnswer:
         except requests.exceptions.Timeout:
             return ""
         dataText = r.text
+
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
+
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
             raise NoFoundAnswerException
@@ -204,9 +220,14 @@ class GetAnswer:
 
 if __name__ == "__main__":
     getAnswer = GetAnswer()
-    q = " 规定将总理衙门改为外务部并“班列六部之前”的不平等条约是( )"
-    answerList = getAnswer.getAnswer(q)
-    print(answerList)
+    while True:
+        q = input("输入题目（q退出）：")
+        # q = "规定将总理衙门改为外务部并“班列六部之前”的不平等条约是( )"
+        if q == "q":
+            break
+        answerList = getAnswer.getAnswer(q)
+        print(answerList)
+        print()
 
 
 

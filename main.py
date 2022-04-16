@@ -198,7 +198,7 @@ while True:
             print("输入错误\n")
         Display.separate()
     elif mode == "5":
-        os.system("start powershell.exe cmd /k 'bin\\updata.exe'")
+        os.system("start cmd /k .\\bin\\updata.exe")
         sys.exit()
     elif mode == "6":  # 爬取题目（暂时隐藏）
         if not os.path.exists(spiderDataPath):  # 判断spiderData文件夹是否存在
