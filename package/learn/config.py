@@ -7,7 +7,7 @@
 from package.learn import file
 from package.learn.exception import InitializationException
 
-config_file_path = r"F:\python项目\XueXiTongAutoFlush4.0.0\config.ini"
+config_file_path = r".\config.ini"
 
 config = file.get_config_file(config_file_path)
 
