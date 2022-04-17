@@ -16,9 +16,10 @@ def cfg_get(section, option, default_value=None):
     try:
         return config.get(section, option)
     except Exception as e:
-        print("配置文件路径："+config_file_path)
-        print("读取配置失败：section="+section+", option="+option+", "+str(e))
-        raise InitializationException
+        err_info = "配置文件路径：" + config_file_path + "\n" + \
+                   '读取配置失败：section="' + section + '", option="' + option + '"\n错误信息：' + str(e)
+        raise Exception(err_info)
+
 
 def change_cfg_data(section, option, value):
     config.set(section, option, value)

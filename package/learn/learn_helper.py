@@ -93,9 +93,10 @@ def automatic_learning(driver):
                             task.finish()
                             break
                         except Exception as e:
+                            driver.get_driver().switch_to.default_content()
                             print(color.read("当前任务点 {} 运行时出错".format(task.__name__)))
                             print(color.read(str(e)))
-                            print(color.read("跳过当前任务点"))
+                            print("跳过当前任务点")
                     else:
                         print("当前任务点不是 "+color.yellow(task.__name__))
                 Display.separate()
@@ -112,3 +113,31 @@ def automatic_learning(driver):
         else:
             print("课程学习完毕")
             exit()
+
+def do_homework():
+    pass
+
+"""
+
+https://mooc1.chaoxing.com/mooc2/work/list?
+courseId=222737476
+&
+classId=50876312
+&
+cpi=156905667
+&
+ut=s&
+enc=7d6f1269176623f37940cf4fab227ad1
+
+https://mooc1-1.chaoxing.com/visit/stucoursemiddle?
+courseid=222737476
+&
+clazzid=50876312
+&
+vc=1
+&
+cpi=156905667
+&
+ismooc2=1
+
+"""

@@ -24,8 +24,8 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == -1:
@@ -43,8 +43,8 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == "0" or dataJson['code'] == 0:
@@ -64,8 +64,8 @@ class GetAnswer:
             raise NoFoundAnswerException
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        print(dataText)
 
         try:
             dataJson = json.loads(dataText)
@@ -87,8 +87,8 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
