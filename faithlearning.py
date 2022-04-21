@@ -5,20 +5,19 @@
 # @Software : PyCharm
 
 import package.learn.config
+from package.learn import color
 from package.learn import learn_helper
 from package.learn import exception
-from package.learn.mydriver import MyDriver
 from package.learn import globalvar as gl
+from package.learn.mydriver import MyDriver
 from package.learn.display import Display, MyFormat
 from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
     change_user_data, delete_historical, system_settings
-from package.learn import color
 
 
 def boot():
     try:
         gl.init_global()
-        gl.is_init = True
     except exception.InitializationException as e:
         print(color.read("程序初始化异常"))
         print(str(e))
@@ -50,7 +49,20 @@ def start_learn():
         else:
             raise Exception("序号输入错误")
         Display.separate()
-        learn_helper.automatic_learning(driver)
+        Display.printTable(["学习", "作业"], MyFormat([20, 20], displayNumber=True))
+        key = input("\n输入序号：")
+        Display.separate()
+        try:
+            if key == "1":
+                learn_helper.automatic_learning(driver)
+            elif key == "2":
+                learn_helper.do_homework(driver)
+            else:
+                raise Exception("序号输入错误")
+        except Exception as e:
+            driver.quit()
+            print(color.read("程序运行出现异常"))
+            print(color.read(str(e)))
 
     elif key == "2":
         print(color.blue("选择设置："))

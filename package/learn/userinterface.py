@@ -6,8 +6,8 @@
 
 from package.learn import config
 from package.learn import color
-from package.learn.mydriver import MyDriver
 from package.learn import globalvar as gl
+from package.learn.mydriver import MyDriver
 from package.learn.display import Display, MyFormat
 
 # --------------------------各种登陆交互----------------------------

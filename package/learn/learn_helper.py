@@ -10,13 +10,16 @@ from package.learn import color
 from package.learn.mydriver import MyDriver
 from package.learn.school import fuist
 from package.learn.display import Display, MyFormat
-from package.learn.task.quiz.quiz import Quiz
+from package.learn.task.quiz.quiz import QuizOfTask, QuizOfHomework
 from package.learn.task.audio import Audio
 from package.learn.task.video import Video
 from package.learn.task.ppt import PPT
+from package.learn import color
 
 from selenium.webdriver.common.by import By
 from selenium.common import exceptions
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 def automatic_learning(driver):
     learn = fuist
@@ -33,14 +36,17 @@ def automatic_learning(driver):
     # 获取所有章节
     driver.get_url(course.get_ZJ_path())
     driver.driver_wait(By.CLASS_NAME, "chapter_td")
-    chapter_list = learn.get_chapters(driver.get_driver())
+    try:
+        chapter_list = learn.get_chapters(driver.get_driver())
+    except exceptions.NoSuchElementException as e:
+        raise Exception("获取章节时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
 
     # 跳过已完成的章节
     for i in chapter_list:
         if i.isFinish:
-            print("章节："+color.green(i.name)+" 已经完成")
+            print("章节：" + color.green(i.name) + " 已经完成")
         else:
-            print("章节："+color.blue(i.name)+" 未完成")
+            print("章节：" + color.blue(i.name) + " 未完成")
             i.webElement.click()
             break
     Display.separate()
@@ -57,12 +63,12 @@ def automatic_learning(driver):
         prev_table_list = []
         try:
             prev_table_list = driver.get_driver().find_element(By.CSS_SELECTOR, '[class="prev_tab"]') \
-                         .find_element(By.CSS_SELECTOR, '[class="prev_ul"]') \
-                         .find_elements(By.TAG_NAME, 'li')
+                .find_element(By.CSS_SELECTOR, '[class="prev_ul"]') \
+                .find_elements(By.TAG_NAME, 'li')
         except exceptions.NoSuchElementException:
             pass
-        prev_table_number = len(prev_table_list) if len(prev_table_list) !=0 else 1  # 选项卡个数
-        print("当前章节选项卡有 "+str(prev_table_number)+" 个")
+        prev_table_number = len(prev_table_list) if len(prev_table_list) != 0 else 1  # 选项卡个数
+        print("当前章节选项卡有 " + str(prev_table_number) + " 个")
 
         # 遍历每个选项卡
         for tableIndex in range(prev_table_number):
@@ -76,18 +82,18 @@ def automatic_learning(driver):
             # 进入第一层iframe
             driver.get_driver().switch_to.frame("iframe")
             iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
-            print("当前章节有 "+color.yellow(str(len(iframeList)))+" 个任务点")
+            print("当前章节有 " + color.yellow(str(len(iframeList))) + " 个任务点")
 
             # 遍历每个任务点
             for i in range(len(iframeList)):
-                print("当前为第 "+color.blue(str(i+1))+" 任务点")
+                print("当前为第 " + color.blue(str(i + 1)) + " 任务点")
 
                 # 循环判断任务点类型
-                # 因为当前 Quiz 类型任务点还没有欧判读方法，所以 Quiz 任务放在元组最后面
-                for item in (PPT, Video, Audio, Quiz):
+                # 因为当前 QuizOfTask 类型任务点还没有欧判读方法，所以 QuizOfTask 任务放在元组最后面
+                for item in (PPT, Video, Audio, QuizOfTask):
                     task = item(driver.get_driver())
                     if task.isCurrentTask(i):
-                        print("当前任务点是 "+color.green(task.__name__))
+                        print("当前任务点是 " + color.green(task.__name__))
                         driver.get_driver().switch_to.frame(iframeList[i])
                         try:
                             task.finish()
@@ -98,7 +104,7 @@ def automatic_learning(driver):
                             print(color.read(str(e)))
                             print("跳过当前任务点")
                     else:
-                        print("当前任务点不是 "+color.yellow(task.__name__))
+                        print("当前任务点不是 " + color.yellow(task.__name__))
                 Display.separate()
                 driver.get_driver().switch_to.default_content()
                 driver.get_driver().switch_to.frame("iframe")
@@ -114,30 +120,57 @@ def automatic_learning(driver):
             print("课程学习完毕")
             exit()
 
-def do_homework():
-    pass
 
-"""
+def do_homework(driver: MyDriver):
+    school = fuist
+    driver.go_courses_page()
 
-https://mooc1.chaoxing.com/mooc2/work/list?
-courseId=222737476
-&
-classId=50876312
-&
-cpi=156905667
-&
-ut=s&
-enc=7d6f1269176623f37940cf4fab227ad1
+    # 获取所有课程
+    try:
+        courses_list = school.get_courses(driver.get_driver())
+    except exceptions.NoSuchElementException as e:
+        raise Exception("获取章节时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
+    print(color.blue("当前课程有："))
+    Display.printTable([i.name for i in courses_list], MyFormat([50, 50], displayNumber=True))
+    index = int(input("\n输入课程序号：")) - 1
+    course = courses_list[index]
+    Display.separate()
 
-https://mooc1-1.chaoxing.com/visit/stucoursemiddle?
-courseid=222737476
-&
-clazzid=50876312
-&
-vc=1
-&
-cpi=156905667
-&
-ismooc2=1
+    # 进入作业
+    driver.get_url(course.url)
+    driver.driver_wait(By.CLASS_NAME, "nav_side")
 
-"""
+    key_value = driver.get_driver().find_element(By.CLASS_NAME, "nav_side") \
+        .find_element(By.CSS_SELECTOR, '[class="nav-content   stuNavigationList"]')
+
+    key_value_dict = {}
+    for i in key_value.find_elements(By.TAG_NAME, "input"):
+        key_value_dict[i.get_attribute("id")] = i.get_attribute("value")
+
+    ZY_url = "https://mooc1.chaoxing.com/mooc2/work/list?" \
+             "courseId=" + key_value_dict['courseid'] + \
+             "&classId=" + key_value_dict['clazzid'] + \
+             "&cpi=" + key_value_dict['cpi'] + \
+             "&ut=s" \
+             "&enc=" + key_value_dict['workEnc']
+    driver.get_url(ZY_url)
+    driver.driver_wait(By.CLASS_NAME, "bottomList")
+
+    homework_url_list = []
+    item = driver.get_driver().find_element(By.CLASS_NAME, "bottomList").find_elements(By.TAG_NAME, "li")
+    for i in item:
+        if i.find_element(By.CSS_SELECTOR, '[class="status fl"]').text == "已完成":
+            continue
+        homework_url_list.append(i.get_attribute("data"))
+
+    print("当前未提交作业有：{} 份".format(len(homework_url_list)))
+    for i in range(len(homework_url_list)):
+        print("正在完成作业 {} ".format(i+1))
+        driver.get_url(homework_url_list[i])
+        time.sleep(1)
+        quiz = QuizOfHomework(driver.get_driver())
+        try:
+            quiz.finish()
+        except Exception as e:
+            print(color.read("完成作业 "+str(i+1)+" 时出现异常："+str(e)))
+            print(color.read("跳过这份作业"))

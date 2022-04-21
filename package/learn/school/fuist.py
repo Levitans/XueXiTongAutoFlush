@@ -5,7 +5,6 @@
 # @Software : PyCharm
 
 from package.learn.school.template import Course, Chapter
-
 from selenium.common import exceptions
 from selenium.webdriver.common.by import By
 
@@ -18,7 +17,8 @@ def get_courses(driver) -> list[Course]:
         clazzid = i.get_attribute("clazzid")
         personid = i.get_attribute("personid")
         name = i.find_element(By.CSS_SELECTOR, '[class="color1"]').text
-        courseList.append(Course(name, courseid, clazzid, personid))
+        url = i.find_element(By.TAG_NAME, "a").get_attribute("href")
+        courseList.append(Course(name, courseid, clazzid, personid, url))
     return courseList
 
 

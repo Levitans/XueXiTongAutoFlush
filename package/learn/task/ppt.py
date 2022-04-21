@@ -7,6 +7,7 @@ import time
 import random
 from selenium.webdriver.common.by import By
 from package.learn.task.interface import Task
+from package.learn import globalvar as gl
 
 class PPT(Task):
     def __init__(self, driver):
@@ -44,9 +45,9 @@ class PPT(Task):
 
         while newPage < endPage:
             nextBtn.click()
-            time.sleep(random.randint(2, 4))
             newPage += 1
             print('\r' + '已观看{}张'.format(newPage), end='')
+            time.sleep(random.randint(gl.ppt_speed_min, gl.ppt_speed_max))
 
     @staticmethod
     def __ppt2(driver):
@@ -56,5 +57,5 @@ class PPT(Task):
         for i in range(len(imgList)):
             print('\r'+"观看第{}张PPT".format(i+1), end="")
             driver.execute_script("window.scrollBy(0,2000)")
-            time.sleep(1)
+            time.sleep(random.randint(gl.ppt_speed_min, gl.ppt_speed_max))
         print()

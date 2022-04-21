@@ -7,8 +7,8 @@
 import time
 from package.learn import useragent
 from package.learn import globalvar as gl
-from selenium.common import exceptions
 from selenium import webdriver
+from selenium.common import exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

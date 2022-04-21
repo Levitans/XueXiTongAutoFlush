@@ -24,8 +24,21 @@ no_img = False
 browser_path = ""
 driver_path = ""
 
+# 任务点配置
+ppt_speed_max: int
+ppt_speed_min: int
+quiz_get_answer_speed_max: int
+quiz_get_answer_speed_min: int
+quiz_click_speed_max: int
+quiz_click_speed_min: int
+
+
 def init_global():
-    global is_init, no_head, mute, no_img, browser_path, driver_path, user_manager, cookie_manager
+    """
+    在配置文件中加载配置
+    """
+    global is_init, no_head, mute, no_img, browser_path, driver_path, user_manager, cookie_manager, \
+        ppt_speed_max, ppt_speed_min, quiz_get_answer_speed_max, quiz_get_answer_speed_min, quiz_click_speed_max, quiz_click_speed_min
     try:
         # <--------------------加载浏览器配置------------------------->
         if cfg_get("browser_config", "no_head") == "True":
@@ -44,5 +57,16 @@ def init_global():
         # <------------------------加载数据管理器----------------------->
         user_manager = UserManger(cfg_get("user_config", "user_path"))
         cookie_manager = CookiesManger(cfg_get("user_config", "cookie_path"))
+
+        # <------------------------加载任务点配置----------------------->
+        ppt_speed_max = int(cfg_get("task_config", "ppt_speed_max"))
+        ppt_speed_min = int(cfg_get("task_config", "ppt_speed_min"))
+        quiz_get_answer_speed_max = int(cfg_get("task_config", "quiz_get_answer_speed_max"))
+        quiz_get_answer_speed_min = int(cfg_get("task_config", "quiz_get_answer_speed_min"))
+        quiz_click_speed_max = int(cfg_get("task_config", "quiz_click_speed_max"))
+        quiz_click_speed_min = int(cfg_get("task_config", "quiz_click_speed_min"))
+
+        # 所有配置加载成功
+        is_init = True
     except Exception as e:
         raise InitializationException(str(e))
