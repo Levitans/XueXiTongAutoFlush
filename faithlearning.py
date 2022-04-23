@@ -4,15 +4,20 @@
 # @File : faithlearning.py
 # @Software : PyCharm
 
-import package.learn.config
-from package.learn import color
-from package.learn import learn_helper
-from package.learn import exception
-from package.learn import globalvar as gl
-from package.learn.mydriver import MyDriver
-from package.learn.display import Display, MyFormat
-from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
-    change_user_data, delete_historical, system_settings
+try:
+    import package.learn.config
+    from package.learn import color
+    from package.learn import learn_helper
+    from package.learn import exception
+    from package.learn import globalvar as gl
+    from package.learn.mydriver import MyDriver
+    from package.learn.display import Display, MyFormat
+    from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
+        change_user_data, delete_historical, system_settings
+except ModuleNotFoundError as e:
+    print(color.read("依赖导入失败："+str(e)))
+    print(color.read("请前往 ”使用说明.md“ 文件中查看所需依赖库"))
+    exit(233)
 
 
 def boot():

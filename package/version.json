@@ -1,0 +1,9 @@
+{
+    "current_version": "v20220424",
+    "historical_version_info": [
+        {
+            "version": "v20220424",
+            "info": "优化程序异常处理。修复完成作业时判断选项是否被选中时会出现异常的问题。增加保存异常信息功能。添加保存程序更信息的文件version.json"
+        }
+    ]
+}

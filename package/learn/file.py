@@ -45,5 +45,10 @@ def save_text_file(filename, text):
         f.write(text)
 
 
+def append_text_file(filename, text):
+    with open(filename, "a", encoding="utf-8") as f:
+        f.write(text)
+
+
 def is_file_exists(filename):
     return filename if os.path.exists(filename) else ""

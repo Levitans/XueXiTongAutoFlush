@@ -34,7 +34,9 @@ def login_of_QRCoed():
     driver = MyDriver(noHead=False)
     print("正在打开二维码登陆界面，请稍后...")
     username = driver.login_with_QRCode()
+    print("登陆成功")
     if gl.no_head:
+        print("请稍后")
         driver.quit()
         driver = MyDriver()
         driver.login_with_cookies(username)

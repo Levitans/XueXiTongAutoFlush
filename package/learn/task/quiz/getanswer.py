@@ -24,12 +24,12 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        #   ==============显示返回内容，测试时使用=================
-        print(dataText)
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == -1:
-            raise NoFoundAnswerException
+            raise NoFoundAnswerException(dataJson["data"])
         answer = dataJson['data']
         return answer
 
@@ -43,12 +43,12 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        #   ==============显示返回内容，测试时使用=================
-        print(dataText)
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == "0" or dataJson['code'] == 0:
-            raise NoFoundAnswerException
+            raise NoFoundAnswerException(dataJson['answer'].encode().decode())
         if isinstance(dataJson['answer'], list):
             return ""
         answer = dataJson['answer'].encode().decode()
@@ -64,8 +64,8 @@ class GetAnswer:
             raise NoFoundAnswerException
         dataText = r.text
 
-        #   ==============显示返回内容，测试时使用=================
-        print(dataText)
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
 
         try:
             dataJson = json.loads(dataText)
@@ -87,12 +87,12 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        #   ==============显示返回内容，测试时使用=================
-        print(dataText)
+        # #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
-            raise NoFoundAnswerException
+            raise NoFoundAnswerException(dataJson['answer'])
         answer = dataJson['answer']
         return answer
 
@@ -113,8 +113,10 @@ class GetAnswer:
             answerList.append(GetAnswer.__parseAnswer(answer1, questionType))
         except TimeoutError:
             print("线程1响应超时")
-        except NoFoundAnswerException:
+        except NoFoundAnswerException as e:
             print("线程1未找到答案")
+            print(str(e)+'\n')
+            print()
         except ConnectionError:
             print("接口1连接失败")
 
@@ -123,8 +125,9 @@ class GetAnswer:
             answerList.append(GetAnswer.__parseAnswer(answer2, questionType))
         except TimeoutError:
             print("线程2响应超时")
-        except NoFoundAnswerException:
+        except NoFoundAnswerException as e:
             print("线程2未找到答案")
+            print(str(e)+"\n")
         except requests.exceptions.ConnectionError:
             print("接口2连接失败")
 
@@ -143,8 +146,9 @@ class GetAnswer:
             answerList.append(GetAnswer.__parseAnswer(answer4, questionType))
         except TimeoutError:
             print("线程4响应超时")
-        except NoFoundAnswerException:
+        except NoFoundAnswerException as e:
             print("线程4未找到答案")
+            print(str(e)+"\n")
         except requests.exceptions.ConnectionError:
             print("接口4连接失败")
 
@@ -189,7 +193,7 @@ class GetAnswer:
         :param questionType: 题目的类型，若不提供题目类型则不检测查找答案正确性
         :return: 形如[[答案1], [答案2], [答案3]]的二维列表，其中列表的元素个数在[0, 4]范围内
         """
-        print("正在搜索题目：{}".format(question))
+        print("正在搜索题目：{}\n".format(question))
         answerList = self.__requestAnswer(question, questionType)
         while None in answerList:
             answerList.remove(None)
@@ -233,6 +237,7 @@ if __name__ == "__main__":
 
 
 """
+资本-帝国主义列强不能灭亡和瓜分近代中国的最根本原因是(    )。
 ['物质是第一性的,意识是第二性的', '主观能动性的发挥,必须尊重客观规律']
 ['物质是第一性的,意识是第二性的', '主观能动性的发挥,必须尊重客观规律']
 ['物质是第一性的，意识是第二性的', '主观能动性的发挥，必须尊重客观规律']

@@ -83,3 +83,12 @@ class CookiesManger:
         file.save_json_data(self.__filename, self.__cookies)
 
 
+class ExceptionLogManger:
+    def __init__(self, filename):
+        self.__filename = filename
+
+    def writeLog(self, info):
+        nowTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        version = file.get_json_data(gl.version_file_path)["current_version"]
+        data = "时间："+nowTime+"\n版本："+version+"\n异常信息："+info+"\n\n"
+        file.append_text_file(self.__filename, data)

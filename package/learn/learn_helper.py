@@ -4,6 +4,7 @@
 # @File : learn_helper.py
 # @Software : PyCharm
 import time
+import traceback
 
 from package.learn import globalvar as gl
 from package.learn import color
@@ -26,7 +27,12 @@ def automatic_learning(driver):
     driver.go_courses_page()
 
     # 获取所有课程
-    courses_list = learn.get_courses(driver.get_driver())
+    try:
+        courses_list = learn.get_courses(driver.get_driver())
+    except exceptions.NoSuchElementException as e:
+        errInfo = traceback.format_exc()
+        gl.exception_log_manger.writeLog(errInfo)
+        raise Exception("获取课程时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
     print(color.blue("当前课程有："))
     Display.printTable([i.name for i in courses_list], MyFormat([50, 50], displayNumber=True))
     index = int(input("\n输入课程序号：")) - 1
@@ -39,6 +45,8 @@ def automatic_learning(driver):
     try:
         chapter_list = learn.get_chapters(driver.get_driver())
     except exceptions.NoSuchElementException as e:
+        errInfo = traceback.format_exc()
+        gl.exception_log_manger.writeLog(errInfo)
         raise Exception("获取章节时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
 
     # 跳过已完成的章节
@@ -99,6 +107,8 @@ def automatic_learning(driver):
                             task.finish()
                             break
                         except Exception as e:
+                            errInfo = traceback.format_exc()
+                            gl.exception_log_manger.writeLog(errInfo)
                             driver.get_driver().switch_to.default_content()
                             print(color.read("当前任务点 {} 运行时出错".format(task.__name__)))
                             print(color.read(str(e)))
@@ -129,7 +139,9 @@ def do_homework(driver: MyDriver):
     try:
         courses_list = school.get_courses(driver.get_driver())
     except exceptions.NoSuchElementException as e:
-        raise Exception("获取章节时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
+        errInfo = traceback.format_exc()
+        gl.exception_log_manger.writeLog(errInfo)
+        raise Exception("获取课程时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
     print(color.blue("当前课程有："))
     Display.printTable([i.name for i in courses_list], MyFormat([50, 50], displayNumber=True))
     index = int(input("\n输入课程序号：")) - 1
@@ -172,5 +184,10 @@ def do_homework(driver: MyDriver):
         try:
             quiz.finish()
         except Exception as e:
+            errInfo = traceback.format_exc()
+            gl.exception_log_manger.writeLog(errInfo)
             print(color.read("完成作业 "+str(i+1)+" 时出现异常："+str(e)))
             print(color.read("跳过这份作业"))
+        driver.get_driver().back()
+        time.sleep(1)
+
