@@ -4,6 +4,18 @@
 # @File : faithlearning.py
 # @Software : PyCharm
 
+import sys
+
+# 判断系统中的 Python 版本是否满足要求
+def python_version_detect():
+    local_version = sys.version.split(" ")[0]
+    if int(local_version.replace(".", "")) < 390:
+        print("当前系统中 Python 版本过低")
+        print("程序运行依赖 3.9 及以上版本的Python")
+
+
+python_version_detect()
+
 try:
     import package.learn.config
     from package.learn import color
@@ -16,7 +28,7 @@ try:
         change_user_data, delete_historical, system_settings
 except ModuleNotFoundError as e:
     print(color.read("依赖导入失败："+str(e)))
-    print(color.read("请前往 ”使用说明.md“ 文件中查看所需依赖库"))
+    print(color.read("请前往 “使用说明.md” 文件中查看所需依赖库"))
     exit(233)
 
 

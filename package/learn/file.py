@@ -36,7 +36,7 @@ def get_json_data(filename) -> dict:
 
 def save_json_data(filename, dictData):
     with open(filename, "w", encoding="utf-8") as f:
-        data = json.dumps(dictData, ensure_ascii=False)
+        data = json.dumps(dictData, indent=4, ensure_ascii=False)
         f.write(data)
 
 
