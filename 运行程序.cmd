@@ -1,17 +1,18 @@
 @echo off
+
+:: сц╢кнд╪Чткппй╠б╥╬╤жп╡╩дэжпнд
 set curpath=%~dp0
 cd /d %curpath%
 
-python -version >nul 2>nul
-
+python --version >nul 2>nul
 if %ERRORLEVEL% == 0 (
-    echo ГЁ╩Г╩÷Д╦╜Ф°╙Ф┴╬Е┬╟Python
-    echo Х╞╥Е╝┴Хё┘PythonЕ░▌Е├█Х©░Х║▄Г╗▀Е╨▐
-    echo ФЁ╗Ф└▐PythonИ°─Х╕│Е╝┴Хё┘3.9Д╩╔Д╦┼Г┴┬Ф°╛
+    goto start
+) else (
+    echo о╣мЁжпн╢ур╣╫Python
+    echo гК╟╡в╟Python╨СтыткппЁлпР
+    echo в╒рБPythonпХр╙╟╡в╟3.9ртио╟Ф╠╬
     pause
     exit 0
-) else (
-    goto start
 )
 
 :start

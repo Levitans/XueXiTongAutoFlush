@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220424",
+    "current_version": "v20220425",
     "historical_version_info": [
+        {
+            "version": "v20220425",
+            "info": "添加一个程序启动脚本和程序更新脚本"
+        },
         {
             "version": "v20220424",
             "info": "优化程序异常处理。修复完成作业时判断选项是否被选中时会出现异常的问题。增加保存异常信息功能。添加保存程序更信息的文件version.json"
