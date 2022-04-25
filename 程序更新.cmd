@@ -1,6 +1,7 @@
+chcp 65001
 @echo off
 set filename="newData.zip"
-echo 正在下载程序
+echo 姝ｅ湪涓嬭浇绋嬪簭
 
 set curpath=%~dp0
 cd /d %curpath%
@@ -10,10 +11,10 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell curl -o %filename% "https:
 package\bin\unzip newData.zip
 copy /Y .\XueXiTongAutoFlush-master\package\learn .\package\learn
 copy /Y .\XueXiTongAutoFlush-master\package\version.json .\package
-copy /Y .\XueXiTongAutoFlush-master\faithlearning.py .\package
+copy /Y .\XueXiTongAutoFlush-master\faithlearning.py .\
 
 rmdir /S/Q XueXiTongAutoFlush-master
 del /Q %filename%
 
-echo 程序更新成功
+echo 绋嬪簭鏇存柊鎴愬姛
 pause
