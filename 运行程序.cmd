@@ -20,6 +20,8 @@ if %ERRORLEVEL% == 0 (
 :start
 if exist ".\venv" (
     .\venv\Scripts\python.exe .\faithlearning.py
+    pause
+    exit 0
 ) else (
     echo 系统中未找到虚拟环境
     goto create_venv

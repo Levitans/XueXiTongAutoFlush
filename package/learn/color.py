@@ -4,7 +4,8 @@
 # @File : color.py
 # @Software : PyCharm
 
-from colorama import Fore, Back
+from colorama import Fore, Back, init
+init(autoreset=True)
 
 def read(some_str):
     return Fore.LIGHTRED_EX + some_str + Fore.RESET
