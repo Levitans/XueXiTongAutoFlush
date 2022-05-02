@@ -8,6 +8,7 @@ import time
 import pickle
 import base64
 from package.learn import file
+from package.learn import globalvar as gl
 
 
 class UserManger:

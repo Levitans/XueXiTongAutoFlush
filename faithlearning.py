@@ -5,6 +5,7 @@
 # @Software : PyCharm
 
 import sys
+import traceback
 
 # 判断系统中的 Python 版本是否满足要求
 def python_version_detect():
@@ -12,6 +13,8 @@ def python_version_detect():
     if int(local_version.replace(".", "")) < 390:
         print("当前系统中 Python 版本过低")
         print("程序运行依赖 3.9 及以上版本的Python")
+        print("可以访问 https://cdn.npmmirror.com/binaries/python/3.9.0/python-3.9.0.exe 下载Python3.9.0安装包")
+        exit(233)
 
 
 python_version_detect()
@@ -80,6 +83,8 @@ def start_learn():
             driver.quit()
             print(color.read("程序运行出现异常"))
             print(color.read(str(e)))
+            err_info = traceback.format_exc()
+            gl.exception_log_manger.writeLog(err_info)
 
     elif key == "2":
         print(color.blue("选择设置："))
