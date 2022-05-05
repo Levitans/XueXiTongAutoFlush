@@ -113,6 +113,7 @@ def automatic_learning(driver):
                             print(color.read("当前任务点 {} 运行时出错".format(task.__name__)))
                             print(color.read(str(e)))
                             print("跳过当前任务点")
+                            break
                     else:
                         print("当前任务点不是 " + color.yellow(task.__name__))
                 Display.separate()
