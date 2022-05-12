@@ -7,10 +7,17 @@ set curpath=%~dp0
 cd /d %curpath%
 
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell curl -o %filename% "https://github.com/Levitans/XueXiTongAutoFlush/archive/refs/heads/master.zip"
+if %ERRORLEVEL% == 0 (
+    echo 程序下载成功
+) else (
+    echo 与服务器连接超时
+    echo 请重试
+    pause
+    exit 2
+)
 
 package\bin\unzip newData.zip
-copy /Y .\XueXiTongAutoFlush-master\package\learn .\package\learn
-copy /Y .\XueXiTongAutoFlush-master\package\version.json .\package
+copy /Y .\XueXiTongAutoFlush-master\package .\package
 copy /Y .\XueXiTongAutoFlush-master\faithlearning.py .\
 
 rmdir /S/Q XueXiTongAutoFlush-master

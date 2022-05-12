@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220425",
+    "current_version": "v20220512",
     "historical_version_info": [
+        {
+            "version": "v20220512",
+            "info": "将下载第三方库的功能从 运行程序.cmd 移到了faithlearning.py 里面。将需要第三方库写在了 requirements.txt 文件中。"
+        },
         {
             "version": "v20220425",
             "info": "添加一个程序启动脚本和程序更新脚本"

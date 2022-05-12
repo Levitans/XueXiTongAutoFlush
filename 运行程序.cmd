@@ -20,20 +20,12 @@ if %ERRORLEVEL% == 0 (
 :start
 if exist ".\venv" (
     .\venv\Scripts\python.exe .\faithlearning.py
-    pause
-    exit 0
 ) else (
     echo 系统中未找到虚拟环境
-    goto create_venv
+    echo 正在为你创建虚拟环境
+    python -m venv .\venv
+    echo 虚拟环境创建成功
+    echo 请重启程序
 )
-
-:create_venv
-echo 正在为你创建虚拟环境
-python -m venv .\venv
-echo 虚拟环境创建完成，正在下载所需依赖
-.\venv\Scripts\pip.exe install -i https://mirrors.aliyun.com/pypi/simple/ selenium==3.141.0
-.\venv\Scripts\pip.exe install -i https://mirrors.aliyun.com/pypi/simple/ requests
-.\venv\Scripts\pip.exe install -i https://mirrors.aliyun.com/pypi/simple/ colorama
-echo 所需依赖下载完毕，请重启程序
 pause
 exit 0
