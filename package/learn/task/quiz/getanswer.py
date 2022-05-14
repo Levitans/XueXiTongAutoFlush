@@ -10,9 +10,10 @@ from package.learn.exception import NoFoundAnswerException
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures._base import TimeoutError
 
+
 class GetAnswer:
     def __init__(self):
-        self.__pool = ThreadPoolExecutor(max_workers=4)
+        self.__pool = ThreadPoolExecutor(max_workers=5)
 
     @staticmethod
     def __API1(question):
@@ -96,6 +97,25 @@ class GetAnswer:
         answer = dataJson['answer']
         return answer
 
+    @staticmethod
+    def __API5(question):
+        api = "http://118.25.10.121/moocapi?q="
+        url = "{}{}".format(api, question)
+        try:
+            r = requests.get(url, timeout=10)
+        except requests.exceptions.Timeout:
+            raise NoFoundAnswerException
+        dataText = r.text
+
+        #   ==============显示返回内容，测试时使用=================
+        # print(dataText)
+
+        dataJson = json.loads(dataText)
+        if dataJson["code"] == -1:
+            raise NoFoundAnswerException(dataJson["msg"])
+        answer = dataJson['answer']
+        return answer
+
     def __requestAnswer(self, question, questionType):
         """
         :param question: 需要查询的问题
@@ -107,6 +127,7 @@ class GetAnswer:
         future2 = self.__pool.submit(GetAnswer.__API2, question)
         future3 = self.__pool.submit(GetAnswer.__API3, question)
         future4 = self.__pool.submit(GetAnswer.__API4, question)
+        future5 = self.__pool.submit(GetAnswer.__API5, question)
 
         try:
             answer1 = future1.result(timeout=20)
@@ -115,7 +136,7 @@ class GetAnswer:
             print("线程1响应超时")
         except NoFoundAnswerException as e:
             print("线程1未找到答案")
-            print(str(e)+'\n')
+            print(str(e) + '\n')
             print()
         except ConnectionError:
             print("接口1连接失败")
@@ -127,7 +148,7 @@ class GetAnswer:
             print("线程2响应超时")
         except NoFoundAnswerException as e:
             print("线程2未找到答案")
-            print(str(e)+"\n")
+            print(str(e) + "\n")
         except requests.exceptions.ConnectionError:
             print("接口2连接失败")
 
@@ -148,9 +169,20 @@ class GetAnswer:
             print("线程4响应超时")
         except NoFoundAnswerException as e:
             print("线程4未找到答案")
-            print(str(e)+"\n")
+            print(str(e) + "\n")
         except requests.exceptions.ConnectionError:
             print("接口4连接失败")
+
+        try:
+            answer5 = future5.result(timeout=20)
+            answerList.append(GetAnswer.__parseAnswer(answer5, questionType))
+        except TimeoutError:
+            print("线程5响应超时")
+        except NoFoundAnswerException as e:
+            print("线程5未找到答案")
+            print(str(e) + "\n")
+        except requests.exceptions.ConnectionError:
+            print("接口5连接失败")
 
         return answerList
 
@@ -187,6 +219,11 @@ class GetAnswer:
                     return [data[i]]
             return None
 
+    @staticmethod
+    def callback(question, answer, qType=""):
+        url = "http://118.25.10.121/moocapi2?t={}&q={}&a={}".format(qType, question, answer)
+        r = requests.get(url)
+
     def getAnswer(self, question, questionType=""):
         """
         :param question: 待搜索的题目
@@ -197,8 +234,10 @@ class GetAnswer:
         answerList = self.__requestAnswer(question, questionType)
         while None in answerList:
             answerList.remove(None)
+        if len(answerList) != 0:
+            GetAnswer.callback(question, str(answerList[0]), questionType)
         for i in range(len(answerList)):
-            print("答案{}：{}".format(i+1, answerList[i]))
+            print("答案{}：{}".format(i + 1, answerList[i]))
         return answerList
 
     def getSingleAnswer(self, question, questionType=""):
@@ -226,15 +265,11 @@ if __name__ == "__main__":
     getAnswer = GetAnswer()
     while True:
         q = input("输入题目（q退出）：")
-        # q = "规定将总理衙门改为外务部并“班列六部之前”的不平等条约是( )"
         if q == "q":
             break
         answerList = getAnswer.getAnswer(q)
         print(answerList)
         print()
-
-
-
 
 """
 资本-帝国主义列强不能灭亡和瓜分近代中国的最根本原因是(    )。

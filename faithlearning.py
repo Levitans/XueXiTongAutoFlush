@@ -20,10 +20,10 @@ def python_version_detect():
         eixt(233)
     local_version = int(versionNumber.group())
     if local_version < 390:
-        shutil.rmtree(".\\venv")
         print("当前系统中 Python 版本过低")
         print("程序运行依赖 3.9 及以上版本的Python")
         print("可以访问 https://cdn.npmmirror.com/binaries/python/3.9.0/python-3.9.0.exe 下载Python3.9.0安装包")
+        print("安装新 Python 后请手动删除，当前文件夹下的 venv 文件夹")
         exit(233)
 
 
