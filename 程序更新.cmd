@@ -1,27 +1,25 @@
-chcp 65001
 @echo off
 set filename="newData.zip"
-echo æ­£åœ¨ä¸‹è½½ç¨‹åº
+echo ÕıÔÚÏÂÔØ³ÌĞò
 
-set curpath=%~dp0
-cd /d %curpath%
+chdir | cd
 
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell curl -o %filename% "https://github.com/Levitans/XueXiTongAutoFlush/archive/refs/heads/master.zip"
 if %ERRORLEVEL% == 0 (
-    echo ç¨‹åºä¸‹è½½æˆåŠŸ
+    echo ³ÌĞòÏÂÔØ³É¹¦
 ) else (
-    echo ä¸æœåŠ¡å™¨è¿æ¥è¶…æ—¶
-    echo è¯·é‡è¯•
+    echo Óë·şÎñÆ÷Á¬½Ó³¬Ê±
+    echo ÇëÖØÊÔ
     pause
     exit 2
 )
 
-package\bin\unzip newData.zip
-copy /Y .\XueXiTongAutoFlush-master\package .\package
-copy /Y .\XueXiTongAutoFlush-master\faithlearning.py .\
+package\bin\unzip %filename%
+xcopy /S/Y .\XueXiTongAutoFlush-master\package .\package
+xcopy /Y .\XueXiTongAutoFlush-master\faithlearning.py .\
 
 rmdir /S/Q XueXiTongAutoFlush-master
 del /Q %filename%
-
-echo ç¨‹åºæ›´æ–°æˆåŠŸ
+echo ³ÌĞò¸üĞÂ³É¹¦
+echo config.ini ÎÄ¼şÒÑ±»¸²¸Ç£¬×¢Òâä¯ÀÀÆ÷ºÍÇı¶¯Â·¾¶ÅäÖÃ
 pause
