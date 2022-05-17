@@ -3,6 +3,7 @@
 # @Author : Levitan
 # @File : homework.py
 # @Software : PyCharm
+import re
 import time
 import requests.exceptions
 import random
@@ -10,9 +11,11 @@ from package.learn.task.quiz.getanswer import GetAnswer
 from package.learn.task.quiz.multipleChoiceOfTask import MultipleChoiceOfTask
 from package.learn.task.quiz.trueOrFalseOfTask import TrueOrFalseOfTask
 from package.learn.task.interface import Task, Answerable
+from package.learn.no_secret import DecodeSecret
 from package.learn.display import Display
 from package.learn import globalvar as gl
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 
 class QuizOfTask(Task):
@@ -30,6 +33,26 @@ class QuizOfTask(Task):
         iframe = self.__driver.find_element(By.CSS_SELECTOR, '[id="frame_content"]')
         self.__driver.switch_to.frame(iframe)
 
+        # 获取 font_face
+        fontFaceItem = self.__driver.find_element(By.TAG_NAME, "head").find_elements(By.CSS_SELECTOR, '[type="text/css"]')
+        fontFaceStr = ""
+        for i in fontFaceItem:
+            strData = i.get_attribute('innerHTML')
+            if strData == "":
+                continue
+            else:
+                try:
+                    fontFaceStr = re.findall(";base64,(.*)'[)] format", strData)[0]
+                    break
+                except Exception as e:
+                    print("当前 fontFace 无法解析："+str(e))
+                    continue
+        if fontFaceStr == "":
+            raise Exception("当前任务点无法获取 font_face 值")
+
+        # 实例化 DecodeSecret 类
+        decodeSecret = DecodeSecret(fontFaceStr)
+
         # 获取页面中的所有题目
         questionList = self.__driver.find_elements(By.CSS_SELECTOR, '[class="TiMu"]')
         print("当前页面共有{}题".format(len(questionList)))
@@ -38,7 +61,7 @@ class QuizOfTask(Task):
         for i in range(len(questionList)):
             Display.separate(10)
             item = questionList[i]
-            title = item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.replace("\n", "")
+            title = decodeSecret.decode(item.find_element(By.CSS_SELECTOR, '[class="Zy_TItle clearfix"]').text.replace("\n", ""))
             # 获取问题
             question = title[title.find("】")+1:]
 
@@ -57,7 +80,29 @@ class QuizOfTask(Task):
                 # 获取题目选项
                 optionTextList = []
                 for option in optionWebElementList:
-                    optionTextList.append(option.find_element(By.CSS_SELECTOR, '[class="fl after"]').text.replace("\n", ""))
+                    """
+                    说明变更时间：===========2022-05-14===========
+                    目前发现，在课程章节里的答题任务点中，单选和多选题目类型的选项标签中有以下三个class值
+                    
+                        class="fl after"
+                        class="font-cxsecret fl after"
+                        class="fl before"
+                    
+                    学习通的作业页面中的答题任务和章节中的答题任务差异非常大，所以目前 quiz 模块无直接用于作业功能
+                    """
+                    try:
+                        rawData = option.find_element(By.CSS_SELECTOR, '[class="fl after"]').text.replace("\n", "")
+                        optionTextList.append(decodeSecret.decode(rawData))
+                    except NoSuchElementException:
+                        try:
+                            rawData = option.find_element(By.CSS_SELECTOR, '[class="font-cxsecret fl after"]').text.replace("\n", "")
+                            optionTextList.append(decodeSecret.decode(rawData))
+                        except NoSuchElementException:
+                            try:
+                                rawData = option.find_element(By.CSS_SELECTOR, '[class="fl before"]').text.replace("\n", "")
+                                optionTextList.append(decodeSecret.decode(rawData))
+                            except NoSuchElementException:
+                                raise NoSuchElementException('题目的选项的class不在 ["fl after", "font-cxsecret fl after", "fl before"] 中，系统无法获取题目选项')
                 self.__questionList.append(
                     MultipleChoiceOfTask(item, questionType, question, answerList, optionTextList, optionWebElementList))
             elif questionType == "判断题":

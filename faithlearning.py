@@ -48,9 +48,7 @@ def try_install_library():
 
 try:
     import package.learn.config
-    from package.learn import color
-    from package.learn import learn_helper
-    from package.learn import exception
+    from package.learn import color, learn_helper, exception, no_secret
     from package.learn import globalvar as gl
     from package.learn.mydriver import MyDriver
     from package.learn.display import Display, MyFormat

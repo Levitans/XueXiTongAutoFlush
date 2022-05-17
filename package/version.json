@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220512",
+    "current_version": "v20220517",
     "historical_version_info": [
+        {
+            "version": "v20220517",
+            "info": "1、添加对抗学习通字体反爬的功能。2、修改 quiz.py 通过题目的 clss 值搜索题目的代码"
+        },
         {
             "version": "v20220512",
             "info": "将下载第三方库的功能从 运行程序.cmd 移到了faithlearning.py 里面。将需要第三方库写在了 requirements.txt 文件中。"
