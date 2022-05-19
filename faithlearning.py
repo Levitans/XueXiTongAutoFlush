@@ -64,8 +64,11 @@ def boot():
         gl.init_global()
     except exception.InitializationException as e:
         print(color.read("程序初始化异常"))
-        print(str(e))
-        exit()
+        print("异常信息为："+str(e))
+        print("==========详细信息如下==========")
+        print(traceback.format_exc())
+        input("输入回车退出程序...")
+        exit(233)
 
 
 boot()

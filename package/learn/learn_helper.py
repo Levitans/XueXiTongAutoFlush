@@ -92,10 +92,39 @@ def automatic_learning(driver):
             iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
             print("当前章节有 " + color.yellow(str(len(iframeList))) + " 个任务点")
 
+            # 获取当前页面中任务点的完成状态
+            # taskPointIsFinish 中储存任务点状态
+            # 任务点状态为以下三种之一
+            #   1、任务点未完成
+            #   2、任务点完成
+            #   3、任务点状态无法判断
+            taskPointElementList = driver.get_driver().find_elements(By.XPATH, '//*[@class="ans-cc"]/p/div')
+            taskPointFinishStateList = []
+            for taskPointElement in taskPointElementList:
+                taskPointClass = taskPointElement.get_attribute("class")
+                if taskPointClass is None:              # 任务点转台无法判断
+                    taskPointFinishStateList.append(3)
+                elif taskPointClass == "ans-attach-ct":
+                    taskPointFinishStateList.append(1)  # 任务点未完成
+                elif taskPointClass == "ans-attach-ct ans-job-finished":
+                    taskPointFinishStateList.append(2)  # 任务点已完成
+
             # 遍历每个任务点
             for i in range(len(iframeList)):
                 print("当前为第 " + color.blue(str(i + 1)) + " 任务点")
 
+                # 判断任务点状态
+                if taskPointFinishStateList[i] == 3:
+                    print(color.yellow("当前任务点无法判断其状态"))
+                    print(color.yellow("跳过当前任务点")+"\n")
+                    continue
+                elif taskPointFinishStateList[i] == 2:
+                    print(color.green("当前任务点已完成"))
+                    print(color.green("跳过当前任务点")+"\n")
+                    continue
+                elif taskPointFinishStateList[i] == 1:
+                    print(color.green("当前任务点未完成"))
+                    print(color.green("开始学习当前任务点"))
                 # 循环判断任务点类型
                 # 因为当前 QuizOfTask 类型任务点还没有欧判读方法，所以 QuizOfTask 任务放在元组最后面
                 for item in (PPT, Video, Audio, QuizOfTask):

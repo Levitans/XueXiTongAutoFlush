@@ -43,6 +43,9 @@ def login_of_QRCoed():
     return driver
 
 def login_of_history():
+    print(color.yellow("          历史登陆中的信息有存活期限        "))
+    print(color.yellow("  若没有你的登陆信息请重新扫码登陆或账号密码登陆"))
+    Display.separate()
     name_list = gl.cookie_manager.getNameList()
     Display.printTable(name_list, MyFormat([20], displayNumber=True))
     print()

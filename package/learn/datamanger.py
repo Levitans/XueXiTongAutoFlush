@@ -48,25 +48,39 @@ class UserManger:
 class CookiesManger:
     def __init__(self, filename):
         self.__filename = filename
-        self.__cookies = file.get_json_data(filename)
+        self.__cookies = self.__readData(filename)
+
+    def __readData(self, filename):
+        cookiesDict = file.get_json_data(filename)
+        usernameList = cookiesDict.keys()
+        expiredUsernameList = []
+        for username in usernameList:
+            cookies_b64 = cookiesDict[username]
+            cookies_bytes = base64.b64decode(cookies_b64)
+            cookies_list = pickle.loads(cookies_bytes)
+            # 检查cookies是否过期
+            # 如果过期则移出 cookies 字典
+            for i in cookies_list:
+                if "expiry" not in list(i.keys()):
+                    continue
+                expiry_timestamp = int(i['expiry'])
+                if expiry_timestamp < int(time.time()):
+                    expiredUsernameList.append(username)
+        for expiredUsername in expiredUsernameList:
+            cookiesDict.pop(expiredUsername)
+        file.save_json_data(self.__filename, cookiesDict)
+        return cookiesDict
 
     def getNameList(self):
         return list(self.__cookies.keys())
 
     def getCookies(self, username):
         # 用户不存在返回空
-        if username not in list(self.__cookies.keys()):
+        if username not in self.getNameList():
             return []
         cookies_b64 = self.__cookies[username]
         cookies_bytes = base64.b64decode(cookies_b64)
         cookies_list = pickle.loads(cookies_bytes)
-        # 检查cookies是否过期
-        for i in cookies_list:
-            if "expiry" not in list(i.keys()):
-                continue
-            expiry_timestamp = int(i['expiry'])
-            if expiry_timestamp < int(time.time()):
-                return []
         return cookies_list
 
     def setCookies(self, username, cookies):

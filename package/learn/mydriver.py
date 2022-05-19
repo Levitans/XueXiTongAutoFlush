@@ -75,11 +75,6 @@ class MyDriver:
     def login_with_cookies(self, username):
         self.__driver.get("http://i.chaoxing.com")
         cookies = gl.cookie_manager.getCookies(username)
-
-        # cookies 过期或没有找到 cookies
-        if len(cookies) == 0:
-            pass
-
         self.set_cookies(cookies)
         self.__driver.get("http://i.chaoxing.com")
 

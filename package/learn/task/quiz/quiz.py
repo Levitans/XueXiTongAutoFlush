@@ -13,6 +13,7 @@ from package.learn.task.quiz.trueOrFalseOfTask import TrueOrFalseOfTask
 from package.learn.task.interface import Task, Answerable
 from package.learn.no_secret import DecodeSecret
 from package.learn.display import Display
+from package.learn import color
 from package.learn import globalvar as gl
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -109,7 +110,9 @@ class QuizOfTask(Task):
                 answerWebElementList = item.find_elements(By.TAG_NAME, "label")
                 self.__questionList.append(TrueOrFalseOfTask(item, questionType, question, answerList[0], answerWebElementList))
             else:
-                raise Exception("当前题目类型为：{}，不在（单选题、多选题、判断题）中，程序无法解决".format(questionType))
+                print(color.blue("程序能回答的题有：单选题、多选题、判断题"))
+                print(color.blue("本题类型为：" + questionType))
+                print(color.blue("跳过该题"))
             time.sleep(random.randint(gl.quiz_get_answer_speed_min, gl.quiz_get_answer_speed_max))        # 防止访问接口频率过高被判断为爬虫
         myGetAnswer.close()
 
@@ -130,7 +133,7 @@ class QuizOfTask(Task):
 
     def __submitOrSave(self):
         # 暂时不启用判断是否提交
-        # 现在都是点击保存
+        # 现在都是点击保存，程序不会主动提交
         # if self.__checkpoint:
         #     self.__driver.find_element(By.CSS_SELECTOR, '[href="javascript:void(0);"][onclick="btnBlueSubmit();"]').click()
         #     time.sleep(1)

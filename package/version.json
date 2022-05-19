@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220517",
+    "current_version": "v20220519",
     "historical_version_info": [
+        {
+            "version": "v20220519",
+            "info": "1、优化程序答题逻辑。2、增加自动删除过期cookies。3、增加判断任务点是否完成的功能"
+        },
         {
             "version": "v20220517",
             "info": "1、添加对抗学习通字体反爬的功能。2、修改 quiz.py 通过题目的 clss 值搜索题目的代码"
