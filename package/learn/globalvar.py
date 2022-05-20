@@ -34,6 +34,7 @@ quiz_get_answer_speed_max: int
 quiz_get_answer_speed_min: int
 quiz_click_speed_max: int
 quiz_click_speed_min: int
+decode_secret_status: int
 
 # 其他配置
 version_file_path = ""
@@ -44,7 +45,7 @@ def init_global():
     """
     global is_init, no_head, mute, no_img, browser_path, driver_path, user_manager, cookie_manager, \
         ppt_speed_max, ppt_speed_min, quiz_get_answer_speed_max, quiz_get_answer_speed_min, quiz_click_speed_max, quiz_click_speed_min, \
-        exception_log_manger, version_file_path
+        exception_log_manger, version_file_path, decode_secret_status
 
     try:
         # <--------------------加载浏览器配置------------------------->
@@ -73,7 +74,7 @@ def init_global():
         quiz_get_answer_speed_min = int(cfg_get("task_config", "quiz_get_answer_speed_min"))
         quiz_click_speed_max = int(cfg_get("task_config", "quiz_click_speed_max"))
         quiz_click_speed_min = int(cfg_get("task_config", "quiz_click_speed_min"))
-
+        decode_secret_status = int(cfg_get("task_config", "decode_secret_status"))
         # <------------------------加载其他点配置----------------------->
         version_file_path = cfg_get("other", "version_file_path")
 

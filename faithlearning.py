@@ -96,7 +96,7 @@ def start_learn():
         else:
             raise Exception("序号输入错误")
         Display.separate()
-        Display.printTable(["学习", "作业"], MyFormat([20, 20], displayNumber=True))
+        Display.printTable(["学习", "作业（还未完善，暂时不要使用）"], MyFormat([20, 20], displayNumber=True))
         key = input("\n输入序号：")
         Display.separate()
         try:

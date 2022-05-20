@@ -34,25 +34,15 @@ class QuizOfTask(Task):
         iframe = self.__driver.find_element(By.CSS_SELECTOR, '[id="frame_content"]')
         self.__driver.switch_to.frame(iframe)
 
-        # 获取 font_face
-        fontFaceItem = self.__driver.find_element(By.TAG_NAME, "head").find_elements(By.CSS_SELECTOR, '[type="text/css"]')
-        fontFaceStr = ""
-        for i in fontFaceItem:
-            strData = i.get_attribute('innerHTML')
-            if strData == "":
-                continue
-            else:
-                try:
-                    fontFaceStr = re.findall(";base64,(.*)'[)] format", strData)[0]
-                    break
-                except Exception as e:
-                    print("当前 fontFace 无法解析："+str(e))
-                    continue
-        if fontFaceStr == "":
-            raise Exception("当前任务点无法获取 font_face 值")
-
         # 实例化 DecodeSecret 类
-        decodeSecret = DecodeSecret(fontFaceStr)
+        decodeSecret = DecodeSecret(gl.decode_secret_status)
+        if gl.decode_secret_status == 0:
+            print(color.yellow("不启用字体解密"))
+        elif gl.decode_secret_status == 1:
+            print(color.yellow("启用字体解密"))
+        elif gl.decode_secret_status == 2:
+            print(color.yellow("程序自动判断是是否需要字体解密"))
+        decodeSecret.getFontFace(self.__driver)
 
         # 获取页面中的所有题目
         questionList = self.__driver.find_elements(By.CSS_SELECTOR, '[class="TiMu"]')

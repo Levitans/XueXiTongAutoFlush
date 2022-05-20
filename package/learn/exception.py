@@ -37,3 +37,6 @@ class NoFoundAnswerException(Exception):
 
 class InitializationException(Exception):
     pass
+
+class TimeoutException(Exception):
+    pass
