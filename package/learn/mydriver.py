@@ -5,14 +5,15 @@
 # @Software : PyCharm
 
 import time
+from package.learn import color
 from package.learn import useragent
 from package.learn import globalvar as gl
+from package.learn import exception as myException
 from selenium import webdriver
 from selenium.common import exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 
 class MyDriver:
     def __init__(self, noImg=None, noHead=None):
@@ -28,6 +29,7 @@ class MyDriver:
                 options.add_argument('blink-settings=imagesEnabled=true')
             if noHead:
                 options.add_argument('headless')
+                options.add_argument('--disable-gpu')
             if gl.mute:
                 options.add_argument('--mute-audion')
             options.add_argument('--user-agent={}'.format(useragent.getheaders()))
@@ -53,9 +55,11 @@ class MyDriver:
         self.__driver.find_element(By.ID, "loginBtn").click()
         try:
             self.driver_wait(By.CLASS_NAME, "header")
-        except exceptions.TimeoutException:
-            print("登陆失败")
-            exit()
+        except myException.TimeoutException as e:
+            print(color.read("登陆失败"))
+            print(color.read("网页未正常加载"))
+            print(color.read(str(e)))
+            exit(233)
         cookies = self.__driver.get_cookies()
         gl.cookie_manager.setCookies(username, cookies)
 
@@ -63,9 +67,11 @@ class MyDriver:
         self.__driver.get("http://i.chaoxing.com")
         try:
             self.driver_wait(By.CLASS_NAME, "user-name")
-        except exceptions.TimeoutException:
-            print("登陆超时")
-            exit()
+        except myException.TimeoutException:
+            print(color.read("登陆失败"))
+            print(color.read("网页未正常加载"))
+            print(color.read(str(e)))
+            exit(233)
         username = self.__driver.find_element(By.CLASS_NAME, "user-name").text
         cookies = self.__driver.get_cookies()
         gl.cookie_manager.setCookies(username, cookies)
@@ -102,11 +108,7 @@ class MyDriver:
 
     def go_courses_page(self):
         self.__driver.get("http://mooc1-1.chaoxing.com/visit/interaction")
-        try:
-            self.driver_wait(By.CLASS_NAME, "course-list")
-        except exceptions.TimeoutException:
-            print("当前网络缓慢...")
-            exit()
+        self.driver_wait(By.CLASS_NAME, "course-list")
 
     def is_element_presence(self, by, value):
         try:
@@ -115,12 +117,19 @@ class MyDriver:
             return None
         return item
 
-    def driver_wait(self, by, value, wait_time=30):
-        try:
-            WebDriverWait(self.__driver, wait_time, 0.2).until(
-                lambda driver: driver.find_element(by, value))
-        except exceptions.TimeoutException:
-            print("当前网络缓慢...")
+    def driver_wait(self, by, value, wait_time=30, wait_number=3):
+        waitCount = 1
+        while True:
+            try:
+                WebDriverWait(self.__driver, wait_time, 0.2).until(
+                    lambda driver: driver.find_element(by, value))
+                break
+            except exceptions.TimeoutException:
+                waitCount += 1
+                if waitCount > wait_number:
+                    raise myException.TimeoutException("当前页面通过 "+by+" 没有找到 "+value)
+                print(color.yellow("当前网络缓慢..."))
+                print(color.yellow("程序会等待 "+str(wait_number)+" 轮，当前等待第 "+str(waitCount)+" 轮"))
 
     def go_js(self, js):
         self.__driver.execute_script(js)

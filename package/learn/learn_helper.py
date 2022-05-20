@@ -3,11 +3,13 @@
 # @Author : Levitan
 # @File : learn_helper.py
 # @Software : PyCharm
+import random
 import time
 import traceback
 
 from package.learn import globalvar as gl
 from package.learn import color
+from package.learn import exception as myException
 from package.learn.mydriver import MyDriver
 from package.learn.school import fuist
 from package.learn.display import Display, MyFormat
@@ -40,8 +42,11 @@ def automatic_learning(driver):
     Display.separate()
 
     # 获取所有章节
-    driver.get_url(course.get_ZJ_path())
-    driver.driver_wait(By.CLASS_NAME, "chapter_td")
+    try:
+        driver.get_url(course.get_ZJ_path())
+        driver.driver_wait(By.CLASS_NAME, "chapter_td")
+    except myException.TimeoutException as e:
+        raise Exception("章节页面未成功加载："+str(e))
     try:
         chapter_list = learn.get_chapters(driver.get_driver())
     except exceptions.NoSuchElementException as e:
@@ -117,10 +122,12 @@ def automatic_learning(driver):
                 if taskPointFinishStateList[i] == 3:
                     print(color.yellow("当前任务点无法判断其状态"))
                     print(color.yellow("跳过当前任务点")+"\n")
+                    time.sleep(random.randint(3, 5))
                     continue
                 elif taskPointFinishStateList[i] == 2:
                     print(color.green("当前任务点已完成"))
                     print(color.green("跳过当前任务点")+"\n")
+                    time.sleep(random.randint(3, 5))
                     continue
                 elif taskPointFinishStateList[i] == 1:
                     print(color.green("当前任务点未完成"))
