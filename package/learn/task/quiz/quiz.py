@@ -59,6 +59,12 @@ class QuizOfTask(Task):
             # 题目类型
             questionType = title[title.find("【")+1: title.find("】")]
 
+            # 判断题目能否解决
+            if questionType not in ("单选题", "多选题", "判断题"):
+                print(color.blue("程序能回答的题有：单选题、多选题、判断题"))
+                print(color.blue("本题类型为：" + questionType))
+                print(color.blue("跳过该题"))
+                continue
             # 获取问题答案
             answerList = myGetAnswer.getAnswer(question, questionType)
             # 判断是否找到答案
@@ -100,9 +106,10 @@ class QuizOfTask(Task):
                 answerWebElementList = item.find_elements(By.TAG_NAME, "label")
                 self.__questionList.append(TrueOrFalseOfTask(item, questionType, question, answerList[0], answerWebElementList))
             else:
-                print(color.blue("程序能回答的题有：单选题、多选题、判断题"))
-                print(color.blue("本题类型为：" + questionType))
-                print(color.blue("跳过该题"))
+                print(color.read("当前题目类型程序无法判断"))
+                print(color.read("题目类型："+questionType))
+                print(color.read("题目内容："+question))
+                print(color.read("跳过该题目"))
             time.sleep(random.randint(gl.quiz_get_answer_speed_min, gl.quiz_get_answer_speed_max))        # 防止访问接口频率过高被判断为爬虫
         myGetAnswer.close()
 

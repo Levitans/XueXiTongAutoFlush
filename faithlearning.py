@@ -53,7 +53,7 @@ try:
     from package.learn.mydriver import MyDriver
     from package.learn.display import Display, MyFormat
     from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
-        change_user_data, delete_historical, system_settings
+        change_user_data, delete_historical, system_settings, find_answers
 except ModuleNotFoundError as e:
     print("依赖导入失败：" + str(e))
     try_install_library()
@@ -79,12 +79,12 @@ def start_learn():
         print(color.blue("选择模式") + "（" + "当前浏览器为 " + color.read("关闭显示") + "）：")
     else:
         print(color.blue("选择模式") + "（" + "当前浏览器为 " + color.read("开启显示") + "）：")
-    Display.printTable(["开始学习", "用户设置", "系统设置"], MyFormat([20, 20, 20], displayNumber=True))
+    Display.printTable(["开始学习", "查找答案", "用户设置", "系统设置"], MyFormat([17, 17, 17, 17], displayNumber=True))
     key = input("\n输入序号：")
     Display.separate()
     if key == "1":
         print(color.blue("选择登陆方式："))
-        Display.printTable(["账号密码登陆", "二维码登陆", "历史登陆"], MyFormat([20, 20, 20], displayNumber=True))
+        Display.printTable(["账号密码登陆", "二维码登陆", "历史登陆"], MyFormat([17, 17, 17], displayNumber=True))
         key = input("\n输入序号：")
         Display.separate()
         if key == "1":
@@ -96,7 +96,7 @@ def start_learn():
         else:
             raise Exception("序号输入错误")
         Display.separate()
-        Display.printTable(["学习", "作业（还未完善，暂时不要使用）"], MyFormat([20, 20], displayNumber=True))
+        Display.printTable(["学习", "作业（还未完善，暂时不要使用）"], MyFormat([17, 17], displayNumber=True))
         key = input("\n输入序号：")
         Display.separate()
         try:
@@ -112,10 +112,11 @@ def start_learn():
             print(color.read(str(e)))
             err_info = traceback.format_exc()
             gl.exception_log_manger.writeLog(err_info)
-
     elif key == "2":
+        find_answers()
+    elif key == "3":
         print(color.blue("选择设置："))
-        Display.printTable(["创建新用户", "修改用户信息", "删除所有历史登陆信息"], MyFormat([20, 20, 20], displayNumber=True))
+        Display.printTable(["创建新用户", "修改用户信息", "删除所有历史登陆信息"], MyFormat([17, 17, 17], displayNumber=True))
         key = input("\n输入序号：")
         Display.separate()
         if key == "1":
@@ -126,7 +127,7 @@ def start_learn():
             delete_historical()
         else:
             raise Exception("序号输入错误")
-    elif key == "3":
+    elif key == "4":
         system_settings()
 
 

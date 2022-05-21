@@ -12,7 +12,10 @@ from concurrent.futures._base import TimeoutError
 
 
 class GetAnswer:
-    def __init__(self):
+    __debug = False
+
+    def __init__(self, debug=False):
+        GetAnswer.__debug = debug
         self.__pool = ThreadPoolExecutor(max_workers=5)
 
     @staticmethod
@@ -25,8 +28,9 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        if GetAnswer.__debug:
+            print("API1返回内容："+dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == -1:
@@ -44,8 +48,9 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        if GetAnswer.__debug:
+            print("API2返回内容："+dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == "0" or dataJson['code'] == 0:
@@ -65,8 +70,9 @@ class GetAnswer:
             raise NoFoundAnswerException
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        if GetAnswer.__debug:
+            print("API3返回内容："+dataText)
 
         try:
             dataJson = json.loads(dataText)
@@ -88,8 +94,9 @@ class GetAnswer:
             return ""
         dataText = r.text
 
-        # #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        #   ==============显示返回内容，测试时使用=================
+        if GetAnswer.__debug:
+            print("API4返回内容："+dataText)
 
         dataJson = json.loads(dataText)
         if dataJson['code'] == 0:
@@ -107,8 +114,9 @@ class GetAnswer:
             raise NoFoundAnswerException
         dataText = r.text
 
-        #   ==============显示返回内容，测试时使用=================
-        # print(dataText)
+        # ==============显示返回内容，测试时使用=================
+        if GetAnswer.__debug:
+            print("API5返回内容："+dataText)
 
         dataJson = json.loads(dataText)
         if dataJson["code"] == -1:
@@ -135,9 +143,7 @@ class GetAnswer:
         except TimeoutError:
             print("线程1响应超时")
         except NoFoundAnswerException as e:
-            print("线程1未找到答案")
-            print(str(e) + '\n')
-            print()
+            print("线程1未找到答案，返回信息："+str(e))
         except ConnectionError:
             print("接口1连接失败")
 
@@ -147,8 +153,7 @@ class GetAnswer:
         except TimeoutError:
             print("线程2响应超时")
         except NoFoundAnswerException as e:
-            print("线程2未找到答案")
-            print(str(e) + "\n")
+            print("线程2未找到答案，返回信息："+str(e))
         except requests.exceptions.ConnectionError:
             print("接口2连接失败")
 
@@ -158,7 +163,7 @@ class GetAnswer:
         except TimeoutError:
             print("线程3响应超时")
         except NoFoundAnswerException:
-            print("线程3未找到答案")
+            print("线程3未找到答案，返回信息：None")
         except requests.exceptions.ConnectionError:
             print("接口3连接失败")
 
@@ -168,8 +173,7 @@ class GetAnswer:
         except TimeoutError:
             print("线程4响应超时")
         except NoFoundAnswerException as e:
-            print("线程4未找到答案")
-            print(str(e) + "\n")
+            print("线程4未找到答案，返回信息："+str(e))
         except requests.exceptions.ConnectionError:
             print("接口4连接失败")
 
@@ -179,11 +183,10 @@ class GetAnswer:
         except TimeoutError:
             print("线程5响应超时")
         except NoFoundAnswerException as e:
-            print("线程5未找到答案")
-            print(str(e) + "\n")
+            print("线程5未找到答案，返回信息："+str(e))
         except requests.exceptions.ConnectionError:
             print("接口5连接失败")
-
+        print()
         return answerList
 
     @staticmethod
@@ -228,7 +231,7 @@ class GetAnswer:
         """
         :param question: 待搜索的题目
         :param questionType: 题目的类型，若不提供题目类型则不检测查找答案正确性
-        :return: 形如[[答案1], [答案2], [答案3]]的二维列表，其中列表的元素个数在[0, 4]范围内
+        :return: 形如[[答案1], [答案2], [答案3]]的二维列表，其中列表的元素个数在[0, 5]范围内
         """
         print("正在搜索题目：{}\n".format(question))
         answerList = self.__requestAnswer(question, questionType)
@@ -236,6 +239,7 @@ class GetAnswer:
             answerList.remove(None)
         if len(answerList) != 0:
             GetAnswer.callback(question, str(answerList[0]), questionType)
+        print("找到 " + str(len(answerList)) + " 个答案")
         for i in range(len(answerList)):
             print("答案{}：{}".format(i + 1, answerList[i]))
         return answerList
@@ -262,7 +266,7 @@ class GetAnswer:
 
 
 if __name__ == "__main__":
-    getAnswer = GetAnswer()
+    getAnswer = GetAnswer(True)
     while True:
         q = input("输入题目（q退出）：")
         if q == "q":
