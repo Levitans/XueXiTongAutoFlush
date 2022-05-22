@@ -68,7 +68,7 @@ class QuizOfTask(Task):
             # 获取问题答案
             answerList = myGetAnswer.getAnswer(question, questionType)
             # 判断是否找到答案
-            if answerList is None:
+            if answerList is None or len(answerList) == 0:
                 continue
             if questionType in ("单选题", "多选题"):
                 # 获取题目选项的WebElement对象

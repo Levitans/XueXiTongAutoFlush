@@ -33,7 +33,7 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
         :return: 将查找到的答案与题目选项相比较，返回一个包含正确选项WebElement对象的列表
         """
         answerWebElementList = []
-        answerList = self.getAnswer()[0] if self.getType() == "单选题" else self.getAnswer()
+        answerList = [self.getAnswer()[0]] if self.getType() == "单选题" else self.getAnswer()
         options = self.getOptions()
         for answerIndex in range(len(answerList)):
             for i in range(len(options)):
