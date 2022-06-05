@@ -28,6 +28,7 @@ browser_path = ""
 driver_path = ""
 
 # 任务点配置
+judgment_TP_tate = True
 ppt_speed_max: int
 ppt_speed_min: int
 quiz_get_answer_speed_max: int
@@ -45,7 +46,7 @@ def init_global():
     """
     global is_init, no_head, mute, no_img, browser_path, driver_path, user_manager, cookie_manager, \
         ppt_speed_max, ppt_speed_min, quiz_get_answer_speed_max, quiz_get_answer_speed_min, quiz_click_speed_max, quiz_click_speed_min, \
-        exception_log_manger, version_file_path, decode_secret_status
+        exception_log_manger, version_file_path, decode_secret_status, judgment_TP_tate
 
     try:
         # <--------------------加载浏览器配置------------------------->
@@ -75,6 +76,7 @@ def init_global():
         quiz_click_speed_max = int(cfg_get("task_config", "quiz_click_speed_max"))
         quiz_click_speed_min = int(cfg_get("task_config", "quiz_click_speed_min"))
         decode_secret_status = int(cfg_get("task_config", "decode_secret_status"))
+        judgment_TP_tate = eval(cfg_get("task_config", "automatic_judgment_task_point_state"))
         # <------------------------加载其他点配置----------------------->
         version_file_path = cfg_get("other", "version_file_path")
 

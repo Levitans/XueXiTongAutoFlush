@@ -107,6 +107,7 @@ def start_learn():
             else:
                 raise Exception("序号输入错误")
         except Exception as e:
+            # input("出现异常程序已经暂停"+traceback.format_exc())
             driver.quit()
             print(color.read("程序运行出现异常"))
             print(color.read(str(e)))

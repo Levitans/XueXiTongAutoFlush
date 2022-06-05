@@ -56,6 +56,11 @@ def automatic_learning(driver):
 
     # 跳过已完成的章节
     for i in chapter_list:
+        if not gl.judgment_TP_tate:
+            print(color.yellow("当前程序不自动跳过已完成章节"))
+            print(color.yellow("若需要开启自动跳过已完成章节功能\n请前往 config.ini 文件修改"))
+            i.webElement.click()
+            break
         if i.isFinish:
             print("章节：" + color.green(i.name) + " 已经完成")
         else:
@@ -72,7 +77,7 @@ def automatic_learning(driver):
 
     # 循环所有章节
     while True:
-        # 寻找是否有选项卡
+        # 寻找是否有任务卡
         prev_table_list = []
         try:
             prev_table_list = driver.get_driver().find_element(By.CSS_SELECTOR, '[class="prev_tab"]') \
@@ -83,9 +88,9 @@ def automatic_learning(driver):
         prev_table_number = len(prev_table_list) if len(prev_table_list) != 0 else 1  # 选项卡个数
         print("当前章节选项卡有 " + str(prev_table_number) + " 个")
 
-        # 遍历每个选项卡
+        # 遍历每个任务卡
         for tableIndex in range(prev_table_number):
-            # 第一个选项卡不用点击
+            # 第一个任务卡不用点击
             if tableIndex != 0:
                 item = prev_table_list[tableIndex].find_element(By.TAG_NAME, 'div')
                 driver.get_driver().execute_script("arguments[0].scrollIntoView(false);", item)
@@ -94,20 +99,30 @@ def automatic_learning(driver):
 
             # 进入第一层iframe
             driver.get_driver().switch_to.frame("iframe")
+
+            # 获取任务点
+            """
+                iframeList 是一个列表，其中存的是任务点的 WebElement 对象
+                taskPointFinishStateList 是一个列表，其中存的是每个任务点的状态
+                
+                    iframeList中的元素与taskPointFinishStateList中的元素一一对应
+            """
             iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
             print("当前章节有 " + color.yellow(str(len(iframeList))) + " 个任务点")
 
-            # 获取当前页面中任务点的完成状态
-            # taskPointIsFinish 中储存任务点状态
-            # 任务点状态为以下三种之一
-            #   1、任务点未完成
-            #   2、任务点完成
-            #   3、任务点状态无法判断
-            taskPointElementList = driver.get_driver().find_elements(By.XPATH, '//*[@class="ans-cc"]/p/div')
+            # 获取当前页面中任务点的状态
+            """
+                taskPointFinishStateList 中储存任务点状态
+                任务点状态为以下三种之一
+                    1、任务点未完成
+                    2、任务点完成
+                    3、任务点状态无法判断
+            """
             taskPointFinishStateList = []
-            for taskPointElement in taskPointElementList:
-                taskPointClass = taskPointElement.get_attribute("class")
-                if taskPointClass is None:              # 任务点转台无法判断
+            for i in iframeList:
+                taskPoint = i.find_element(By.XPATH, "../.")    # 获取任务点的爷爷元素
+                taskPointClass = taskPoint.get_attribute("class")
+                if taskPointClass is None:              # 任务点状态无法判断
                     taskPointFinishStateList.append(3)
                 elif taskPointClass == "ans-attach-ct":
                     taskPointFinishStateList.append(1)  # 任务点未完成
@@ -119,17 +134,17 @@ def automatic_learning(driver):
                 print("当前为第 " + color.blue(str(i + 1)) + " 任务点")
 
                 # 判断任务点状态
-                if taskPointFinishStateList[i] == 3:
+                if gl.judgment_TP_tate and taskPointFinishStateList[i] == 3:
                     print(color.yellow("当前任务点无法判断其状态"))
                     print(color.yellow("跳过当前任务点")+"\n")
                     time.sleep(random.randint(3, 5))
                     continue
-                elif taskPointFinishStateList[i] == 2:
+                elif gl.judgment_TP_tate and taskPointFinishStateList[i] == 2:
                     print(color.green("当前任务点已完成"))
                     print(color.green("跳过当前任务点")+"\n")
                     time.sleep(random.randint(3, 5))
                     continue
-                elif taskPointFinishStateList[i] == 1:
+                elif gl.judgment_TP_tate and taskPointFinishStateList[i] == 1:
                     print(color.green("当前任务点未完成"))
                     print(color.green("开始学习当前任务点"))
                 # 循环判断任务点类型
@@ -156,6 +171,8 @@ def automatic_learning(driver):
                 driver.get_driver().switch_to.default_content()
                 driver.get_driver().switch_to.frame("iframe")
                 iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
+            # 完成当前章节后退出到最外层
+            # 不退出到最外层就无法找到”下一章节“的按钮
             driver.get_driver().switch_to.default_content()
         print("当前章节已完成")
         Display.separate()

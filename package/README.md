@@ -25,15 +25,16 @@
 **task_config**  
 答题功能配置
 
-|            选项名             |      作用      |        其他        |
-|:--------------------------:|:------------:|:----------------:|
-|    decode_secret_status    |   字体解密器状态    |  0：关闭、1：开启、2：自动  |
-|       ppt_speed_max        | ppt点击最长等待时间  |  不宜过快，不然会被学习通警告  |
-|       ppt_speed_min        | ppt点击最短等待时间  |        同上        |
-| quiz_get_answer_speed_max  |  答案获取最长等待时间  | 不宜过快，不然会被接口判定为爬虫 |
-| quiz_get_answer_speed_min  |  答案获取最短等待时间  |        同上        |
-|    quiz_click_speed_max    |  点击答案最长等待时间  |  不宜过快，不然会被学习通警告  |
-|    quiz_click_speed_min    |  点击答案最短等待时间  |        同上        |
+|                选项名                |       作用       |        其他        |
+|:---------------------------------:|:--------------:|:----------------:|
+|automatic_judgment_task_point_state| 自动判断章节、任务点是否完成 | True：开启、False：关闭 |
+|       decode_secret_status        |    字体解密器状态     |  0：关闭、1：开启、2：自动  |
+|           ppt_speed_max           |  ppt点击最长等待时间   |  不宜过快，不然会被学习通警告  |
+|           ppt_speed_min           |  ppt点击最短等待时间   |        同上        |
+|     quiz_get_answer_speed_max     |   答案获取最长等待时间   | 不宜过快，不然会被接口判定为爬虫 |
+|     quiz_get_answer_speed_min     |   答案获取最短等待时间   |        同上        |
+|       quiz_click_speed_max        |   点击答案最长等待时间   |  不宜过快，不然会被学习通警告  |
+|       quiz_click_speed_min        |   点击答案最短等待时间   |        同上        |
 
 
 **other**

@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220521",
+    "current_version": "v20220605",
     "historical_version_info": [
+        {
+            "version": "v20220605",
+            "info": "1、更改判断任务点完成的逻辑。2、配置文件中添加是否跳过已完成任务点的选项"
+        },
         {
             "version": "v20220521",
             "info": "1、增加查题功能单独使用、且增加debug模式。2、优化答单选题时程序的行为"
