@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220605",
+    "current_version": "v20220630",
     "historical_version_info": [
+        {
+            "version": "v20220630",
+            "info": "1、修复删除多个过期cookie时出现的异常。2、添加对新页面中视频任务点出现题目的答题支持。3、将判断“Python版本”、“检测依赖”和“检测配置文件”等功能写入boot.py中。4、配置文件中添加“default_wait_time”和“default_wait_times”，将这个两个变量应用在mydriver类中。5、修复某些页面判断任务点是否完成时出现越界的异常。"
+        },
         {
             "version": "v20220605",
             "info": "1、更改判断任务点完成的逻辑。2、配置文件中添加是否跳过已完成任务点的选项"
