@@ -66,6 +66,7 @@ class CookiesManger:
                 expiry_timestamp = int(i['expiry'])
                 if expiry_timestamp < int(time.time()):
                     expiredUsernameList.append(username)
+                    break
         for expiredUsername in expiredUsernameList:
             cookiesDict.pop(expiredUsername)
         file.save_json_data(self.__filename, cookiesDict)

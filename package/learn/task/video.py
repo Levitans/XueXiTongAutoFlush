@@ -34,7 +34,7 @@ class Video(Task):
         counterTime = 2
 
         while nowTime != endTime:
-            time.sleep(1)
+            time.sleep(0.96)
             nowTime = self.__driver.find_element(By.CLASS_NAME, 'vjs-current-time-display').text
             print('\r'+'已观看{}分{}秒'.format(counterTime//60, counterTime % 60), end='')
             counterTime += 1
@@ -45,15 +45,42 @@ class Video(Task):
 
     @staticmethod
     def __answer(driver):
-        title = driver.find_element(By.CSS_SELECTOR, '.ans-videoquiz-title').text[1:4]
-        if title == '判断题' or title == '单选题.txt':
-            driver\
-                .find_element(By.CSS_SELECTOR, '[type="radio"][name="ans-videoquiz-opt"][value="true"]')\
-                .click()
-            time.sleep(1)
-        else:
-            answerList = driver.find_elements(By.CSS_SELECTOR, '[type="checkbox"][value="true"]')
-            for i in answerList:
-                i.click()
+        try:
+            # 一版视频答题
+            title = driver.find_element(By.CSS_SELECTOR, '.ans-videoquiz-title').text[1:4]
+            if title == '判断题' or title == '单选题.txt':
+                driver \
+                    .find_element(By.CSS_SELECTOR, '[type="radio"][name="ans-videoquiz-opt"][value="true"]') \
+                    .click()
                 time.sleep(1)
-        driver.find_element(By.CSS_SELECTOR, '.ans-videoquiz-submit').click()
+            else:
+                answerList = driver.find_elements(By.CSS_SELECTOR, '[type="checkbox"][value="true"]')
+                for i in answerList:
+                    i.click()
+                    time.sleep(1)
+            driver.find_element(By.CSS_SELECTOR, '.ans-videoquiz-submit').click()
+        except Exception:
+            # 二版视屏答题
+            tkTopic = driver.find_element(By.CLASS_NAME, "tkTopic")
+            title = tkTopic.find_element(By.CLASS_NAME, "tkTopic_title").text
+            tkItem = tkTopic.find_element(By.CLASS_NAME, "tkItem")
+            if title == "[单选题]" or title == "[判断题]":
+                ansList = tkItem.find_elements(By.CLASS_NAME, "ans-videoquiz-opt")
+                for ansItem in ansList:
+                    value = ansItem.find_element(By.TAG_NAME, "input").get_attribute("value")
+                    if value == "false":
+                        continue
+                    elif value == "true":
+                        ansItem.click()
+                        break
+            elif title == "[多选题]":
+                ansList = tkItem.find_elements(By.CLASS_NAME, "ans-videoquiz-opt")
+                for ansItem in ansList:
+                    value = ansItem.find_element(By.TAG_NAME, "input").get_attribute("value")
+                    if value == "false":
+                        continue
+                    elif value == "true":
+                        ansItem.click()
+            else:
+                print("视屏答题出错，没有匹配的题目")
+            tkTopic.find_element(By.CSS_SELECTOR, '[class="ans-videoquiz-submit bntLinear fr"]').click()
