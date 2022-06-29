@@ -1,17 +1,42 @@
-# 当前目录下各文件的作用
+# 当前目录下各文件和文件夹作用
 
-## config.ini
+## bin 文件夹
+
+放置工具程序
+
+### unzip.exe 程序
+
+用于解压.zip文件，在”程序更新.cmd“中会调用该程序
+
+**"程序更新.cmd"的逻辑**
+
+1. 下载该项目在GitHub上的压缩包
+2. 解压该压缩包并替换当前系统中项目的源码
+3. 删除解压后的文件夹和下载的压缩包
+
+
+
+## learn 文件夹
+
+存放该项目的源码
+
+
+
+## config.ini 文件
 程序配置文件，保存程序运行时的一些配置信息
 
-**user_config**  
-用户数据有关配置
+
+
+### 用户（user_config）
 
 |     选项名      |      作用       |  其他   |
 |:------------:|:-------------:|:-----:|
 |  user_path   |   账号密码文件路径    ||
 | cookie_path  | cookie数据保存路径  ||
 
-**browser_config**
+
+
+### 浏览器及驱动（browser_config）
 
 |      选项名      |     作用     |      其他      |
 |:-------------:|:----------:|:------------:|
@@ -22,37 +47,39 @@
 |  driver_path  |  浏览器驱动路径   ||
 
 
-**task_config**  
-答题功能配置
 
-|                选项名                |       作用       |        其他        |
-|:---------------------------------:|:--------------:|:----------------:|
-|automatic_judgment_task_point_state| 自动判断章节、任务点是否完成 | True：开启、False：关闭 |
-|       decode_secret_status        |    字体解密器状态     |  0：关闭、1：开启、2：自动  |
-|           ppt_speed_max           |  ppt点击最长等待时间   |  不宜过快，不然会被学习通警告  |
-|           ppt_speed_min           |  ppt点击最短等待时间   |        同上        |
-|     quiz_get_answer_speed_max     |   答案获取最长等待时间   | 不宜过快，不然会被接口判定为爬虫 |
-|     quiz_get_answer_speed_min     |   答案获取最短等待时间   |        同上        |
-|       quiz_click_speed_max        |   点击答案最长等待时间   |  不宜过快，不然会被学习通警告  |
-|       quiz_click_speed_min        |   点击答案最短等待时间   |        同上        |
+### 答题模块（task_config） 
+
+|               选项名                |             作用             |               其他               |
+| :---------------------------------: | :--------------------------: | :------------------------------: |
+| automatic_judgment_task_point_state | 自动判断章节、任务点是否完成 |     True：开启、False：关闭      |
+|        decode_secret_status         |        字体解密器状态        |    0：关闭、1：开启、2：自动     |
+|            ppt_speed_max            |     ppt点击最长等待时间      |   不宜过快，不然会被学习通警告   |
+|            ppt_speed_min            |     ppt点击最短等待时间      |               同上               |
+|      quiz_get_answer_speed_max      |     答案获取最长等待时间     | 不宜过快，不然会被接口判定为爬虫 |
+|      quiz_get_answer_speed_min      |     答案获取最短等待时间     |               同上               |
+|        quiz_click_speed_max         |     点击答案最长等待时间     |   不宜过快，不然会被学习通警告   |
+|        quiz_click_speed_min         |     点击答案最短等待时间     |               同上               |
 
 
-**other**
-其他配置
+
+### 其他（other）
 
 |           选项名            |     作用      |  其他 |
-|:------------------------:|:-----------:|----:|
+|:------------------------:|:-----------:|:---:|
 | exception_log_file_path  | 异常信息保存文件路径  ||
 |    version_file_path     |  版本信息文件路径   ||
+| default_wait_time | 等待页面上元素出现的时间 |整型，单位秒|
+| default_wait_times | 等待页面元素出现的次数 |整型|
 
-## exception.log
+## exception.log 文件
 保存程序异常，当程序运行时出现异常都会详细记录在该文件中，便于debug
 
-## requirements.txt
+## requirements.txt 文件
 保存程序运行时需要的第三方依赖。当程序检测到缺少依赖时会读取本文件并自动安装所需依赖
 
-## font_dict.txt
+## font_dict.txt 文件
 保存思源黑体字体的字形信息的md5值和字符编码的映射，用于解决学习通的字体反爬
 
-## version.json
+## version.json 文件
 保存程序更新信息和版本信息

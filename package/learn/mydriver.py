@@ -117,7 +117,7 @@ class MyDriver:
             return None
         return item
 
-    def driver_wait(self, by, value, wait_time=30, wait_number=3):
+    def driver_wait(self, by, value, wait_time=gl.default_wait_time, wait_times=gl.default_wait_times):
         waitCount = 1
         while True:
             try:
@@ -126,10 +126,10 @@ class MyDriver:
                 break
             except exceptions.TimeoutException:
                 waitCount += 1
-                if waitCount > wait_number:
-                    raise myException.TimeoutException("当前页面通过 "+by+" 没有找到 "+value)
+                if waitCount > wait_times:
+                    raise myException.TimeoutException("当前网络延迟严重\n通过 "+by+" 在页面中没有找到 "+value)
                 print(color.yellow("当前网络缓慢..."))
-                print(color.yellow("程序会等待 "+str(wait_number)+" 轮，当前等待第 "+str(waitCount)+" 轮"))
+                print(color.yellow("程序会等待 " + str(wait_times) + " 轮，当前等待第 " + str(waitCount) + " 轮"))
 
     def go_js(self, js):
         self.__driver.execute_script(js)

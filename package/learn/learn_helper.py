@@ -128,6 +128,8 @@ def automatic_learning(driver):
                     taskPointFinishStateList.append(1)  # 任务点未完成
                 elif taskPointClass == "ans-attach-ct ans-job-finished":
                     taskPointFinishStateList.append(2)  # 任务点已完成
+                else:
+                    taskPointFinishStateList.append(3)  # 任务点状态无法判断
 
             # 遍历每个任务点
             for i in range(len(iframeList)):
@@ -175,6 +177,7 @@ def automatic_learning(driver):
             # 不退出到最外层就无法找到”下一章节“的按钮
             driver.get_driver().switch_to.default_content()
         print("当前章节已完成")
+        print(color.green("完成时间："+getTimeStr()))
         Display.separate()
         next_button = driver.is_element_presence(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]')
         if next_button is not None:
@@ -245,3 +248,7 @@ def do_homework(driver: MyDriver):
         driver.get_driver().back()
         time.sleep(1)
 
+
+def getTimeStr():
+    timeFormat = "%Y年%m月%d日 %H时%M分%S秒"
+    return time.strftime(timeFormat, time.localtime())

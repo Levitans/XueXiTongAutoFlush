@@ -3,76 +3,31 @@
 # @Author : Levitan
 # @File : faithlearning.py
 # @Software : PyCharm
-import re
 import shutil
 import sys
-import os
 import traceback
 
-
-# 判断系统中的 Python 版本是否满足要求
-def python_version_detect():
-    pattern = re.compile(r"\d+\d*")
-    versionStr = sys.version.split(" ")[0].replace(".", "")
-    versionNumber = re.search(pattern, versionStr)
-    if versionNumber is None:
-        print("获取系统 Python 版本时出现异常")
-        eixt(233)
-    local_version = int(versionNumber.group())
-    if local_version < 390:
-        print("当前系统中 Python 版本过低")
-        print("程序运行依赖 3.9 及以上版本的Python")
-        print("可以访问 https://cdn.npmmirror.com/binaries/python/3.9.0/python-3.9.0.exe 下载Python3.9.0安装包")
-        print("安装新 Python 后请手动删除，当前文件夹下的 venv 文件夹")
-        exit(233)
-
-
-python_version_detect()
-
-
-def try_install_library():
-    print("检测到未安装所需要的第三方库")
-    haveVenv = os.path.exists("./venv")
-    if haveVenv:
-        print(r"你可以手动执行命令 “.\venv\Scripts\pip install -r .\package\requirements.txt” 安装第三方库")
-    else:
-        print(r"你可以手动执行命令 “pip install -r .\package\requirements.txt” 安装第三方库")
-    print("下面尝试自动安装第三方库")
-    input("如需自动安装按回车键继续（如不需要可现在关闭程序）...\n")
-    from pip._internal import main
-    main(["install", "-r", "./package/requirements.txt", "-i", "https://mirrors.aliyun.com/pypi/simple/"])
-    print("\n第三方库安装成功，请重新运行程序")
-    input("按回车键退出程序......")
-    exit(0)
-
-
+"""
+运行前自检
+检测依赖是否存在和全局变量是否正确读入
+"""
+from package.learn import boot
 try:
-    import package.learn.config
-    from package.learn import color, learn_helper, exception, no_secret
-    from package.learn import globalvar as gl
-    from package.learn.mydriver import MyDriver
-    from package.learn.display import Display, MyFormat
-    from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
-        change_user_data, delete_historical, system_settings, find_answers
-except ModuleNotFoundError as e:
-    print("依赖导入失败：" + str(e))
-    try_install_library()
+    boot.python_version_detect()
+    boot.isDependencyReady()
+    boot.initGlobalVar()
+except Exception as e:
+    print("自检时出现异常：")
+    err_info = traceback.format_exc()
+    print("异常详细信息：\n"+err_info)
 
 
-def boot():
-    try:
-        gl.init_global()
-    except exception.InitializationException as e:
-        print(color.read("程序初始化异常"))
-        print("异常信息为："+str(e))
-        print("==========详细信息如下==========")
-        print(traceback.format_exc())
-        input("输入回车退出程序...")
-        exit(233)
-
-
-boot()
-
+from package.learn import color
+from package.learn import globalvar as gl
+from package.learn import learn_helper
+from package.learn.display import Display, MyFormat
+from package.learn.userinterface import login_of_acc_and_pwd, login_of_QRCoed, login_of_history, add_new_user, \
+    change_user_data, delete_historical, system_settings, find_answers
 
 def start_learn():
     if gl.no_head:

@@ -39,6 +39,8 @@ decode_secret_status: int
 
 # 其他配置
 version_file_path = ""
+default_wait_time: int
+default_wait_times: int
 
 def init_global():
     """
@@ -46,7 +48,7 @@ def init_global():
     """
     global is_init, no_head, mute, no_img, browser_path, driver_path, user_manager, cookie_manager, \
         ppt_speed_max, ppt_speed_min, quiz_get_answer_speed_max, quiz_get_answer_speed_min, quiz_click_speed_max, quiz_click_speed_min, \
-        exception_log_manger, version_file_path, decode_secret_status, judgment_TP_tate
+        exception_log_manger, version_file_path, decode_secret_status, judgment_TP_tate, default_wait_time, default_wait_times
 
     try:
         # <--------------------加载浏览器配置------------------------->
@@ -77,8 +79,11 @@ def init_global():
         quiz_click_speed_min = int(cfg_get("task_config", "quiz_click_speed_min"))
         decode_secret_status = int(cfg_get("task_config", "decode_secret_status"))
         judgment_TP_tate = eval(cfg_get("task_config", "automatic_judgment_task_point_state"))
+
         # <------------------------加载其他点配置----------------------->
         version_file_path = cfg_get("other", "version_file_path")
+        default_wait_time = int(cfg_get("other", "default_wait_time"))
+        default_wait_times = int(cfg_get("other", "default_wait_times"))
 
         # 所有配置加载成功
         is_init = True
