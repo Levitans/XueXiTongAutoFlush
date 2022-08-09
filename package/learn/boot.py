@@ -26,21 +26,21 @@ def python_version_detect():
 
 # 检测依赖是否存在
 def isDependencyReady():
-    try:
-        # 检测依赖是否存在
-        import selenium
-        import requests
-        import colorama
-        import fontTools
-    except ModuleNotFoundError as e:
-        print("依赖导入失败")
-        try_install_library()
+    file = open("package/requirements.txt")
+    for depend in file.readlines():
+        depend = depend.replace("\n", "").split("==")[0]
+        __import__(depend)
+        try:
+            __import__(depend)
+        except ModuleNotFoundError:
+            print("未安装 {} 模块".format(depend))
+            try_install_library()
 
 # 检测配置文件是否正确
 def initGlobalVar():
     from package.learn import exception
     from package.learn import globalvar
-    from package.learn import color
+    from package.learn.printer import color
     try:
         globalvar.init_global()
     except exception.InitializationException as e:

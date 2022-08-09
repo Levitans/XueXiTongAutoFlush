@@ -3,13 +3,15 @@
 # @Author : Levitan
 # @File : getanswer.py
 # @Software : PyCharm
-
-import requests
 import json
-from package.learn.exception import NoFoundAnswerException
 from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures._base import TimeoutError
 
+# 自定义文件
+from .exception import NoFoundAnswerException
+
+# 第三方包
+from concurrent.futures._base import TimeoutError
+import requests
 
 class GetAnswer:
     __debug = False

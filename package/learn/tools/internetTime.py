@@ -4,10 +4,9 @@
 # @File : internetTime.py
 # @Software : PyCharm
 
-import requests
 from time import mktime, strftime, strptime
 import json
-from package.display import Display
+import requests
 
 class InternetTime:
     # 过期时间
@@ -22,7 +21,7 @@ class InternetTime:
             nowTime = json.loads(r.text)
             nowTime = int(nowTime["data"]["t"])/1000
         except Exception:
-            Display.printWarning("网络时间抓取失败")
+            print("网络时间抓取失败")
             return isExpiration
 
         expirationTimestamp = mktime(strptime(InternetTime.__expirationDate, '%Y-%m-%d %H:%M:%S'))

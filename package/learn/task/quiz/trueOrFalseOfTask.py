@@ -4,9 +4,13 @@
 # @File : trueOrFalseOfTask.py
 # @Software : PyCharm
 
+# 自定义包
+from ..interface import Answerable
+from .question import TrueOrFalse
+
+# 第三方包
 from selenium.webdriver.remote.webelement import WebElement
-from package.learn.task.quiz.question import TrueOrFalse
-from package.learn.task.interface import Answerable
+
 
 class TrueOrFalseOfTask(TrueOrFalse, Answerable):
     def __init__(self, questionWebObj, qType, question, answer, answerWebElementList):

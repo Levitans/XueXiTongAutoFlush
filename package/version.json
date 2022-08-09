@@ -1,6 +1,10 @@
 {
-    "current_version": "v20220630",
+    "current_version": "v20220809",
     "historical_version_info": [
+        {
+            "version": "v20220809",
+            "info": "1、整理项目代码减少模块间的耦合。\n2、增加printer模块，重构原本的display模块并整合到printer模块中\n3、修改 boot.py 依赖检测方式，现在只需将用到的第三方库名写到 requirements.txt 中即可\n4、将获取页面课程到获取用户选择课程这段单独抽为一个函数，为之后自动完成作业功能做准备\n5、新增从指定章节开始刷课的功能"
+        },
         {
             "version": "v20220630",
             "info": "1、修复删除多个过期cookie时出现的异常。2、添加对新页面中视频任务点出现题目的答题支持。3、将判断“Python版本”、“检测依赖”和“检测配置文件”等功能写入boot.py中。4、配置文件中添加“default_wait_time”和“default_wait_times”，将这个两个变量应用在mydriver类中。5、修复某些页面判断任务点是否完成时出现越界的异常。"

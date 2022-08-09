@@ -4,13 +4,13 @@
 # @File : datamanger.py
 # @Software : PyCharm
 
+# 系统包
 import time
 import pickle
 import base64
-from package.learn import file
-from package.learn import globalvar as gl
+from . import file
 
-
+# 用户数据文件管理器
 class UserManger:
     def __init__(self, filename):
         self.__filename = filename
@@ -45,6 +45,7 @@ class UserManger:
         file.save_json_data(self.__filename, self.__users)
 
 
+# cookies 文件管理器
 class CookiesManger:
     def __init__(self, filename):
         self.__filename = filename
@@ -90,6 +91,9 @@ class CookiesManger:
         self.__cookies[username] = str(cookies_b64, encoding="utf-8")
         file.save_json_data(self.__filename, self.__cookies)
 
+    def isUserExist(self, username: str) -> bool:
+        return username in self.getNameList()
+
     def removeCookie(self, username):
         self.__cookies.pop(username)
         file.save_json_data(self.__filename, self.__cookies)
@@ -99,12 +103,53 @@ class CookiesManger:
         file.save_json_data(self.__filename, self.__cookies)
 
 
-class ExceptionLogManger:
-    def __init__(self, filename):
-        self.__filename = filename
+# 异常等级类
+# 用于指定异常发生的等级
+class ExceptionLevel:
+    low = 1
+    middle = 2
+    high = 3
+    severe = 0
 
-    def writeLog(self, info):
+
+# 日志文件管理器
+class ExceptionLogManger:
+    EXC_LEVEL = {0: "严重", 1: "低级", 2: "中级", 3: "高级"}
+
+    def __init__(self, filePath):
+        self.__filename = filePath
+
+    def writeLog(self, version, info, excLevel=ExceptionLevel.low):
+        # 异常等级
+        level = self.EXC_LEVEL[excLevel]
+        # 时间
         nowTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        version = file.get_json_data(gl.version_file_path)["current_version"]
-        data = "时间："+nowTime+"\n版本："+version+"\n异常信息："+info+"\n\n"
+        # 异常信息
+        data = "异常等级："+level + \
+               "\n时间："+nowTime + \
+               "\n版本："+version + \
+               "\n异常信息：\n"+info + \
+               "\n\n"
         file.append_text_file(self.__filename, data)
+
+
+# 配置文件管理器
+class ConfigManger:
+    _configFilePath = r".\package\config.ini"
+    _config = file.get_config_file(_configFilePath)
+
+    @classmethod
+    def getCfg(cls, section, option, default_value=None):
+        try:
+            return cls._config.get(section, option)
+        except Exception as e:
+            if default_value is not None:
+                return default_value
+            err_info = "配置文件路径：" + config_file_path + "\n" + \
+                       '读取配置失败：section="' + section + '", option="' + option + '"\n错误信息：' + str(e)
+            raise Exception(err_info)
+
+    @classmethod
+    def change_cfg(cls, section, option, value):
+        cls._config.set(section, option, value)
+        cls._config.write(open(cls._configFilePath, "w", encoding="utf-8"))

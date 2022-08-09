@@ -7,9 +7,13 @@ import base64
 import hashlib
 import re
 import os
-from selenium.webdriver.common.by import By
-from package.learn.file import get_json_data
 from xml.dom.minidom import parse
+
+# 自定义包
+from package.learn.data_management.file import get_json_data
+
+# 第三方包
+from selenium.webdriver.common.by import By
 from fontTools.ttLib import TTFont
 
 class DecodeSecret:

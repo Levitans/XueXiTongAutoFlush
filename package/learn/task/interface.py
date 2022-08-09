@@ -3,20 +3,26 @@
 # @Author : Levitan
 # @File : interface.py
 # @Software : PyCharm
-from abc import abstractmethod, ABCMeta
+import abc
+
+# 第三方库
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-class Task(metaclass=ABCMeta):
-    @abstractmethod
+class Task(abc.ABC):
+    def __init__(self, driver: WebDriver):
+        self.__driver = driver
+
+    @abc.abstractmethod
     def isCurrentTask(self, iframeIndex) -> bool:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def finish(self):
         pass
 
 
-class Answerable(metaclass=ABCMeta):
-    @abstractmethod
+class Answerable(abc.ABC):
+    @abc.abstractmethod
     def getAnswerWebElement(self) -> list[WebElement]:
         pass

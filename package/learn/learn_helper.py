@@ -8,39 +8,72 @@ import time
 import traceback
 
 from package.learn import globalvar as gl
-from package.learn import color
 from package.learn import exception as myException
-from package.learn.mydriver import MyDriver
-from package.learn.school import fuist
-from package.learn.display import Display, MyFormat
-from package.learn.task.quiz.quiz import QuizOfTask, QuizOfHomework
+from package.learn.driver.mydriver import MyDriver
+from package.learn.school.getter import schoolGetter
+from package.learn.task.quiz.quiz import QuizOfTask
 from package.learn.task.audio import Audio
 from package.learn.task.video import Video
 from package.learn.task.ppt import PPT
-from package.learn import color
+
+from package.learn.data_management.datamanger import ExceptionLevel as errLevel
+
+from package.learn.printer import color
+from package.learn.printer.factory import getPrinterBySetter
+from package.learn.printer.setter import TableSetter
+
+import package.learn.driver
 
 from selenium.webdriver.common.by import By
 from selenium.common import exceptions
-from selenium.webdriver.support.ui import WebDriverWait
 
-
-def automatic_learning(driver):
-    learn = fuist
-    driver.go_courses_page()
-
+# 该方法获页面中的课程，并返回用户选择的课程
+def getCourse(driver: MyDriver, learn):
     # 获取所有课程
+    driver.go_courses_page()
     try:
         courses_list = learn.get_courses(driver.get_driver())
     except exceptions.NoSuchElementException as e:
         errInfo = traceback.format_exc()
-        gl.exception_log_manger.writeLog(errInfo)
-        raise Exception("获取课程时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
+        gl.exception_log_manger.writeLog(gl.version, errInfo)
+        raise Exception("获取课程时出现异常：" + str(e) + "\n可能原因见：package\\learn\\school\\README.md")
+
+    # 以表格的形式打印课程
+
+    # 设置表格的外观
+    mySetter = TableSetter()
+    mySetter.hasHead = True
+    mySetter.autoOrdNumber = True
+    mySetter.headColor = "green"
+    mySetter.abreastTableNumber = 2
+    tablePrinter = getPrinterBySetter(mySetter)
+    tablePrinter.setTableColWidth([30])
+
+    # 设置需要打印的数据
+    courseNameList = [["课程名"]]
+    courseNameList += [[i.name] for i in courses_list]
+
+    # 打印
     print(color.blue("当前课程有："))
-    Display.printTable([i.name for i in courses_list], MyFormat([50, 50], displayNumber=True))
+    tablePrinter.print(courseNameList)
+
+    # 读取用户指定的课程
     index = int(input("\n输入课程序号：")) - 1
     course = courses_list[index]
-    Display.separate()
+    gl.spliter.print()
+    return course
 
+
+def automatic_learning(driver: MyDriver, specificChapter=False):
+    """
+        learn = fuist
+        这一句是指定学校
+        不同的学校对应 package/learn/school 下的一个 .py 文件
+        如果程序运行时没有找到课程，或者进入课程后没有找到章节，则大概率是因为学校不同导致页面元素不同。
+        详细解决方案看 package/learn/school/README.md
+    """
+    learn = schoolGetter(gl.school_type)
+    course = getCourse(driver, learn)
     # 获取所有章节
     try:
         driver.get_url(course.get_ZJ_path())
@@ -51,7 +84,7 @@ def automatic_learning(driver):
         chapter_list = learn.get_chapters(driver.get_driver())
     except exceptions.NoSuchElementException as e:
         errInfo = traceback.format_exc()
-        gl.exception_log_manger.writeLog(errInfo)
+        gl.exception_log_manger.writeLog(errInfo, errLevel.high)
         raise Exception("获取章节时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
 
     # 跳过已完成的章节
@@ -62,15 +95,29 @@ def automatic_learning(driver):
             i.webElement.click()
             break
         if i.isFinish:
-            print("章节：" + color.green(i.name) + " 已经完成")
+            print("章节：" + color.green(i.toString()) + " 已经完成")
         else:
-            print("章节：" + color.blue(i.name) + " 未完成")
-            i.webElement.click()
-            break
-    Display.separate()
+            print("章节：" + color.blue(i.toString()) + " 未完成")
+            if not specificChapter:
+                i.webElement.click()
+                break
 
+    if specificChapter:
+        while True:
+            starCatalogSbar = input(color.blue("输入章节号（例如：1.1）："))
+            for i in chapter_list:
+                if i.catalog_sbar == starCatalogSbar:
+                    i.webElement.click()
+                    break
+            else:
+                print(color.yellow("章节号不存在，请重新输入！！"))
+                continue
+            break
+    gl.spliter.print()
+
+    driver.driver_wait(By.CSS_SELECTOR, '[id="iframe"]')
     # 收起目录栏
-    driver.get_driver().find_element(By.CLASS_NAME, "switchbtn").click()
+    driver.getElement(By.CLASS_NAME, "switchbtn").click()
     time.sleep(1)
     driver.go_js("var q=document.documentElement.scrollTop=10000")
     time.sleep(0.5)
@@ -80,7 +127,7 @@ def automatic_learning(driver):
         # 寻找是否有任务卡
         prev_table_list = []
         try:
-            prev_table_list = driver.get_driver().find_element(By.CSS_SELECTOR, '[class="prev_tab"]') \
+            prev_table_list = driver.getElement(By.CSS_SELECTOR, '[class="prev_tab"]') \
                 .find_element(By.CSS_SELECTOR, '[class="prev_ul"]') \
                 .find_elements(By.TAG_NAME, 'li')
         except exceptions.NoSuchElementException:
@@ -107,7 +154,7 @@ def automatic_learning(driver):
                 
                     iframeList中的元素与taskPointFinishStateList中的元素一一对应
             """
-            iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
+            iframeList = driver.getElements(By.TAG_NAME, 'iframe')
             print("当前章节有 " + color.yellow(str(len(iframeList))) + " 个任务点")
 
             # 获取当前页面中任务点的状态
@@ -161,24 +208,31 @@ def automatic_learning(driver):
                             break
                         except Exception as e:
                             errInfo = traceback.format_exc()
-                            gl.exception_log_manger.writeLog(errInfo)
+                            errInfo += "以 {} 执行时出错".format(task.__name__)
+                            gl.exception_log_manger.writeLog(gl.version, errInfo, errLevel.middle)
                             driver.get_driver().switch_to.default_content()
-                            print(color.read("当前任务点 {} 运行时出错".format(task.__name__)))
-                            print(color.read(str(e)))
+                            gl.errorPrinter.print("当前任务点 {} 运行时出错\n详细错误信息已写入 exception.log 中".format(task.__name__))
                             print("跳过当前任务点")
                             break
                     else:
                         print("当前任务点不是 " + color.yellow(task.__name__))
-                Display.separate()
+                gl.spliter.print()
                 driver.get_driver().switch_to.default_content()
                 driver.get_driver().switch_to.frame("iframe")
-                iframeList = driver.get_driver().find_elements(By.TAG_NAME, 'iframe')
+                iframeList = driver.getElements(By.TAG_NAME, 'iframe')
             # 完成当前章节后退出到最外层
             # 不退出到最外层就无法找到”下一章节“的按钮
             driver.get_driver().switch_to.default_content()
+
         print("当前章节已完成")
         print(color.green("完成时间："+getTimeStr()))
-        Display.separate()
+        gl.spliter.print()
+
+        # 判断有没有出现章节提示
+        chapterTips = driver.is_element_presence(By.CSS_SELECTOR, '[class="popDiv wid440 popMove"]')
+        if chapterTips is not None:
+            chapterTips.find_element(By.CLASS_NAME, '[class="jb_btn jb_btn_92 fr fs14 nextChapter"]').click()
+
         next_button = driver.is_element_presence(By.CSS_SELECTOR, '[class="jb_btn jb_btn_92 fs14 prev_next next"]')
         if next_button is not None:
             next_button.click()
@@ -189,66 +243,13 @@ def automatic_learning(driver):
 
 
 def do_homework(driver: MyDriver):
-    school = fuist
-    driver.go_courses_page()
-
-    # 获取所有课程
-    try:
-        courses_list = school.get_courses(driver.get_driver())
-    except exceptions.NoSuchElementException as e:
-        errInfo = traceback.format_exc()
-        gl.exception_log_manger.writeLog(errInfo)
-        raise Exception("获取课程时出现异常："+str(e)+"\n可能原因见：package\\learn\\school\\README.md")
-    print(color.blue("当前课程有："))
-    Display.printTable([i.name for i in courses_list], MyFormat([50, 50], displayNumber=True))
-    index = int(input("\n输入课程序号：")) - 1
-    course = courses_list[index]
-    Display.separate()
-
-    # 进入作业
-    driver.get_url(course.url)
-    driver.driver_wait(By.CLASS_NAME, "nav_side")
-
-    key_value = driver.get_driver().find_element(By.CLASS_NAME, "nav_side") \
-        .find_element(By.CSS_SELECTOR, '[class="nav-content   stuNavigationList"]')
-
-    key_value_dict = {}
-    for i in key_value.find_elements(By.TAG_NAME, "input"):
-        key_value_dict[i.get_attribute("id")] = i.get_attribute("value")
-
-    ZY_url = "https://mooc1.chaoxing.com/mooc2/work/list?" \
-             "courseId=" + key_value_dict['courseid'] + \
-             "&classId=" + key_value_dict['clazzid'] + \
-             "&cpi=" + key_value_dict['cpi'] + \
-             "&ut=s" \
-             "&enc=" + key_value_dict['workEnc']
-    driver.get_url(ZY_url)
-    driver.driver_wait(By.CLASS_NAME, "bottomList")
-
-    homework_url_list = []
-    item = driver.get_driver().find_element(By.CLASS_NAME, "bottomList").find_elements(By.TAG_NAME, "li")
-    for i in item:
-        if i.find_element(By.CSS_SELECTOR, '[class="status fl"]').text == "已完成":
-            continue
-        homework_url_list.append(i.get_attribute("data"))
-
-    print("当前未提交作业有：{} 份".format(len(homework_url_list)))
-    for i in range(len(homework_url_list)):
-        print("正在完成作业 {} ".format(i+1))
-        driver.get_url(homework_url_list[i])
-        time.sleep(1)
-        quiz = QuizOfHomework(driver.get_driver())
-        try:
-            quiz.finish()
-        except Exception as e:
-            errInfo = traceback.format_exc()
-            gl.exception_log_manger.writeLog(errInfo)
-            print(color.read("完成作业 "+str(i+1)+" 时出现异常："+str(e)))
-            print(color.read("跳过这份作业"))
-        driver.get_driver().back()
-        time.sleep(1)
+    # 做作业的功能等待实现
+    pass
 
 
 def getTimeStr():
     timeFormat = "%Y年%m月%d日 %H时%M分%S秒"
     return time.strftime(timeFormat, time.localtime())
+
+
+

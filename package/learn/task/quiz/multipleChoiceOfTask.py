@@ -6,13 +6,15 @@
 
 import difflib
 import traceback
+
+from ..interface import Answerable
+from .question import MultipleChoice
+from package.learn.globalvar import exception_log_manger, version, color
+
+# 第三方库
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
-from package.learn.task.quiz.question import MultipleChoice
-from package.learn.task.interface import Answerable
-from package.learn import globalvar as gl
-from package.learn import color
 
 class MultipleChoiceOfTask(MultipleChoice, Answerable):
     def __init__(self, questionWebObj, qType, question, answersList, options, optionsWebElements):
@@ -51,7 +53,7 @@ class MultipleChoiceOfTask(MultipleChoice, Answerable):
                                 elementClass = self.__optionsWebElements[i].get_attribute("class")
                                 isElementBeClick = True if elementClass.split(" ")[-1] == "check_answer" else False
                             except NoSuchElementException:
-                                gl.exception_log_manger.writeLog(traceback.format_exc())
+                                exception_log_manger.writeLog(version, traceback.format_exc())
                                 print(color.read("无法判断选项是否被选中\n默认被选中"))
                                 isElementBeClick = True
                         if isElementBeClick:

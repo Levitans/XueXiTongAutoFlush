@@ -1,5 +1,5 @@
 # -*- encoding = utf-8 -*-
-# @Time : 2022-04-15 13:54
+# @Time : 2022-07-29 22:52
 # @Author : Levitan
 # @File : color.py
 # @Software : PyCharm
@@ -21,3 +21,6 @@ def green(some_str):
 
 def magenta(some_str):
     return Fore.MAGENTA + some_str + Fore.RESET
+
+def white(some_str):
+    return some_str
